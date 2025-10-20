@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ClearGATE — Visual GATE CS Prep</title>
+  <meta name="description" content="Visual notes, flowcharts and mind maps for GATE CS. Community-driven and open source." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { } }
+    }
+  </script>
+  <style>
+    /* Utilities & small animations */
+    html { scroll-behavior: smooth; }
+    .bg-clip-text { -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+    /* page transitions */
+    .page-fade-enter { opacity: 0; transform: translateY(8px) scale(.998); }
+    .page-fade-enter-active { transition: opacity .36s ease, transform .36s ease; opacity: 1; transform: none; }
+
+    /* reveal-on-scroll (MODIFIED for more pop) */
+    .reveal { opacity: 0; transform: translateY(20px) scale(0.98); transition: opacity .7s ease-out, transform .7s ease-out; will-change: opacity, transform; }
+    .reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+    /* ripple button press */
+    .ripple { position: relative; overflow: hidden; }
+    .ripple span { position: absolute; border-radius: 9999px; transform: translate(-50%,-50%); animation: ripple .6s ease-out; background: rgba(255,255,255,0.35); }
+    @keyframes ripple { from { opacity: .9; transform: translate(-50%,-50%) scale(0); } to { opacity: 0; transform: translate(-50%,-50%) scale(4); } }
+
+    /* shimmer */
+    .shimmer { background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0) 100%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+    @keyframes shimmer { 0% { background-position: -150% 0 } 100% { background-position: 150% 0 } }
+
+    /* small floating effects */
+    .float-btn { transition: transform .18s ease, box-shadow .18s ease; }
+    .float-btn:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(2,6,23,0.12); }
+
+    /* hero parallax */
+    .hero-parallax { will-change: transform; transform-origin: center; }
+
+    /* back to top */
+    #backToTop { transition: opacity .2s, transform .2s; }
+    #backToTop.hidden { opacity: 0; transform: translateY(12px) scale(.96); pointer-events: none; }
+    
+    /* --- NEW ANIMATIONS --- */
+
+    /* 1. Animated Gradient for Hero Text */
+    .animated-gradient-text {
+      background-size: 200% auto;
+      animation: gradient-flow 4s linear infinite;
+    }
+    @keyframes gradient-flow {
+      from { background-position: 0% center; }
+      to { background-position: -200% center; }
+    }
+
+    /* 2. Bouncing Icon Animation */
+    @keyframes bounce-icon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .animate-bounce-icon { animation: bounce-icon 1.8s ease-in-out infinite; }
+
+    /* small responsive tweak */
+    @media (max-width: 768px) {
+      header .max-w-7xl { padding-left: 1rem; padding-right: 1rem; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+  <div id="app"></div>
+
+  <button id="backToTop" class="fixed right-6 bottom-24 z-50 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:shadow-2xl float-btn hidden" aria-label="Back to top">↑</button>
+
+  <nav id="mobileNav" class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-gray-900/95 border-t border-gray-200 dark:border-gray-800 backdrop-blur-sm p-2 md:hidden hidden">
+    <div class="max-w-3xl mx-auto flex justify-between items-center">
+      <button onclick="navigateTo('home')" class="flex flex-col items-center text-xs">
+        <div class="text-2xl">🏠</div><span>Home</span>
+      </button>
+      <button onclick="navigateTo('subjects')" class="flex flex-col items-center text-xs">
+        <div class="text-2xl">📚</div><span>Subjects</span>
+      </button>
+      <button onclick="navigateTo('contribute')" class="flex flex-col items-center text-xs">
+        <div class="text-2xl">🤝</div><span>Contribute</span>
+      </button>
+      <button onclick="toggleDarkMode()" class="flex flex-col items-center text-xs">
+        <div id="mobile-toggle-icon" class="text-2xl">🌙</div><span>Theme</span>
+      </button>
+    </div>
+  </nav>
+
+  <script>
+  // ---------- State ----------
+  let state = {
+    darkMode: localStorage.getItem('cg_dark') === '1',
+    mobileMenuOpen: false,
+    currentPage: 'home',
+    selectedSubject: null,
+    selectedTopic: null,
+    completedTopics: JSON.parse(localStorage.getItem('completedTopics') || '{}'),
+    isNavigating: false
+  };
+
+  // ---------- Data (MODIFIED based on GATE 2025 Syllabus) ----------
+  const subjects = [
+    { id: 'eng_math', name: 'Engineering Mathematics', icon: '🧮', color: 'from-pink-500 to-pink-600', topics: 6, weightage: '13%' },
+    { id: 'dl', name: 'Digital Logic', icon: '🔢', color: 'from-lime-500 to-lime-600', topics: 4, weightage: '5%' },
+    { id: 'coa', name: 'Computer Organization & Architecture', icon: '🖥️', color: 'from-cyan-500 to-cyan-600', topics: 4, weightage: '8%' },
+    { id: 'pds', name: 'Programming & Data Structures', icon: '📚', color: 'from-blue-500 to-blue-600', topics: 6, weightage: '15%' },
+    { id: 'algo', name: 'Algorithms', icon: '💻', color: 'from-purple-500 to-purple-600', topics: 5, weightage: '8%' },
+    { id: 'toc', name: 'Theory of Computation', icon: '📄', color: 'from-indigo-500 to-indigo-600', topics: 4, weightage: '8%' },
+    { id: 'cd', name: 'Compiler Design', icon: '👨‍💻', color: 'from-teal-500 to-teal-600', topics: 5, weightage: '6%' },
+    { id: 'os', name: 'Operating System', icon: '⚙️', color: 'from-green-500 to-green-600', topics: 6, weightage: '10%' },
+    { id: 'dbms', name: 'Databases', icon: '🗄️', color: 'from-red-500 to-red-600', topics: 5, weightage: '8%' },
+    { id: 'cn', name: 'Computer Networks', icon: '🌐', color: 'from-yellow-500 to-yellow-600', topics: 6, weightage: '9%' }
+  ];
+
+  const sampleTopics = {
+    eng_math: [
+      { id: 'math-1', name: 'Discrete Mathematics (Logic, Sets, Graphs)', difficulty: 'Hard', pyq: 20, time: '10 min' },
+      { id: 'math-2', name: 'Combinatorics', difficulty: 'Medium', pyq: 10, time: '6 min' },
+      { id: 'math-3', name: 'Linear Algebra', difficulty: 'Hard', pyq: 18, time: '9 min' },
+      { id: 'math-4', name: 'Calculus', difficulty: 'Medium', pyq: 12, time: '7 min' },
+      { id: 'math-5', name: 'Probability and Statistics', difficulty: 'Hard', pyq: 15, time: '8 min' },
+      { id: 'math-6', name: 'Bayes Theorem', difficulty: 'Easy', pyq: 8, time: '4 min' }
+    ],
+    dl: [
+      { id: 'dl-1', name: 'Boolean Algebra & Minimization', difficulty: 'Medium', pyq: 14, time: '7 min' },
+      { id: 'dl-2', name: 'Combinational Circuits', difficulty: 'Medium', pyq: 13, time: '7 min' },
+      { id: 'dl-3', name: 'Sequential Circuits', difficulty: 'Hard', pyq: 16, time: '8 min' },
+      { id: 'dl-4', name: 'Number Representations', difficulty: 'Easy', pyq: 11, time: '5 min' }
+    ],
+    coa: [
+      { id: 'coa-1', name: 'Machine Instructions & Addressing Modes', difficulty: 'Medium', pyq: 12, time: '6 min' },
+      { id: 'coa-2', name: 'ALU, Data-path and Control Unit', difficulty: 'Medium', pyq: 10, time: '5 min' },
+      { id: 'coa-3', name: 'Instruction Pipelining & Hazards', difficulty: 'Hard', pyq: 15, time: '8 min' },
+      { id: 'coa-4', name: 'Memory Hierarchy (Cache, Main)', difficulty: 'Hard', pyq: 17, time: '9 min' }
+    ],
+    pds: [
+      { id: 'pds-1', name: 'Programming in C & Recursion', difficulty: 'Easy', pyq: 12, time: '5 min' },
+      { id: 'pds-2', name: 'Arrays, Stacks, Queues', difficulty: 'Easy', pyq: 10, time: '5 min' },
+      { id: 'pds-3', name: 'Linked Lists', difficulty: 'Medium', pyq: 15, time: '6 min' },
+      { id: 'pds-4', name: 'Trees, Binary Search Trees, Heaps', difficulty: 'Hard', pyq: 18, time: '8 min' },
+      { id: 'pds-5', name: 'Graphs', difficulty: 'Hard', pyq: 20, time: '10 min' },
+      { id: 'pds-6', name: 'Hashing (in Algorithms section)', difficulty: 'Medium', pyq: 8, time: '5 min' }
+    ],
+    algo: [
+      { id: 'algo-1', name: 'Sorting, Searching, Hashing', difficulty: 'Medium', pyq: 14, time: '7 min' },
+      { id: 'algo-2', name: 'Asymptotic Complexity', difficulty: 'Easy', pyq: 9, time: '4 min' },
+      { id: 'algo-3', name: 'Algorithm Design (Greedy, DP, D&C)', difficulty: 'Hard', pyq: 22, time: '12 min' },
+      { id: 'algo-4', name: 'Graph Traversals (BFS, DFS)', difficulty: 'Medium', pyq: 11, time: '6 min' },
+      { id: 'algo-5', name: 'Minimum Spanning Trees & Shortest Paths', difficulty: 'Hard', pyq: 13, time: '7 min' }
+    ],
+    toc: [
+      { id: 'toc-1', name: 'Regular Expressions & Finite Automata', difficulty: 'Medium', pyq: 15, time: '7 min' },
+      { id: 'toc-2', name: 'Context-Free Grammars & PDA', difficulty: 'Medium', pyq: 13, time: '7 min' },
+      { id: 'toc-3', 'name': 'Regular & Context-Free Languages, Pumping Lemma', difficulty: 'Hard', pyq: 12, time: '8 min' },
+      { id: 'toc-4', name: 'Turing Machines & Undecidability', difficulty: 'Hard', pyq: 17, time: '9 min' }
+    ],
+    cd: [
+        { id: 'cd-1', name: 'Lexical Analysis', difficulty: 'Easy', pyq: 8, time: '5 min' },
+        { id: 'cd-2', name: 'Parsing & Syntax-Directed Translation', difficulty: 'Hard', pyq: 15, time: '8 min' },
+        { id: 'cd-3', name: 'Runtime Environments', difficulty: 'Medium', pyq: 10, time: '6 min' },
+        { id: 'cd-4', name: 'Intermediate Code Generation', difficulty: 'Medium', pyq: 9, time: '6 min' },
+        { id: 'cd-5', name: 'Local Optimisation & Data Flow Analyses', difficulty: 'Hard', pyq: 12, time: '7 min' }
+    ],
+    os: [
+      { id: 'os-1', name: 'Processes, Threads, IPC', difficulty: 'Medium', pyq: 16, time: '7 min' },
+      { id: 'os-2', name: 'Concurrency and Synchronization', difficulty: 'Hard', pyq: 15, time: '8 min' },
+      { id: 'os-3', name: 'Deadlock', difficulty: 'Medium', pyq: 12, time: '6 min' },
+      { id: 'os-4', name: 'CPU Scheduling', difficulty: 'Hard', pyq: 19, time: '9 min' },
+      { id: 'os-5', name: 'Memory Management and Virtual Memory', difficulty: 'Hard', pyq: 17, time: '8 min' },
+      { id: 'os-6', name: 'File Systems', difficulty: 'Medium', pyq: 10, time: '6 min' }
+    ],
+    dbms: [
+        { id: 'dbms-1', name: 'ER-model', difficulty: 'Easy', pyq: 9, time: '5 min' },
+        { id: 'dbms-2', name: 'Relational Model (Algebra, Calculus)', difficulty: 'Hard', pyq: 16, time: '8 min' },
+        { id: 'dbms-3', name: 'SQL', difficulty: 'Medium', pyq: 14, time: '7 min' },
+        { id: 'dbms-4', name: 'Integrity Constraints & Normal Forms', difficulty: 'Hard', pyq: 18, time: '9 min' },
+        { id: 'dbms-5', name: 'Transactions & Concurrency Control', difficulty: 'Hard', pyq: 15, time: '8 min' }
+    ],
+    cn: [
+        { id: 'cn-1', name: 'Concept of Layering (OSI, TCP/IP)', difficulty: 'Easy', pyq: 10, time: '5 min' },
+        { id: 'cn-2', name: 'Data Link Layer (Framing, MAC)', difficulty: 'Medium', pyq: 12, time: '6 min' },
+        { id: 'cn-3', name: 'Routing Protocols (Shortest Path, DV, LS)', difficulty: 'Hard', pyq: 14, time: '7 min' },
+        { id: 'cn-4', name: 'IP Addressing (IPv4, CIDR, NAT)', difficulty: 'Hard', pyq: 16, time: '8 min' },
+        { id: 'cn-5', name: 'Transport Layer (TCP, UDP, Congestion)', difficulty: 'Hard', pyq: 15, time: '8 min' },
+        { id: 'cn-6', name: 'Application Layer (DNS, SMTP, HTTP)', difficulty: 'Medium', pyq: 11, time: '6 min' }
+    ]
+  };
+
+  // ---------- Persistence ----------
+  function persist() {
+    localStorage.setItem('completedTopics', JSON.stringify(state.completedTopics));
+    localStorage.setItem('cg_dark', state.darkMode ? '1' : '0');
+  }
+
+  // ---------- Helpers ----------
+  function calculateProgress() {
+    const allTopics = Object.values(sampleTopics).flat();
+    const completed = allTopics.filter(t => state.completedTopics[t.id]).length;
+    return Math.round((completed / allTopics.length) * 100);
+  }
+
+  function getDifficultyColor(diff) {
+    if (diff === 'Easy') return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300';
+    if (diff === 'Medium') return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300';
+    return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300';
+  }
+
+  function safeJSON(obj) { return JSON.stringify(obj).replace(/'/g, "\\'"); }
+
+  // ---------- Animations & UI behaviors ----------
+  // reveal on scroll
+  function initRevealObserver() {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  }
+
+  // parallax for hero
+  function initParallax() {
+    const hero = document.querySelector('.hero-parallax');
+    if (!hero) return;
+    window.addEventListener('scroll', () => {
+      const sc = window.scrollY;
+      hero.style.transform = `translateY(${sc * 0.06}px)`;
+    }, { passive: true });
+  }
+
+  // ripple effect on buttons
+  function attachRipples() {
+    document.querySelectorAll('.rippleable').forEach(btn => {
+      if (btn.__ripple) return;
+      btn.addEventListener('pointerdown', e => {
+        const rect = btn.getBoundingClientRect();
+        const s = Math.max(rect.width, rect.height);
+        const span = document.createElement('span');
+        span.style.width = span.style.height = s + 'px';
+        span.style.left = (e.clientX - rect.left) + 'px';
+        span.style.top = (e.clientY - rect.top) + 'px';
+        btn.appendChild(span);
+        setTimeout(() => span.remove(), 620);
+      });
+      btn.__ripple = true;
+    });
+  }
+
+  // back to top visibility
+  function initBackToTop() {
+    const btn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 320) btn.classList.remove('hidden'); else btn.classList.add('hidden');
+    }, { passive: true });
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+
+  // mobile nav show/hide
+  function showMobileNavIfNeeded() {
+    const mobileNav = document.getElementById('mobileNav');
+    if (window.innerWidth <= 768) mobileNav.classList.remove('hidden'); else mobileNav.classList.add('hidden');
+  }
+
+  // ---------- Navigation with small fade transition ----------
+  function navigateTo(page, subject = null, topic = null) {
+    if (state.isNavigating) return;
+    state.isNavigating = true;
+    const app = document.getElementById('app');
+    app.classList.add('page-fade-enter');
+    setTimeout(() => {
+      state.currentPage = page || 'home';
+      state.selectedSubject = subject || null;
+      state.selectedTopic = topic || null;
+      state.mobileMenuOpen = false;
+      render(); // full render
+      // entrance
+      requestAnimationFrame(() => {
+        const main = document.querySelector('main');
+        if (main) main.classList.add('page-fade-enter-active');
+      });
+      setTimeout(() => {
+        app.classList.remove('page-fade-enter');
+        state.isNavigating = false;
+      }, 420);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 160);
+  }
+
+  function toggleDarkMode() {
+    state.darkMode = !state.darkMode;
+    document.documentElement.classList.toggle('dark', state.darkMode);
+    persist();
+    // little spin feedback
+    const btn = document.getElementById('darkModeBtn');
+    if (btn) {
+      btn.classList.add('transform', 'rotate-12', 'scale-105');
+      setTimeout(() => btn.classList.remove('rotate-12', 'scale-105'), 420);
+    }
+    render();
+  }
+
+  function toggleComplete(topicId) {
+    state.completedTopics[topicId] = !state.completedTopics[topicId];
+    persist();
+    render(); // re-render to update progress visuals
+  }
+
+  // ---------- Components (template strings) ----------
+  function Header() {
+    return `
+      <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+          <div class="flex items-center justify-between">
+            <div onclick="navigateTo('home')" class="flex items-center gap-3 cursor-pointer select-none">
+              <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-sm">
+                <span class="text-white text-xl">📄</span>
+              </div>
+              <div>
+                <h1 class="text-xl font-bold text-gray-800 dark:text-white leading-tight">ClearGATE</h1>
+                <p class="text-xs text-gray-600 dark:text-gray-400">Visual GATE CS Prep</p>
+              </div>
+            </div>
+
+            <nav class="hidden md:flex items-center gap-6">
+              <button onclick="navigateTo('home')" class="font-medium transition ${state.currentPage === 'home' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}">Home</button>
+              <button onclick="navigateTo('subjects')" class="font-medium transition ${state.currentPage === 'subjects' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}">Subjects</button>
+              <button onclick="navigateTo('contribute')" class="font-medium transition ${state.currentPage === 'contribute' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}">Contribute</button>
+              <button id="darkModeBtn" onclick="toggleDarkMode()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition rippleable">${state.darkMode ? '☀️' : '🌙'}</button>
+            </nav>
+
+            <div class="flex items-center gap-2">
+              <button onclick="state.mobileMenuOpen = !state.mobileMenuOpen; render();" class="md:hidden p-2" aria-label="Open menu">
+                ${state.mobileMenuOpen ? '✕' : '☰'}
+              </button>
+            </div>
+          </div>
+
+          ${state.mobileMenuOpen ? `
+            <div class="md:hidden mt-4 pb-4 space-y-3">
+              <button onclick="navigateTo('home')" class="block w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">Home</button>
+              <button onclick="navigateTo('subjects')" class="block w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">All Subjects</button>
+              <button onclick="navigateTo('contribute')" class="block w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">Contribute</button>
+              <button onclick="toggleDarkMode()" class="flex items-center gap-2 w-full px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">${state.darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}</button>
+            </div>` : ''}
+        </div>
+      </header>
+    `;
+  }
+
+  function HomePage() {
+    return `
+      <div class="space-y-16">
+        <section class="text-center py-20 px-4">
+          <div class="max-w-4xl mx-auto hero-parallax">
+            <div class="inline-block mb-6 px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800 rounded-full reveal">
+              <span class="text-sm font-semibold text-blue-700 dark:text-blue-300">Community-driven • Open Source</span>
+            </div>
+
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent reveal animated-gradient-text">
+              ClearGATE
+            </h1>
+
+            <p class="text-2xl md:text-3xl font-semibold mb-4 text-gray-700 dark:text-gray-300 reveal">See it. Understand it. Ace it.</p>
+            <p class="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto reveal">
+              Visual notes, flowcharts and mind maps for GATE CS — built by students, for students.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center reveal">
+              <button onclick="navigateTo('subjects')" class="rippleable px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-semibold shadow-md hover:shadow-xl transform hover:scale-[1.03] transition">Start Learning</button>
+              <button onclick="navigateTo('contribute')" class="rippleable px-8 py-4 border-2 border-blue-200 text-blue-700 dark:text-blue-300 rounded-2xl font-semibold hover:bg-blue-50 dark:hover:bg-blue-900 transition">Contribute Notes</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="py-12 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl px-4">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+            <div class="text-center reveal">
+              <div class="text-4xl mb-3 animate-bounce-icon" style="animation-delay: 0.1s;">🧭</div>
+              <div class="text-2xl font-bold mb-1 text-gray-800 dark:text-white">Visual-first</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Concepts with diagrams & maps</div>
+            </div>
+            <div class="text-center reveal">
+              <div class="text-4xl mb-3 animate-bounce-icon" style="animation-delay: 0.2s;">⚡</div>
+              <div class="text-2xl font-bold mb-1 text-gray-800 dark:text-white">Quick Revision</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Bite-sized topics, fast review</div>
+            </div>
+            <div class="text-center reveal">
+              <div class="text-4xl mb-3 animate-bounce-icon" style="animation-delay: 0.3s;">📚</div>
+              <div class="text-2xl font-bold mb-1 text-gray-800 dark:text-white">PYQ Focused</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Past questions integrated</div>
+            </div>
+            <div class="text-center reveal">
+              <div class="text-4xl mb-3 animate-bounce-icon" style="animation-delay: 0.4s;">📥</div>
+              <div class="text-2xl font-bold mb-1 text-gray-800 dark:text-white">Downloadable</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Save notes for offline study</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="max-w-6xl mx-auto px-4">
+          <h2 class="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-white reveal">Explore Subjects</h2>
+          <div class="grid md:grid-cols-3 gap-6">
+            ${subjects.map(s => `
+              <div onclick='navigateTo("subjects", ${safeJSON(s)})' class="p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-md hover:shadow-2xl cursor-pointer transform hover:scale-[1.05] hover:rotate-[-1deg] transition-all duration-300 reveal">
+                <div class="w-12 h-12 bg-gradient-to-r ${s.color} rounded-lg flex items-center justify-center mb-4 text-2xl">${s.icon}</div>
+                <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">${s.name}</h3>
+                <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                  <span>📚 ${s.topics} Topics</span>
+                  <span class="font-semibold text-blue-600 dark:text-blue-400">${s.weightage}</span>
+                </div>
+              </div>`).join('')}
+          </div>
+        </section>
+
+        <section class="max-w-4xl mx-auto px-4">
+          <div class="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-2xl p-8 text-center reveal">
+            <h2 class="text-2xl font-bold mb-3 text-gray-800 dark:text-white">Built by the Community</h2>
+            <p class="text-gray-700 dark:text-gray-300 mb-6">Open-source notes created & reviewed by students. Improve it, use it, share it.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <button onclick="navigateTo('contribute')" class="px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-2xl font-semibold hover:shadow-lg transform hover:scale-[1.03] transition rippleable">Contribute</button>
+              <a href="#" class="px-6 py-3 bg-white text-blue-600 rounded-2xl font-semibold hover:shadow-md transform hover:scale-[1.02] transition">GitHub Repo</a>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    `;
+  }
+
+  function SubjectsPage() {
+    const progress = calculateProgress();
+    return `
+      <div class="space-y-8">
+        <div class="text-center mb-12 reveal">
+          <h1 class="text-4xl font-bold mb-4 text-gray-800 dark:text-white">All GATE CS Subjects</h1>
+          <p class="text-gray-600 dark:text-gray-400">Visual topics covering the official GATE 2025 syllabus</p>
+
+          <div class="max-w-md mx-auto mt-8">
+            <div class="flex justify-between mb-2">
+              <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Your Progress</span>
+              <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">${progress}%</span>
+            </div>
+            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-800" style="width:${progress}%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          ${subjects.map(subject => {
+            const subjectTopics = sampleTopics[subject.id] || [];
+            const completed = subjectTopics.filter(t => state.completedTopics[t.id]).length;
+            const subjectProgress = subjectTopics.length ? Math.round((completed / subjectTopics.length) * 100) : 0;
+            return `
+            <div onclick='navigateTo("subjects", ${safeJSON(subject)})' class="p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-md hover:shadow-2xl cursor-pointer transform hover:scale-[1.05] hover:rotate-[-1deg] transition-all duration-300 reveal">
+              <div class="w-16 h-16 bg-gradient-to-r ${subject.color} rounded-xl flex items-center justify-center mb-4 text-3xl">${subject.icon}</div>
+              <h3 class="text-2xl font-bold mb-2 text-gray-800 dark:text-white">${subject.name}</h3>
+              <div class="flex items-center gap-4 mb-4">
+                <span class="text-sm text-gray-600 dark:text-gray-400">📚 ${subjectTopics.length} Topics</span>
+                <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">${subject.weightage}</span>
+              </div>
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-gray-600 dark:text-gray-400">Progress</span>
+                  <span class="font-semibold text-gray-800 dark:text-white">${subjectProgress}%</span>
+                </div>
+                <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r ${subject.color} transition-all duration-800" style="width:${subjectProgress}%"></div>
+                </div>
+              </div>
+            </div>`; }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function TopicsPage() {
+    const topics = sampleTopics[state.selectedSubject.id] || [];
+    return `
+      <div class="space-y-8">
+        <button onclick="navigateTo('subjects')" class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-2 reveal">← Back to Subjects</button>
+
+        <div class="flex items-center justify-between flex-wrap gap-4 mb-8 reveal">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 bg-gradient-to-r ${state.selectedSubject.color} rounded-xl flex items-center justify-center text-3xl">${state.selectedSubject.icon}</div>
+            <div>
+              <h1 class="text-3xl font-bold text-gray-800 dark:text-white">${state.selectedSubject.name}</h1>
+              <p class="text-gray-600 dark:text-gray-400">${topics.length} visual topics • ${state.selectedSubject.weightage} of GATE</p>
+            </div>
+          </div>
+          <button onclick="alert('Download packaged PDFs coming soon')" class="px-4 py-2 bg-blue-600 text-white rounded-2xl font-semibold hover:bg-blue-700 transition rippleable">Download All</button>
+        </div>
+
+        <div class="grid gap-4">
+          ${topics.map(topic => `
+            <div onclick='navigateTo("topics", state.selectedSubject, ${safeJSON(topic)})' class="p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-md hover:shadow-xl cursor-pointer transition-all duration-200 group reveal hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:border-l-4 border-l-transparent hover:border-l-blue-500">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center gap-3 mb-2">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-white group-hover:text-blue-600 transition">${topic.name}</h3>
+                    ${state.completedTopics[topic.id] ? '<span class="text-green-500 text-xl">✓</span>' : ''}
+                    <span class="px-2 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300">FREE</span>
+                  </div>
+                  <div class="flex flex-wrap gap-3 mt-3">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(topic.difficulty)}">${topic.difficulty}</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">${topic.pyq} PYQs</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">⏱️ ${topic.time}</span>
+                  </div>
+                </div>
+                <button onclick="event.stopPropagation(); toggleComplete('${topic.id}')" class="px-4 py-2 rounded-lg font-semibold transition ${state.completedTopics[topic.id] ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200'} rippleable">${state.completedTopics[topic.id] ? '✓ Done' : 'Mark Done'}</button>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function TopicDetailPage() {
+    const topic = state.selectedTopic;
+    return `
+      <div class="max-w-4xl mx-auto space-y-8">
+        <button onclick="navigateTo('subjects', state.selectedSubject)" class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-2 reveal">← Back to ${state.selectedSubject.name}</button>
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 reveal">
+          <div class="flex items-start justify-between mb-6 flex-wrap gap-4">
+            <div>
+              <h1 class="text-3xl font-bold mb-3 text-gray-800 dark:text-white">${topic.name}</h1>
+              <div class="flex flex-wrap gap-3">
+                <span class="px-3 py-1 rounded-full text-sm font-semibold bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300">Visual Note</span>
+                <span class="px-3 py-1 rounded-full text-sm font-semibold ${getDifficultyColor(topic.difficulty)}">${topic.difficulty}</span>
+                <span class="px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">${topic.pyq} GATE Questions</span>
+                <span class="px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">⏱️ ${topic.time}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="prose dark:prose-invert max-w-none">
+            <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-8 mb-8 text-center">
+              <div class="text-6xl mb-4">📊</div>
+              <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Visual Note Preview</h3>
+              <p class="text-gray-600 dark:text-gray-400 mb-4">Flowcharts, diagrams, and quick revision maps for the concept.</p>
+              <div class="bg-white dark:bg-gray-800 rounded-lg p-6 text-left">
+                <h4 class="font-semibold mb-3 text-gray-800 dark:text-white">What you'll get:</h4>
+                <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+                  <li>• Visual concept explanation</li>
+                  <li>• Step-by-step flowcharts</li>
+                  <li>• Mind maps for quick revision</li>
+                  <li>• Time & space complexity summary</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-6 mb-8">
+              <h3 class="text-lg font-semibold mb-3 text-gray-800 dark:text-white">GATE Pattern Analysis</h3>
+              <p class="text-gray-700 dark:text-gray-300">This topic appeared <strong>${topic.pyq} times</strong> in recent GATE papers.</p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 p-6">
+              <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Previous Year GATE Questions</h3>
+              <div class="space-y-4">
+                <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">GATE 2023 - Q15</span>
+                    <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300 rounded">2 Marks</span>
+                  </div>
+                  <p class="text-gray-700 dark:text-gray-300 text-sm">[Question + detailed solution will be added here]</p>
+                </div>
+                <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">GATE 2022 - Q28</span>
+                    <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300 rounded">1 Mark</span>
+                  </div>
+                  <p class="text-gray-700 dark:text-gray-300 text-sm">[Question + detailed solution will be added here]</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-4 mt-6">
+              <button onclick="toggleComplete('${topic.id}')" class="rippleable flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold transition ${state.completedTopics[topic.id] ? 'bg-green-500 text-white' : 'bg-blue-600 text-white hover:bg-blue-700'}">${state.completedTopics[topic.id] ? '✓ Completed' : '✓ Mark as Learned'}</button>
+              <button onclick="alert('Download feature coming soon')" class="rippleable px-6 py-3 rounded-2xl font-semibold bg-green-600 text-white hover:bg-green-700 transition">📥 Download PDF</button>
+              <button onclick="navigator.share?.({ title: '${topic.name} - ClearGATE', text: 'Check out this ClearGATE visual note: ${topic.name}', url: location.href }) || alert('Share not supported in this browser')" class="rippleable px-6 py-3 rounded-2xl font-semibold bg-purple-600 text-white hover:bg-purple-700 transition">🔗 Share</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-6 text-center reveal">
+          <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Help the Project</h3>
+          <p class="text-gray-700 dark:text-gray-300 mb-4">Found this helpful? Contribute notes or share with friends.</p>
+          <button onclick="navigateTo('contribute')" class="rippleable px-6 py-2 bg-green-600 text-white rounded-2xl font-semibold hover:bg-green-700 transition">Contribute Notes</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function ContributePage() {
+    return `
+      <div class="max-w-4xl mx-auto space-y-8">
+        <div class="text-center mb-12 reveal">
+          <h1 class="text-4xl font-bold mb-4 text-gray-800 dark:text-white">Contribute to ClearGATE</h1>
+          <p class="text-xl text-gray-600 dark:text-gray-400">Help learners by sharing your visual notes</p>
+        </div>
+
+        <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-8 reveal">
+          <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Why Contribute?</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="flex gap-4"><div class="text-3xl">🤝</div><div><h3 class="font-semibold mb-2 text-gray-800 dark:text-white">Help Others</h3><p class="text-sm text-gray-600 dark:text-gray-400">Your notes help students who can't access paid coaching.</p></div></div>
+            <div class="flex gap-4"><div class="text-3xl">⭐</div><div><h3 class="font-semibold mb-2 text-gray-800 dark:text-white">Get Recognition</h3><p class="text-sm text-gray-600 dark:text-gray-400">Contributors are credited in notes.</p></div></div>
+            <div class="flex gap-4"><div class="text-3xl">📚</div><div><h3 class="font-semibold mb-2 text-gray-800 dark:text-white">Build Portfolio</h3><p class="text-sm text-gray-600 dark:text-gray-400">Great for GitHub & resumes.</p></div></div>
+            <div class="flex gap-4"><div class="text-3xl">🌟</div><div><h3 class="font-semibold mb-2 text-gray-800 dark:text-white">Join Community</h3><p class="text-sm text-gray-600 dark:text-gray-400">Connect with learners & contributors.</p></div></div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 reveal">
+          <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">How to Contribute</h2>
+          <div class="space-y-6">
+            <div class="flex gap-4"><div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center font-bold text-blue-600 dark:text-blue-400">1</div><div><h3 class="font-semibold mb-2 text-gray-800 dark:text-white">Create Notes</h3><p class="text-sm text-gray-600 dark:text-gray-400">Use PPT/Canva/Draw.io or scanned notes. Focus on visuals.</p></div></div>
+            <div class="flex gap-4"><div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center font-bold text-blue-600 dark:text-blue-400">2</div><div><h3 class="font-semibold mb-2 text-gray-800 dark:text-white">Submit via GitHub</h3><p class="text-sm text-gray-600 dark:text-gray-400">Fork repo > add notes > open PR. We review & publish.</p></div></div>
+            <div class="flex gap-4"><div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center font-bold text-blue-600 dark:text-blue-400">3</div><div><h3 class="font-semibold mb-2 text-gray-800 dark:text-white">We Review & Publish</h3><p class="text-sm text-gray-600 dark:text-gray-400">Quality checks and credit to authors.</p></div></div>
+          </div>
+        </div>
+
+        <div class="text-center reveal">
+          <button onclick="alert('Open GitHub Repo')" class="px-8 py-4 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-2xl font-semibold hover:shadow-lg transform hover:scale-[1.03] transition rippleable">🚀 Start on GitHub</button>
+          <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">Prefer email? <button class="text-blue-600 dark:text-blue-400 underline" onclick="alert('Email: contact@example.com')">Email us</button></p>
+        </div>
+      </div>
+    `;
+  }
+
+  function Footer() {
+    return `
+      <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-16">
+        <div class="max-w-7xl mx-auto px-4 py-12">
+          <div class="grid md:grid-cols-4 gap-8">
+            <div>
+              <div class="flex items-center gap-2 mb-4"><div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"><span class="text-white">📄</span></div><span class="font-bold text-gray-800 dark:text-white">ClearGATE</span></div>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Visual learning platform for GATE CS. Community-driven & open source.</p>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-4 text-gray-800 dark:text-white">Quick Links</h3>
+              <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                <li><button onclick="navigateTo('home')" class="hover:text-blue-600 dark:hover:text-blue-400">Home</button></li>
+                <li><button onclick="navigateTo('subjects')" class="hover:text-blue-600 dark:hover:text-blue-400">All Subjects</button></li>
+                <li><button onclick="navigateTo('contribute')" class="hover:text-blue-600 dark:hover:text-blue-400">Contribute</button></li>
+                <li><a href="#" class="hover:text-blue-600 dark:hover:text-blue-400">GitHub Repo</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-4 text-gray-800 dark:text-white">Subjects</h3>
+              <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                ${subjects.slice(0,5).map(s => `<li><button onclick='navigateTo("subjects", ${safeJSON(s)})' class="hover:text-blue-600 dark:hover:text-blue-400">${s.name}</button></li>`).join('')}
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-4 text-gray-800 dark:text-white">Community</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Join our learners & contributors.</p>
+              <div class="space-y-2">
+                <a href="#" class="w-full inline-block px-4 py-2 bg-blue-600 text-white rounded-2xl text-sm font-semibold hover:bg-blue-700 transition text-center">⭐ Star on GitHub</a>
+                <button onclick="navigateTo('contribute')" class="w-full px-4 py-2 bg-green-600 text-white rounded-2xl text-sm font-semibold hover:bg-green-700 transition">🤝 Contribute</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 text-center">
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">© ${new Date().getFullYear()} ClearGATE. Made by students, for students.</p>
+            <p class="text-xs text-gray-500 dark:text-gray-500">Open source • MIT License</p>
+          </div>
+        </div>
+      </footer>
+    `;
+  }
+
+  // ---------- Render ----------
+  function render() {
+    document.documentElement.classList.toggle('dark', state.darkMode);
+    let content = '';
+    if (state.selectedTopic) content = TopicDetailPage();
+    else if (state.selectedSubject) content = TopicsPage();
+    else if (state.currentPage === 'contribute') content = ContributePage();
+    else if (state.currentPage === 'subjects') content = SubjectsPage();
+    else content = HomePage();
+
+    document.getElementById('app').innerHTML = `
+      ${Header()}
+      <main class="max-w-7xl mx-auto px-4 py-8 page-content">
+        ${content}
+      </main>
+      ${Footer()}
+    `;
+
+    // post-render setup
+    attachRipples();
+    initRevealObserver();
+    initParallax();
+    initBackToTop();
+    showMobileNavIfNeeded();
+
+    // update mobile toggle icon
+    const mobileIcon = document.getElementById('mobile-toggle-icon');
+    if (mobileIcon) mobileIcon.innerText = state.darkMode ? '☀️' : '🌙';
+
+    // animate progress bars a bit
+    document.querySelectorAll('[style*="width:"]').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0%';
+      setTimeout(()=> el.style.width = w, 90);
+    });
+  }
+
+  // ---------- Init ----------
+  document.addEventListener('DOMContentLoaded', () => {
+    // ensure dark mode persists
+    document.documentElement.classList.toggle('dark', state.darkMode);
+    render();
+    window.addEventListener('resize', showMobileNavIfNeeded);
+  });
+
+  // expose some functions globally for inline handlers
+  window.navigateTo = navigateTo;
+  window.toggleDarkMode = toggleDarkMode;
+  window.toggleComplete = toggleComplete;
+  </script>
+</body>
+</html>
