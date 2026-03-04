@@ -196,11 +196,11 @@
             <h2 id="modalTitle">Enter Details</h2>
             
             <div class="input-toggle-container">
-                <div id="optPhone" class="toggle-option active" maxlength="10" onclick="setModalType('Phone')">Phone No.</div>
+                <div id="optPhone" class="toggle-option active" onclick="setModalType('Phone')">Phone No.</div>
                 <div id="optAccount" class="toggle-option" onclick="setModalType('Account')">Account No.</div>
             </div>
 
-            <input type="tel" inputmode="numeric" id="modalInput" placeholder="Enter number...">
+            <input type="tel" inputmode="numeric" id="modalInput" maxlength="10" placeholder="Enter number...">
             
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                 <button class="btn btn-cancel" onclick="closeModal()">BACK</button>
@@ -390,4 +390,5 @@
     </script>
 </body>
 </html>
+
 
