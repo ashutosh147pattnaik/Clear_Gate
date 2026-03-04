@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Informa v2.0</title>
+    <title>Informa v2.2 - Ashutosh Patnaik</title>
     <style>
         :root {
             --bg-color: #F0F4F8;
             --primary-blue: #2D5BFF;
             --deep-navy: #1A2B49;
             --success-green: #00C897;
-            --warning-orange: #FF8A00;
+            --danger-red: #EF4444;
             --white: #FFFFFF;
             --text-dark: #2D3748;
             --text-light: #718096;
@@ -25,7 +25,7 @@
             display: flex;
             justify-content: center;
             color: var(--text-dark);
-            overscroll-behavior: none; /* Prevents annoying pull-to-refresh */
+            overscroll-behavior: none;
         }
 
         .app-shell {
@@ -36,7 +36,6 @@
             flex-direction: column;
         }
 
-        /* Modern Header */
         header {
             background: var(--white);
             padding: 24px 20px;
@@ -61,7 +60,6 @@
             color: var(--text-light);
         }
 
-        /* Content Area */
         .content {
             padding: 16px;
             flex-grow: 1;
@@ -76,7 +74,6 @@
             letter-spacing: 1px;
         }
 
-        /* Card Component */
         .card {
             background: var(--white);
             border-radius: 20px;
@@ -85,7 +82,6 @@
             margin-bottom: 16px;
         }
 
-        /* Custom Button Styling */
         .btn {
             width: 100%;
             border: none;
@@ -116,9 +112,6 @@
             box-shadow: 0 4px 12px rgba(0, 200, 151, 0.2);
         }
 
-        .btn-attendance:active { background: #00AA81; }
-
-        /* Badge Styling */
         .counter-badge {
             background: var(--primary-blue);
             color: white;
@@ -127,7 +120,6 @@
             font-size: 13px;
         }
 
-        /* Navigation Bar / Bottom Action */
         .bottom-nav {
             padding: 20px;
             background: transparent;
@@ -144,7 +136,6 @@
             height: 64px;
         }
 
-        /* Modal / Overlay UI */
         .overlay {
             display: none;
             position: fixed;
@@ -167,8 +158,6 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
 
-        .modal h2 { margin-top: 0; font-size: 20px; color: var(--deep-navy); }
-
         .modal input {
             width: 100%;
             padding: 16px;
@@ -187,7 +176,6 @@
         .btn-cancel { background: #EDF2F7; color: var(--text-light); justify-content: center; }
         .btn-confirm { background: var(--primary-blue); color: white; justify-content: center; }
 
-        /* Report Styles */
         .report-item {
             display: flex;
             justify-content: space-between;
@@ -202,6 +190,16 @@
             color: white;
             justify-content: center;
             margin-top: 24px;
+        }
+
+        .btn-reset {
+            background: transparent;
+            color: var(--danger-red);
+            border: 1px solid var(--danger-red);
+            justify-content: center;
+            margin-top: 30px;
+            font-size: 14px;
+            padding: 12px;
         }
 
         #reportView { display: none; }
@@ -227,16 +225,16 @@
                     NPS <span class="counter-badge" id="badge-nps">0</span>
                 </button>
                 <button class="btn" onclick="handleActivity('whatsapp', 'WhatsApp Banking', true)">
-                    WhatsApp <span class="counter-badge" id="badge-whatsapp">0</span>
+                    WhatsApp Banking <span class="counter-badge" id="badge-whatsapp">0</span>
                 </button>
-                <button class="btn" onclick="handleActivity('yammer', 'Yammer Registration', true)">
-                    Yammer <span class="counter-badge" id="badge-yammer">0</span>
+                <button class="btn" onclick="handleActivity('yono', 'YONO Registration', true)">
+                    YONO Reg <span class="counter-badge" id="badge-yono">0</span>
                 </button>
-                <button class="btn" onclick="handleActivity('contact', 'Customer Contact', true)">
-                    Contact <span class="counter-badge" id="badge-contact">0</span>
+                <button class="btn" onclick="handleActivity('contact', 'Contact Centre', true)">
+                    Contact Centre <span class="counter-badge" id="badge-contact">0</span>
                 </button>
                 <button class="btn" onclick="handleActivity('others', 'Other Forms', false)">
-                    Others <span class="counter-badge" id="badge-others">0</span>
+                    Other Forms Filled <span class="counter-badge" id="badge-others">0</span>
                 </button>
             </div>
         </div>
@@ -249,18 +247,20 @@
     <div class="app-shell" id="reportView">
         <header>
             <h1>Daily Summary</h1>
-            <p>Export your activities</p>
+            <p>Review & Export Report</p>
         </header>
         <div class="content">
             <div class="card">
-                <div class="report-item"><span>NPS Total</span> <span class="report-val" id="rep-nps">0</span></div>
-                <div class="report-item"><span>WhatsApp Total</span> <span class="report-val" id="rep-whatsapp">0</span></div>
-                <div class="report-item"><span>Yammer Total</span> <span class="report-val" id="rep-yammer">0</span></div>
-                <div class="report-item"><span>Contact Total</span> <span class="report-val" id="rep-contact">0</span></div>
-                <div class="report-item"><span>Others Total</span> <span class="report-val" id="rep-others">0</span></div>
+                <div class="report-item"><span>NPS Forms</span> <span class="report-val" id="rep-nps">0</span></div>
+                <div class="report-item"><span>WhatsApp Banking</span> <span class="report-val" id="rep-whatsapp">0</span></div>
+                <div class="report-item"><span>YONO Registration</span> <span class="report-val" id="rep-yono">0</span></div>
+                <div class="report-item"><span>Contact Centre</span> <span class="report-val" id="rep-contact">0</span></div>
+                <div class="report-item"><span>Other Forms</span> <span class="report-val" id="rep-others">0</span></div>
                 
                 <button class="btn btn-whatsapp" onclick="shareReport()">Share on WhatsApp</button>
                 <button class="btn btn-cancel" style="margin-top:10px" onclick="hideReport()">Edit Tasks</button>
+                
+                <button class="btn btn-reset" onclick="resetCounts()">Clear All Data for Tomorrow</button>
             </div>
         </div>
     </div>
@@ -278,11 +278,23 @@
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDsf-JisblzD0mvVvFnrzCkDnwbij_9jHQdOlDVHoDwPzLyrtvHsSyngXXaUbJqyvz/exec";
-        let counts = { nps: 0, whatsapp: 0, yammer: 0, contact: 0, others: 0 };
+        
+        let counts = JSON.parse(localStorage.getItem('informa_counts')) || { nps: 0, whatsapp: 0, yono: 0, contact: 0, others: 0 };
         let currentKey = "";
         let currentLabel = "";
 
-        // Set Date
+        // Initial UI Update
+        function updateBadges() {
+            Object.keys(counts).forEach(key => {
+                const badge = document.getElementById('badge-' + key);
+                if(badge) badge.innerText = counts[key];
+            });
+        }
+        updateBadges();
+
+        // Header Date Info
+        const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        const formattedDate = new Date().toLocaleDateString('en-GB', dateOptions);
         document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
 
         function sendToSheet(sheetName, type, detail) {
@@ -320,14 +332,28 @@
 
         function saveActivity(key, label, detail) {
             counts[key]++;
+            localStorage.setItem('informa_counts', JSON.stringify(counts));
             document.getElementById('badge-' + key).innerText = counts[key];
             sendToSheet("Activities", label, detail);
+        }
+
+        function resetCounts() {
+            if(confirm("Are you sure? This will reset all numbers to zero.")){
+                counts = { nps: 0, whatsapp: 0, yono: 0, contact: 0, others: 0 };
+                localStorage.setItem('informa_counts', JSON.stringify(counts));
+                updateBadges();
+                hideReport();
+                alert("Data Reset for tomorrow!");
+            }
         }
 
         function showReport() {
             document.getElementById('mainView').style.display = 'none';
             document.getElementById('reportView').style.display = 'flex';
-            Object.keys(counts).forEach(k => document.getElementById('rep-' + k).innerText = counts[k]);
+            Object.keys(counts).forEach(k => {
+                const repElem = document.getElementById('rep-' + k);
+                if(repElem) repElem.innerText = counts[k];
+            });
         }
 
         function hideReport() {
@@ -336,9 +362,22 @@
         }
 
         function shareReport() {
-            const text = `*Informa Report - ${new Date().toLocaleDateString()}*\n\nNPS: *${counts.nps}*\nWhatsApp: *${counts.whatsapp}*\nYammer: *${counts.yammer}*\nContact: *${counts.contact}*\nOthers: *${counts.others}*`;
-            if (navigator.share) navigator.share({ text: text });
-            else window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+            const text = `*Informa Daily Report*\n` +
+                         `*Date:* ${formattedDate}\n` +
+                         `*Name:* Ashutosh Patnaik\n` +
+                         `*Branch:* SPI Komtra (17978)\n` +
+                         `-------------------------\n` +
+                         `NPS Forms: *${counts.nps}*\n` +
+                         `WhatsApp Banking: *${counts.whatsapp}*\n` +
+                         `YONO Registration: *${counts.yono}*\n` +
+                         `Contact Centre: *${counts.contact}*\n` +
+                         `Other Forms Filled: *${counts.others}*`;
+            
+            if (navigator.share) {
+                navigator.share({ text: text }).catch(() => {});
+            } else {
+                window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+            }
         }
     </script>
 </body>
