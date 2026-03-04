@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Informa v3.1</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0F172A">
-
+    <title>Informa v3.0 - Dynamic</title>
     <style>
+        /* Base Variables (Will be overwritten by JavaScript daily) */
         :root {
             --primary-color: #2D5BFF;
             --bg-gradient: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
@@ -19,7 +16,7 @@
 
         body {
             font-family: 'Inter', -apple-system, sans-serif;
-            background-color: #0F172A; 
+            background-color: #0F172A; /* Fallback */
             background-image: var(--bg-gradient);
             background-attachment: fixed;
             margin: 0;
@@ -32,91 +29,164 @@
             transition: all 0.5s ease;
         }
 
-        .app-shell { width: 100%; max-width: 450px; display: flex; flex-direction: column; }
+        .app-shell {
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+        }
 
         header {
             padding: 30px 20px;
             backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            position: sticky; top: 0; z-index: 100;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         header h1 {
-            margin: 0; font-size: 28px; font-weight: 800;
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
             color: var(--primary-color);
             text-shadow: 0 0 15px rgba(var(--primary-rgb), 0.4);
         }
 
-        header p { margin: 4px 0 0; font-size: 14px; color: var(--text-dim); font-weight: 500; }
+        header p {
+            margin: 4px 0 0;
+            font-size: 14px;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
 
         .content { padding: 16px; flex-grow: 1; }
 
         .section-label {
-            font-size: 11px; font-weight: 700; text-transform: uppercase;
-            color: var(--primary-color); margin: 24px 0 12px 8px; letter-spacing: 2px; opacity: 0.8;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary-color);
+            margin: 24px 0 12px 8px;
+            letter-spacing: 2px;
+            opacity: 0.8;
         }
 
         .card {
-            background: var(--card-bg); border-radius: 24px; padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); margin-bottom: 20px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            margin-bottom: 20px;
         }
 
         .btn {
-            width: 100%; border: none; border-radius: 18px; padding: 18px;
-            font-size: 16px; font-weight: 600; cursor: pointer; display: flex;
-            align-items: center; justify-content: space-between;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); margin-bottom: 14px;
-            background: rgba(255, 255, 255, 0.08); color: var(--text-main);
+            width: 100%;
+            border: none;
+            border-radius: 18px;
+            padding: 18px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-main);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .btn:active { transform: scale(0.95); background: rgba(255,255,255,0.15); }
 
         .btn-attendance {
-            background: var(--primary-color); color: #000; justify-content: center;
-            font-weight: 800; box-shadow: 0 4px 20px rgba(var(--primary-rgb), 0.4); border: none;
+            background: var(--primary-color);
+            color: #000;
+            justify-content: center;
+            font-weight: 800;
+            box-shadow: 0 4px 20px rgba(var(--primary-rgb), 0.4);
+            border: none;
         }
 
         .counter-badge {
-            background: rgba(255, 255, 255, 0.1); color: var(--primary-color);
-            padding: 4px 14px; border-radius: 12px; font-size: 14px;
-            font-weight: 800; border: 1px solid var(--primary-color);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+            padding: 4px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            border: 1px solid var(--primary-color);
         }
 
         .bottom-nav {
-            padding: 24px; position: sticky; bottom: 0;
+            padding: 24px;
+            position: sticky;
+            bottom: 0;
             background: linear-gradient(0deg, rgba(15,23,42,1) 40%, transparent 100%);
         }
 
         .btn-main-action {
-            background: var(--primary-color); color: #000; justify-content: center;
-            font-weight: 800; font-size: 18px; height: 64px; box-shadow: 0 0 25px rgba(var(--primary-rgb), 0.4);
+            background: var(--primary-color);
+            color: #000;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+            height: 64px;
+            box-shadow: 0 0 25px rgba(var(--primary-rgb), 0.4);
         }
 
-        /* Modal UI */
+        /* Modal / Overlay UI */
         .overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
-            z-index: 1000; align-items: center; justify-content: center; padding: 20px;
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
         .modal {
-            background: #1E293B; width: 100%; max-width: 340px; border-radius: 32px;
-            padding: 30px; text-align: center; border: 1px solid var(--primary-color);
+            background: #1E293B;
+            width: 100%;
+            max-width: 340px;
+            border-radius: 32px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid var(--primary-color);
         }
 
         .modal h2 { margin-top: 0; color: var(--primary-color); }
+
         .modal input {
-            width: 100%; padding: 16px; font-size: 28px; background: #0F172A;
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
-            text-align: center; margin: 20px 0; color: var(--primary-color);
-            font-weight: 800; outline: none;
+            width: 100%;
+            padding: 16px;
+            font-size: 28px;
+            background: #0F172A;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--primary-color);
+            font-weight: 800;
+            outline: none;
         }
 
         .btn-cancel { background: #334155; color: white; justify-content: center; }
         .btn-confirm { background: var(--primary-color); color: #000; justify-content: center; }
-        .btn-whatsapp { background: #25D366; color: white; justify-content: center; margin-top: 24px; font-weight: 800; }
-        
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+            justify-content: center;
+            margin-top: 24px;
+            font-weight: 800;
+        }
+
         #reportView { display: none; }
     </style>
 </head>
@@ -148,9 +218,8 @@
                 <button class="btn" onclick="handleActivity('contact', 'Contact Centre', true)">
                     Contact Centre <span class="counter-badge" id="badge-contact">0</span>
                 </button>
-                
-                <button class="btn" onclick="openCategoryModal()" style="border-color: var(--primary-color);">
-                    Other Forms Filled <span class="counter-badge" id="badge-all_forms">0</span>
+                <button class="btn" onclick="handleActivity('others', 'Other Forms', false)">
+                    Other Forms <span class="counter-badge" id="badge-others">0</span>
                 </button>
             </div>
         </div>
@@ -167,7 +236,9 @@
         </header>
         <div class="content">
             <div class="card">
-                <div id="reportContainer"></div>
+                <div id="reportContainer">
+                    </div>
+                
                 <button class="btn btn-whatsapp" onclick="shareReport()">SHARE VIA WHATSAPP</button>
                 <button class="btn btn-cancel" style="margin-top:10px" onclick="hideReport()">GO BACK</button>
                 <button class="btn" style="margin-top:20px; color:#EF4444; font-size:12px; justify-content:center; background:transparent; border:1px solid #EF4444;" onclick="resetCounts()">RESET ALL DATA</button>
@@ -182,20 +253,6 @@
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                 <button class="btn btn-cancel" onclick="closeModal()">BACK</button>
                 <button class="btn btn-confirm" onclick="submitModal()">SAVE</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="categoryModal" class="overlay">
-        <div class="modal">
-            <h2>Select Form Type</h2>
-            <div style="display:flex; flex-direction:column; gap:8px; margin-top: 20px;">
-                <button class="btn" style="justify-content:center" onclick="selectForm('withdrawal', 'Withdrawal Form')">Withdrawal Form</button>
-                <button class="btn" style="justify-content:center" onclick="selectForm('deposit', 'Deposit Form')">Deposit Form</button>
-                <button class="btn" style="justify-content:center" onclick="selectForm('kyc', 'KYC Form')">KYC Form</button>
-                <button class="btn" style="justify-content:center" onclick="selectForm('account_opening', 'A/C Opening Form')">Account Opening Form</button>
-                <button class="btn" style="justify-content:center" onclick="selectForm('others', 'Misc Other Forms')">Other Forms (Misc)</button>
-                <button class="btn btn-cancel" style="margin-top:12px;" onclick="closeCategoryModal()">CANCEL</button>
             </div>
         </div>
     </div>
@@ -216,30 +273,26 @@
             const dayIndex = new Date().getDay();
             const theme = themes[dayIndex];
             const root = document.documentElement;
+            
             root.style.setProperty('--primary-color', theme.color);
             root.style.setProperty('--primary-rgb', theme.rgb);
             root.style.setProperty('--bg-gradient', theme.bg);
+            
             document.getElementById('dynamicTitle').innerText = "Informa " + theme.day;
         }
         applyTheme();
 
         // --- CORE LOGIC ---
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzDsf-JisblzD0mvVvFnrzCkDnwbij_9jHQdOlDVHoDwPzLyrtvHsSyngXXaUbJqyvz/exec";
-        
-        const defaultCounts = { nps: 0, whatsapp: 0, yono: 0, contact: 0, withdrawal: 0, deposit: 0, kyc: 0, account_opening: 0, others: 0 };
-        let counts = JSON.parse(localStorage.getItem('informa_counts')) || {};
-        for(let key in defaultCounts) { if(counts[key] === undefined) counts[key] = 0; }
-
+        let counts = JSON.parse(localStorage.getItem('informa_counts')) || { nps: 0, whatsapp: 0, yono: 0, contact: 0, others: 0 };
         let currentKey = "";
         let currentLabel = "";
 
         function updateBadges() {
-            ['nps', 'whatsapp', 'yono', 'contact'].forEach(key => {
+            Object.keys(counts).forEach(key => {
                 const badge = document.getElementById('badge-' + key);
                 if(badge) badge.innerText = counts[key];
             });
-            const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.others;
-            document.getElementById('badge-all_forms').innerText = totalForms;
         }
         updateBadges();
 
@@ -274,31 +327,22 @@
             saveActivity(currentKey, currentLabel, val);
         }
 
-        function openCategoryModal() { document.getElementById('categoryModal').style.display = "flex"; }
-        function closeCategoryModal() { document.getElementById('categoryModal').style.display = "none"; }
-        
-        function selectForm(key, label) {
-            closeCategoryModal();
-            saveActivity(key, label, "N/A"); 
-        }
-
         function saveActivity(key, label, detail) {
             counts[key]++;
             localStorage.setItem('informa_counts', JSON.stringify(counts));
-            updateBadges();
+            document.getElementById('badge-' + key).innerText = counts[key];
             sendToSheet("Activities", label, detail);
         }
 
         function resetCounts() {
             if(confirm("Start fresh for tomorrow?")){
-                counts = { ...defaultCounts };
+                counts = { nps: 0, whatsapp: 0, yono: 0, contact: 0, others: 0 };
                 localStorage.setItem('informa_counts', JSON.stringify(counts));
                 updateBadges();
                 hideReport();
             }
         }
 
-        // --- REPORT & EXPORT LOGIC ---
         function showReport() {
             document.getElementById('mainView').style.display = 'none';
             document.getElementById('reportView').style.display = 'flex';
@@ -306,22 +350,12 @@
             const container = document.getElementById('reportContainer');
             container.innerHTML = "";
             
-            // Calculate total for "Other Forms"
-            const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.others;
-
-            // Define only the 5 main categories to show on the report page
-            const summaryDisplay = [
-                { label: "NPS Forms", val: counts.nps },
-                { label: "WA Banking", val: counts.whatsapp },
-                { label: "YONO Reg", val: counts.yono },
-                { label: "Contact Centre", val: counts.contact },
-                { label: "Other Forms Filled", val: totalForms }
-            ];
+            const labels = { nps: "NPS Forms", whatsapp: "WA Banking", yono: "YONO Reg", contact: "Contact Centre", others: "Other Forms" };
             
-            summaryDisplay.forEach(item => {
+            Object.keys(counts).forEach(k => {
                 const row = document.createElement('div');
                 row.style = "display:flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom:10px;";
-                row.innerHTML = `<span>${item.label}</span> <span style="color:var(--primary-color); font-weight:800;">${item.val}</span>`;
+                row.innerHTML = `<span>${labels[k]}</span> <span style="color:var(--primary-color); font-weight:800;">${counts[k]}</span>`;
                 container.appendChild(row);
             });
         }
@@ -330,24 +364,10 @@
 
         function shareReport() {
             const date = new Date().toLocaleDateString('en-GB');
-            const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.others;
-
-            // Creates the compressed 5-category text block for WhatsApp
-            const text = `*Daily Report*\n` +
-                         `*Date:* ${date}\n` +
-                         `*Name:* Ashutosh Patnaik\n` +
-                         `*Branch:* SBI Komtalpeta (17978)\n` +
-                         `-------------------------\n` +
-                         `NPS Forms: *${counts.nps}*\n` +
-                         `WhatsApp Banking: *${counts.whatsapp}*\n` +
-                         `YONO Registration: *${counts.yono}*\n` +
-                         `Contact Centre: *${counts.contact}*\n` +
-                         `Other Forms Filled: *${totalForms}*`;
-
+            const text = `*Informa Daily Report*\n*Date:* ${date}\n*Name:* Ashutosh Patnaik\n*Branch:* SPI Komtra (17978)\n-------------------------\nNPS Forms: *${counts.nps}*\nWA Banking: *${counts.whatsapp}*\nYONO Reg: *${counts.yono}*\nContact Centre: *${counts.contact}*\nOther Forms: *${counts.others}*`;
             if (navigator.share) navigator.share({ text: text });
             else window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
         }
     </script>
 </body>
 </html>
-
