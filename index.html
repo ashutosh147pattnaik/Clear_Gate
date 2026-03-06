@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBI Informa v6.4</title>
+    <title>SBI Informa v6.5</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -56,8 +56,17 @@
 
         .counter-badge { background: var(--sbi-navy); color: white; padding: 3px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; }
 
-        .bottom-nav { padding: 20px; background: white; border-top: 1px solid #f1f5f9; }
-        .btn-main-action { background: var(--sbi-yellow); color: #000; justify-content: center; font-weight: 900; border: none; height: 60px; font-size: 16px; border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        /* MOVED UP: Adjusted padding and margin for ergonomic placement */
+        .bottom-nav { 
+            padding: 30px 20px 50px; /* Increased bottom padding to push button up */
+            background: white; 
+            border-top: 1px solid #f1f5f9; 
+        }
+        .btn-main-action { 
+            background: var(--sbi-yellow); color: #000; justify-content: center; 
+            font-weight: 900; border: none; height: 60px; font-size: 16px; 
+            border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+        }
 
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,20,60,0.7); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
         .modal { background: white; width: 100%; max-width: 350px; border-radius: 25px; padding: 30px; border-top: 10px solid var(--sbi-navy); }
@@ -113,9 +122,9 @@
             <div class="card" id="reportSummaryContainer"></div>
             <div class="section-label">Detailed Exports</div>
             <button class="btn" style="background:#25D366; color:white; border:none; justify-content:center;" onclick="shareReport()">SHARE SUMMARY WHATSAPP</button>
-            <button class="btn" style="background:var(--sbi-cyan); color:white; border:none; justify-content:center;" onclick="shareToDrive()">SAVE FULL LOG TO DRIVE</button>
-            <button class="btn" style="background:var(--sbi-navy); color:white; border:none; justify-content:center;" onclick="generatePDF()">DOWNLOAD FULL PDF</button>
-            <button class="btn" style="background:#1D6F42; color:white; border:none; justaify-content:center;" onclick="generateExcel()">EXPORT FULL EXCEL</button>
+            <button class="btn" style="background:var(--sbi-cyan) !important; color:white; border:none; justify-content:center;" onclick="shareToDrive()">SAVE FULL LOG TO DRIVE</button>
+            <button class="btn" style="background:var(--sbi-navy); color:white; border:none; justify-content:center;" onclick="generatePDF()">DOWNLOAD FULL PDF (HH:MM:SS)</button>
+            <button class="btn" style="background:#1D6F42; color:white; border:none; justify-content:center;" onclick="generateExcel()">EXPORT FULL EXCEL</button>
             <button class="btn" style="color: #ef4444; border: 1.5px solid #ef4444; justify-content:center; margin-top: 10px;" onclick="hardReset()">HARD RESET</button>
             <button class="btn" style="background:#94a3b8; color:white; border:none; justify-content:center; margin-top:15px" onclick="hideReport()">BACK</button>
         </div>
@@ -193,12 +202,11 @@
             document.getElementById('badge-all_forms').innerText = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
         }
 
-        // UPDATED: Full detailed audit log in PDF
         function generatePDF(isShare = false) {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
             doc.text(`SBI Branch Audit Detailed Log - ${new Date().toLocaleDateString()}`, 14, 15);
             doc.autoTable({ 
-                head: [['Timestamp', 'Activity', 'Reference (A/c or Phone)']], 
+                head: [['Timestamp', 'Activity', 'Reference']], 
                 body: logHistory.map(h => [h.time, h.label, h.detail]), 
                 startY: 25, 
                 headStyles: {fillColor: [0, 51, 153]} 
@@ -215,16 +223,13 @@
             } else alert("Feature not supported.");
         }
 
-        // UPDATED: Full detailed audit log in Excel
         function generateExcel() {
             const ws = XLSX.utils.json_to_sheet(logHistory.map(h => ({
-                "Time (H:M:S)": h.time,
-                "Task Category": h.label,
-                "Customer Reference": h.detail
+                "Time": h.time, "Activity": h.label, "Detail": h.detail
             }))); 
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Detailed_Log"); 
-            XLSX.writeFile(wb, `SBI_Detailed_Audit.xlsx`); wipe();
+            XLSX.utils.book_append_sheet(wb, ws, "Log"); 
+            XLSX.writeFile(wb, `SBI_Audit.xlsx`); wipe();
         }
 
         function wipe() { setTimeout(() => { localStorage.clear(); location.reload(); }, 1500); }
