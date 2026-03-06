@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBI Informa v6.5</title>
+    <title>SBI Informa v6.6</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -56,17 +56,8 @@
 
         .counter-badge { background: var(--sbi-navy); color: white; padding: 3px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; }
 
-        /* MOVED UP: Adjusted padding and margin for ergonomic placement */
-        .bottom-nav { 
-            padding: 30px 20px 50px; /* Increased bottom padding to push button up */
-            background: white; 
-            border-top: 1px solid #f1f5f9; 
-        }
-        .btn-main-action { 
-            background: var(--sbi-yellow); color: #000; justify-content: center; 
-            font-weight: 900; border: none; height: 60px; font-size: 16px; 
-            border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
-        }
+        .bottom-nav { padding: 30px 20px 50px; background: white; border-top: 1px solid #f1f5f9; }
+        .btn-main-action { background: var(--sbi-yellow); color: #000; justify-content: center; font-weight: 900; border: none; height: 60px; font-size: 16px; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,20,60,0.7); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
         .modal { background: white; width: 100%; max-width: 350px; border-radius: 25px; padding: 30px; border-top: 10px solid var(--sbi-navy); }
@@ -123,7 +114,7 @@
             <div class="section-label">Detailed Exports</div>
             <button class="btn" style="background:#25D366; color:white; border:none; justify-content:center;" onclick="shareReport()">SHARE SUMMARY WHATSAPP</button>
             <button class="btn" style="background:var(--sbi-cyan) !important; color:white; border:none; justify-content:center;" onclick="shareToDrive()">SAVE FULL LOG TO DRIVE</button>
-            <button class="btn" style="background:var(--sbi-navy); color:white; border:none; justify-content:center;" onclick="generatePDF()">DOWNLOAD FULL PDF (HH:MM:SS)</button>
+            <button class="btn" style="background:var(--sbi-navy); color:white; border:none; justify-content:center;" onclick="generatePDF()">DOWNLOAD FULL PDF</button>
             <button class="btn" style="background:#1D6F42; color:white; border:none; justify-content:center;" onclick="generateExcel()">EXPORT FULL EXCEL</button>
             <button class="btn" style="color: #ef4444; border: 1.5px solid #ef4444; justify-content:center; margin-top: 10px;" onclick="hardReset()">HARD RESET</button>
             <button class="btn" style="background:#94a3b8; color:white; border:none; justify-content:center; margin-top:15px" onclick="hideReport()">BACK</button>
@@ -171,6 +162,16 @@
         }
         setInterval(updateClock, 1000); updateClock();
 
+        // Helper to get formatted filename
+        function getFileName() {
+            const now = new Date();
+            const day = now.getDate();
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+            return `${day} ${month} ${year} SBI Logs`;
+        }
+
         window.onload = function() {
             updateBadges();
             if (logHistory.length > 0) alert("Your last session has been resumed.");
@@ -212,12 +213,12 @@
                 headStyles: {fillColor: [0, 51, 153]} 
             });
             if(isShare) return doc.output('blob'); 
-            doc.save(`SBI_Audit_Log.pdf`); wipe();
+            doc.save(`${getFileName()}.pdf`); wipe();
         }
 
         async function shareToDrive() {
             const blob = generatePDF(true);
-            const file = new File([blob], `SBI_Full_Log.pdf`, { type: 'application/pdf' });
+            const file = new File([blob], `${getFileName()}.pdf`, { type: 'application/pdf' });
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 try { await navigator.share({ files: [file], title: 'SBI Full Audit Log' }); } catch (err) { console.error(err); }
             } else alert("Feature not supported.");
@@ -229,7 +230,7 @@
             }))); 
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Log"); 
-            XLSX.writeFile(wb, `SBI_Audit.xlsx`); wipe();
+            XLSX.writeFile(wb, `${getFileName()}.xlsx`); wipe();
         }
 
         function wipe() { setTimeout(() => { localStorage.clear(); location.reload(); }, 1500); }
