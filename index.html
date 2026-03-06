@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBI Informa v5.4 - Premium Internal</title>
+    <title>SBI Informa v2.0 - Premium Internal</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -79,7 +79,6 @@
             background: var(--sbi-navy); color: white; justify-content: center; 
             border: none; box-shadow: 0 10px 20px rgba(0,51,153,0.2);
         }
-        .btn-attendance.logged { background: #10b981; }
 
         .counter-badge { 
             background: var(--sbi-navy); color: white; 
@@ -131,8 +130,10 @@
         </header>
 
         <div class="content">
-            <div class="section-label">Shift Status</div>
-            <div class="card"><button id="attBtn" class="btn btn-attendance" onclick="markPresent()">MARK ATTENDANCE</button></div>
+            <div id="attSection">
+                <div class="section-label">Shift Status</div>
+                <div class="card"><button id="attBtn" class="btn btn-attendance" onclick="markPresent()">MARK ATTENDANCE</button></div>
+            </div>
 
             <div class="section-label">Operational Logs</div>
             <div class="card">
@@ -212,10 +213,9 @@
 
         window.onload = function() {
             updateBadges();
+            // If already logged, hide the section on load
             if(attDone) {
-                const btn = document.getElementById('attBtn');
-                btn.classList.add('logged');
-                btn.innerText = "ATTENDANCE MARKED ✓";
+                document.getElementById('attSection').style.display = 'none';
             }
         };
 
@@ -227,8 +227,10 @@
             localStorage.setItem('informa_history', JSON.stringify(logHistory));
             localStorage.setItem('attendance_done', 'true');
             attDone = true;
-            document.getElementById('attBtn').innerText = "MARKED AT " + t;
-            document.getElementById('attBtn').classList.add('logged');
+            
+            // DISAPPEAR LOGIC
+            document.getElementById('attSection').style.display = 'none';
+            
             new Image().src = `${SCRIPT_URL}?sheet=Attendance&type=Present&detail=${t}`;
         }
 
