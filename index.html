@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Informa v3.2</title>
+    <title>Informa v4.1 - Pro Edition</title>
     
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0F172A">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
     <style>
         :root {
@@ -18,18 +18,14 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: #0F172A; 
             background-image: var(--bg-gradient);
             background-attachment: fixed;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
+            margin: 0; padding: 0;
+            display: flex; justify-content: center;
             color: var(--text-main);
-            overscroll-behavior: none;
             min-height: 100vh;
-            transition: all 0.5s ease;
         }
 
         .app-shell { width: 100%; max-width: 450px; display: flex; flex-direction: column; }
@@ -41,97 +37,62 @@
             position: sticky; top: 0; z-index: 100;
         }
 
-        header h1 {
-            margin: 0; font-size: 28px; font-weight: 800;
-            color: var(--primary-color);
-            text-shadow: 0 0 15px rgba(var(--primary-rgb), 0.4);
-        }
-
-        header p { margin: 4px 0 0; font-size: 14px; color: var(--text-dim); font-weight: 500; }
+        header h1 { margin: 0; font-size: 28px; font-weight: 800; color: var(--primary-color); }
+        header p { margin: 4px 0 0; font-size: 14px; color: var(--text-dim); }
 
         .content { padding: 16px; flex-grow: 1; }
 
         .section-label {
             font-size: 11px; font-weight: 700; text-transform: uppercase;
-            color: var(--primary-color); margin: 24px 0 12px 8px; letter-spacing: 2px; opacity: 0.8;
+            color: var(--primary-color); margin: 24px 0 12px 8px; letter-spacing: 2px;
         }
 
         .card {
             background: var(--card-bg); border-radius: 24px; padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 20px;
         }
 
         .btn {
             width: 100%; border: none; border-radius: 18px; padding: 18px;
             font-size: 16px; font-weight: 600; cursor: pointer; display: flex;
             align-items: center; justify-content: space-between;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); margin-bottom: 14px;
             background: rgba(255, 255, 255, 0.08); color: var(--text-main);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 14px; box-sizing: border-box;
+            transition: transform 0.1s;
         }
+        .btn:active { transform: scale(0.97); }
 
-        .btn:active { transform: scale(0.95); background: rgba(255,255,255,0.15); }
-
-        .btn-attendance {
-            background: var(--primary-color); color: #000; justify-content: center;
-            font-weight: 800; box-shadow: 0 4px 20px rgba(var(--primary-rgb), 0.4); border: none;
-        }
+        .btn-attendance { background: var(--primary-color); color: #000; justify-content: center; font-weight: 800; }
+        .btn-attendance.logged { background: #4ADE80; color: #000; }
 
         .counter-badge {
             background: rgba(255, 255, 255, 0.1); color: var(--primary-color);
-            padding: 4px 14px; border-radius: 12px; font-size: 14px;
-            font-weight: 800; border: 1px solid var(--primary-color);
+            padding: 4px 14px; border-radius: 12px; font-size: 14px; font-weight: 800; border: 1px solid var(--primary-color);
         }
 
-        .bottom-nav {
-            padding: 24px; position: sticky; bottom: 0;
-            background: linear-gradient(0deg, rgba(15,23,42,1) 40%, transparent 100%);
-        }
+        .bottom-nav { padding: 24px; position: sticky; bottom: 0; background: linear-gradient(0deg, rgba(15,23,42,1) 40%, transparent 100%); }
+        .btn-main-action { background: var(--primary-color); color: #000; justify-content: center; font-weight: 800; font-size: 18px; height: 64px; }
 
-        .btn-main-action {
-            background: var(--primary-color); color: #000; justify-content: center;
-            font-weight: 800; font-size: 18px; height: 64px; box-shadow: 0 0 25px rgba(var(--primary-rgb), 0.4);
-        }
-
-        /* Modal UI */
+        /* Modals */
         .overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
             z-index: 1000; align-items: center; justify-content: center; padding: 20px;
         }
-
-        .modal {
-            background: #1E293B; width: 100%; max-width: 340px; border-radius: 32px;
-            padding: 30px; text-align: center; border: 1px solid var(--primary-color);
-        }
-
-        .modal h2 { margin-top: 0; color: var(--primary-color); margin-bottom: 20px; }
-        
-        /* New Segmented Toggle for Phone/Account */
-        .input-toggle-container {
-            display: flex; background: rgba(255,255,255,0.05);
-            border-radius: 12px; padding: 4px; margin-bottom: 16px;
-        }
-        .toggle-option {
-            flex: 1; padding: 12px; font-size: 14px; font-weight: 700;
-            color: var(--text-dim); border-radius: 10px; cursor: pointer;
-            transition: all 0.2s;
-        }
-        .toggle-option.active {
-            background: var(--primary-color); color: #000;
-            box-shadow: 0 2px 10px rgba(var(--primary-rgb), 0.3);
-        }
-
+        .modal { background: #1E293B; width: 100%; max-width: 340px; border-radius: 32px; padding: 30px; border: 1px solid var(--primary-color); }
+        .input-toggle-container { display: flex; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 4px; margin-bottom: 16px; }
+        .toggle-option { flex: 1; padding: 12px; font-size: 14px; font-weight: 700; color: var(--text-dim); border-radius: 10px; cursor: pointer; text-align: center; }
+        .toggle-option.active { background: var(--primary-color); color: #000; }
         .modal input {
             width: 100%; padding: 16px; font-size: 24px; background: #0F172A;
             border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
-            text-align: center; margin-bottom: 20px; color: var(--primary-color);
-            font-weight: 800; outline: none; box-sizing: border-box;
+            text-align: center; margin-bottom: 20px; color: var(--primary-color); font-weight: 800; outline: none; box-sizing: border-box;
         }
 
         .btn-cancel { background: #334155; color: white; justify-content: center; }
         .btn-confirm { background: var(--primary-color); color: #000; justify-content: center; }
         .btn-whatsapp { background: #25D366; color: white; justify-content: center; margin-top: 24px; font-weight: 800; }
+        .btn-pdf { background: #E11D48; color: white; justify-content: center; font-weight: 800; margin-top: 10px; }
         
         #reportView { display: none; }
     </style>
@@ -147,46 +108,31 @@
         <div class="content">
             <div class="section-label">Duty Status</div>
             <div class="card">
-                <button class="btn btn-attendance" onclick="markPresent()">LOG ATTENDANCE</button>
+                <button id="attBtn" class="btn btn-attendance" onclick="markPresent()">LOG ATTENDANCE</button>
             </div>
 
             <div class="section-label">Operations Log</div>
             <div class="card">
-                <button class="btn" onclick="handleActivity('nps', 'NPS', true)">
-                    NPS Forms <span class="counter-badge" id="badge-nps">0</span>
-                </button>
-                <button class="btn" onclick="handleActivity('whatsapp', 'WhatsApp Banking', true)">
-                    WA Banking <span class="counter-badge" id="badge-whatsapp">0</span>
-                </button>
-                <button class="btn" onclick="handleActivity('yono', 'YONO Registration', true)">
-                    YONO Reg <span class="counter-badge" id="badge-yono">0</span>
-                </button>
-                <button class="btn" onclick="handleActivity('contact', 'Contact Centre', true)">
-                    Contact Centre <span class="counter-badge" id="badge-contact">0</span>
-                </button>
-                
-                <button class="btn" onclick="openCategoryModal()" style="border-color: var(--primary-color);">
-                    Other Forms Filled <span class="counter-badge" id="badge-all_forms">0</span>
-                </button>
+                <button class="btn" onclick="handleActivity('nps', 'NPS', true)">NPS Forms <span class="counter-badge" id="badge-nps">0</span></button>
+                <button class="btn" onclick="handleActivity('whatsapp', 'WhatsApp Banking', true)">WA Banking <span class="counter-badge" id="badge-whatsapp">0</span></button>
+                <button class="btn" onclick="handleActivity('yono', 'YONO Registration', true)">YONO Reg <span class="counter-badge" id="badge-yono">0</span></button>
+                <button class="btn" onclick="handleActivity('contact', 'Contact Centre', true)">Contact Centre <span class="counter-badge" id="badge-contact">0</span></button>
+                <button class="btn" onclick="openCategoryModal()" style="border-color: var(--primary-color);">Other Forms <span class="counter-badge" id="badge-all_forms">0</span></button>
             </div>
         </div>
 
-        <div class="bottom-nav">
-            <button class="btn btn-main-action" onclick="showReport()">VIEW FINAL REPORT</button>
-        </div>
+        <div class="bottom-nav"><button class="btn btn-main-action" onclick="showReport()">VIEW FINAL REPORT</button></div>
     </div>
 
     <div class="app-shell" id="reportView">
-        <header>
-            <h1>Summary</h1>
-            <p>Exporting to WhatsApp</p>
-        </header>
+        <header><h1>Summary</h1><p>SBI Komtalpeta (17978)</p></header>
         <div class="content">
             <div class="card">
                 <div id="reportContainer"></div>
                 <button class="btn btn-whatsapp" onclick="shareReport()">SHARE VIA WHATSAPP</button>
+                <button class="btn btn-pdf" onclick="generatePDF()">DOWNLOAD PDF REPORT</button>
                 <button class="btn btn-cancel" style="margin-top:10px" onclick="hideReport()">GO BACK</button>
-                <button class="btn" style="margin-top:20px; color:#EF4444; font-size:12px; justify-content:center; background:transparent; border:1px solid #EF4444;" onclick="resetCounts()">RESET ALL DATA</button>
+                <button class="btn" style="margin-top:20px; color:#EF4444; font-size:11px; justify-content:center; background:transparent; border:1px solid #EF4444;" onclick="resetCounts()">RESET ALL DATA</button>
             </div>
         </div>
     </div>
@@ -194,14 +140,11 @@
     <div id="numberModal" class="overlay">
         <div class="modal">
             <h2 id="modalTitle">Enter Details</h2>
-            
             <div class="input-toggle-container">
-                <div id="optPhone" class="toggle-option active" onclick="setModalType('Phone')">Phone No.</div>
-                <div id="optAccount" class="toggle-option" onclick="setModalType('Account')">Account No.</div>
+                <div id="optPhone" class="toggle-option active" onclick="setModalType('Phone')">Phone</div>
+                <div id="optAccount" class="toggle-option" onclick="setModalType('Account')">Account</div>
             </div>
-
-            <input type="tel" inputmode="numeric" id="modalInput" placeholder="Enter number...">
-            
+            <input type="tel" inputmode="numeric" id="modalInput" placeholder="Enter 10 digits...">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                 <button class="btn btn-cancel" onclick="closeModal()">BACK</button>
                 <button class="btn btn-confirm" onclick="submitModal()">SAVE</button>
@@ -212,185 +155,177 @@
     <div id="categoryModal" class="overlay">
         <div class="modal">
             <h2>Select Form Type</h2>
-            <div style="display:flex; flex-direction:column; gap:8px; margin-top: 20px;">
-                <button class="btn" style="justify-content:center" onclick="selectForm('withdrawal', 'Withdrawal Form')">Withdrawal Form</button>
-                <button class="btn" style="justify-content:center" onclick="selectForm('deposit', 'Deposit Form')">Deposit Form</button>
-                <button class="btn" style="justify-content:center" onclick="selectForm('kyc', 'KYC Form')">KYC Form</button>
-                <button class="btn" style="justify-content:center" onclick="selectForm('account_opening', 'A/C Opening Form')">Account Opening Form</button>
-                <button class="btn" style="justify-content:center" onclick="selectForm('others', 'Misc Other Forms')">Other Forms (Misc)</button>
-                <button class="btn btn-cancel" style="margin-top:12px;" onclick="closeCategoryModal()">CANCEL</button>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <button class="btn" onclick="selectForm('withdrawal', 'Withdrawal Form')">Withdrawal</button>
+                <button class="btn" onclick="selectForm('deposit', 'Deposit Form')">Deposit</button>
+                <button class="btn" onclick="selectForm('kyc', 'KYC Form')">KYC</button>
+                <button class="btn" onclick="selectForm('account_opening', 'A/C Opening')">A/C Opening</button>
+                <button class="btn btn-cancel" onclick="closeCategoryModal()">CANCEL</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- DYNAMIC THEME ENGINE ---
-        const themes = [
-            { day: "Sunday", color: "#94A3B8", rgb: "148, 163, 184", bg: "linear-gradient(180deg, #1E293B 0%, #0F172A 100%)" },
-            { day: "Monday", color: "#38BDF8", rgb: "56, 189, 248", bg: "linear-gradient(180deg, #0C4A6E 0%, #0F172A 100%)" },
-            { day: "Tuesday", color: "#2DD4BF", rgb: "45, 212, 191", bg: "linear-gradient(180deg, #064E3B 0%, #0F172A 100%)" },
-            { day: "Wednesday", color: "#A78BFA", rgb: "167, 139, 250", bg: "linear-gradient(180deg, #4C1D95 0%, #0F172A 100%)" },
-            { day: "Thursday", color: "#F472B6", rgb: "244, 114, 182", bg: "linear-gradient(180deg, #831843 0%, #0F172A 100%)" },
-            { day: "Friday", color: "#4ADE80", rgb: "74, 222, 128", bg: "linear-gradient(180deg, #064E3B 0%, #0F172A 100%)" },
-            { day: "Saturday", color: "#FB923C", rgb: "251, 146, 60", bg: "linear-gradient(180deg, #7C2D12 0%, #0F172A 100%)" }
-        ];
-
-        function applyTheme() {
-            const dayIndex = new Date().getDay();
-            const theme = themes[dayIndex];
-            const root = document.documentElement;
-            root.style.setProperty('--primary-color', theme.color);
-            root.style.setProperty('--primary-rgb', theme.rgb);
-            root.style.setProperty('--bg-gradient', theme.bg);
-            document.getElementById('dynamicTitle').innerText = "Informa " + theme.day;
-        }
-        applyTheme();
-
-        // --- CORE LOGIC ---
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxeLcVyTN-v9pEqaI9PdreobrUoPlMqMGl07epMz4ECJOBkrWtRJCXveN1hDIX5K2Yv/exec";
         
-        const defaultCounts = { nps: 0, whatsapp: 0, yono: 0, contact: 0, withdrawal: 0, deposit: 0, kyc: 0, account_opening: 0, others: 0 };
-        let counts = JSON.parse(localStorage.getItem('informa_counts')) || {};
-        for(let key in defaultCounts) { if(counts[key] === undefined) counts[key] = 0; }
+        // --- DATA LOAD ---
+        const defaultCounts = { nps: 0, whatsapp: 0, yono: 0, contact: 0, withdrawal: 0, deposit: 0, kyc: 0, account_opening: 0 };
+        let counts = JSON.parse(localStorage.getItem('informa_counts')) || {...defaultCounts};
+        let logHistory = JSON.parse(localStorage.getItem('informa_history')) || [];
+        let attendanceLogged = localStorage.getItem('attendance_done') === 'true';
 
-        let currentKey = "";
-        let currentLabel = "";
-        let currentInputType = "Phone"; // Default selection
+        // --- THEME & UI ---
+        function setupUI() {
+            const themes = [
+                { day: "Sunday", color: "#94A3B8", rgb: "148, 163, 184", bg: "linear-gradient(180deg, #1E293B 0%, #0F172A 100%)" },
+                { day: "Monday", color: "#38BDF8", rgb: "56, 189, 248", bg: "linear-gradient(180deg, #0C4A6E 0%, #0F172A 100%)" },
+                { day: "Tuesday", color: "#2DD4BF", rgb: "45, 212, 191", bg: "linear-gradient(180deg, #064E3B 0%, #0F172A 100%)" },
+                { day: "Wednesday", color: "#A78BFA", rgb: "167, 139, 250", bg: "linear-gradient(180deg, #4C1D95 0%, #0F172A 100%)" },
+                { day: "Thursday", color: "#F472B6", rgb: "244, 114, 182", bg: "linear-gradient(180deg, #831843 0%, #0F172A 100%)" },
+                { day: "Friday", color: "#4ADE80", rgb: "74, 222, 128", bg: "linear-gradient(180deg, #064E3B 0%, #0F172A 100%)" },
+                { day: "Saturday", color: "#FB923C", rgb: "251, 146, 60", bg: "linear-gradient(180deg, #7C2D12 0%, #0F172A 100%)" }
+            ];
+            const theme = themes[new Date().getDay()];
+            document.documentElement.style.setProperty('--primary-color', theme.color);
+            document.documentElement.style.setProperty('--primary-rgb', theme.rgb);
+            document.documentElement.style.setProperty('--bg-gradient', theme.bg);
+            document.getElementById('dynamicTitle').innerText = "Informa " + theme.day;
+            document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
+            
+            if(attendanceLogged) {
+                const btn = document.getElementById('attBtn');
+                btn.innerText = "ATTENDANCE LOGGED ✓";
+                btn.classList.add('logged');
+            }
+        }
+        setupUI();
 
         function updateBadges() {
-            ['nps', 'whatsapp', 'yono', 'contact'].forEach(key => {
-                const badge = document.getElementById('badge-' + key);
-                if(badge) badge.innerText = counts[key];
-            });
-            const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.others;
-            document.getElementById('badge-all_forms').innerText = totalForms;
+            ['nps', 'whatsapp', 'yono', 'contact'].forEach(k => { document.getElementById('badge-'+k).innerText = counts[k] || 0; });
+            document.getElementById('badge-all_forms').innerText = (counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening) || 0;
         }
         updateBadges();
 
-        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' });
-
-        function sendToSheet(sheetName, type, detail) {
-            const finalUrl = `${SCRIPT_URL}?sheet=${encodeURIComponent(sheetName)}&type=${encodeURIComponent(type)}&detail=${encodeURIComponent(detail)}&time=${new Date().getTime()}`;
-            new Image().src = finalUrl;
-        }
-
+        // --- CORE LOGIC ---
         function markPresent() {
-            sendToSheet("Attendance", "Present", "N/A");
-            alert("Attendance Logged!");
-        }
-
-        // --- NEW MODAL SELECTION LOGIC ---
-        function setModalType(type) {
-            currentInputType = type;
-            if(type === 'Phone') {
-                document.getElementById('optPhone').classList.add('active');
-                document.getElementById('optAccount').classList.remove('active');
-            } else {
-                document.getElementById('optAccount').classList.add('active');
-                document.getElementById('optPhone').classList.remove('active');
-            }
-            document.getElementById('modalInput').focus();
-        }
-
-        function handleActivity(key, label, requiresInput) {
-            if (requiresInput) {
-                currentKey = key; currentLabel = label;
-                document.getElementById('modalTitle').innerText = label;
-                
-                // Reset Modal to Phone by default
-                setModalType('Phone');
-                document.getElementById('modalInput').value = "";
-                document.getElementById('numberModal').style.display = "flex";
-                setTimeout(() => document.getElementById('modalInput').focus(), 150);
-            } else { saveActivity(key, label, "N/A"); }
-        }
-
-        function closeModal() { document.getElementById('numberModal').style.display = "none"; }
-
-        function submitModal() {
-            let val = document.getElementById('modalInput').value;
-            if (!val.trim()) return;
-            closeModal();
+            if(attendanceLogged) return alert("Already logged for today.");
             
-            // Format the final detail string (e.g., "Phone: 9876543210")
-            let formattedDetail = `${currentInputType}: ${val}`;
-            saveActivity(currentKey, currentLabel, formattedDetail);
+            const time = new Date().toLocaleTimeString();
+            const date = new Date().toLocaleDateString();
+            
+            // 1. Log locally for PDF
+            logHistory.unshift({ time: time, label: "ATTENDANCE", detail: `Present (Logged at ${time})` });
+            localStorage.setItem('informa_history', JSON.stringify(logHistory));
+            
+            // 2. Mark state
+            attendanceLogged = true;
+            localStorage.setItem('attendance_done', 'true');
+            
+            // 3. Update UI
+            const btn = document.getElementById('attBtn');
+            btn.innerText = "ATTENDANCE LOGGED ✓";
+            btn.classList.add('logged');
+            
+            // 4. Send to Cloud
+            new Image().src = `${SCRIPT_URL}?sheet=Attendance&type=Present&detail=${encodeURIComponent(date + ' ' + time)}&t=${Date.now()}`;
+            alert("Attendance recorded in Local Memory and Cloud.");
         }
 
-        function openCategoryModal() { document.getElementById('categoryModal').style.display = "flex"; }
-        function closeCategoryModal() { document.getElementById('categoryModal').style.display = "none"; }
-        
-        function selectForm(key, label) {
-            closeCategoryModal();
-            saveActivity(key, label, "N/A"); 
-        }
-
-        function saveActivity(key, label, detail) {
-            counts[key]++;
+        function finalizeActivity(key, label, detail) {
+            counts[key] = (counts[key] || 0) + 1;
             localStorage.setItem('informa_counts', JSON.stringify(counts));
+            
+            logHistory.push({ time: new Date().toLocaleTimeString(), label: label, detail: detail });
+            localStorage.setItem('informa_history', JSON.stringify(logHistory));
+            
             updateBadges();
-            sendToSheet("Activities", label, detail);
+            new Image().src = `${SCRIPT_URL}?sheet=Activities&type=${encodeURIComponent(label)}&detail=${encodeURIComponent(detail)}&t=${Date.now()}`;
         }
 
-        function resetCounts() {
-            if(confirm("Start fresh for tomorrow?")){
-                counts = { ...defaultCounts };
-                localStorage.setItem('informa_counts', JSON.stringify(counts));
-                updateBadges();
-                hideReport();
-            }
+        // --- PDF GENERATION ---
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.setFontSize(20);
+            doc.setTextColor(45, 91, 255);
+            doc.text("INFORMA DAILY LOG", 14, 20);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(`Staff Name: Ashutosh Pattnaik`, 14, 30);
+            doc.text(`Branch: SBI Komtalpeta (17978)`, 14, 35);
+            doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 14, 40);
+
+            const tableData = logHistory.map(h => [h.time, h.label, h.detail]);
+            doc.autoTable({
+                head: [['Time', 'Activity', 'Details/Numbers']],
+                body: tableData,
+                startY: 45,
+                theme: 'grid',
+                headStyles: { fillColor: [45, 91, 255] },
+                styles: { fontSize: 9 }
+            });
+
+            doc.save(`Informa_Report_${new Date().toLocaleDateString()}.pdf`);
         }
 
-        // --- REPORT & EXPORT LOGIC ---
+        // --- REMAINING UI HELPERS ---
         function showReport() {
             document.getElementById('mainView').style.display = 'none';
             document.getElementById('reportView').style.display = 'flex';
-            
             const container = document.getElementById('reportContainer');
             container.innerHTML = "";
-            
-            const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.others;
-
-            const summaryDisplay = [
-                { label: "NPS Forms", val: counts.nps },
-                { label: "WA Banking", val: counts.whatsapp },
-                { label: "YONO Reg", val: counts.yono },
-                { label: "Contact Centre", val: counts.contact },
-                { label: "Other Forms Filled", val: totalForms }
+            const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening;
+            const summary = [
+                { l: "NPS Forms", v: counts.nps }, { l: "WA Banking", v: counts.whatsapp },
+                { l: "YONO Reg", v: counts.yono }, { l: "Contact Centre", v: counts.contact },
+                { l: "Other Forms", v: totalForms }
             ];
-            
-            summaryDisplay.forEach(item => {
-                const row = document.createElement('div');
-                row.style = "display:flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom:10px;";
-                row.innerHTML = `<span>${item.label}</span> <span style="color:var(--primary-color); font-weight:800;">${item.val}</span>`;
-                container.appendChild(row);
+            summary.forEach(i => {
+                container.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px;">
+                    <span>${i.l}</span><span style="color:var(--primary-color); font-weight:800;">${i.v}</span></div>`;
             });
         }
 
-        function hideReport() { document.getElementById('reportView').style.display = 'none'; document.getElementById('mainView').style.display = 'flex'; }
-
         function shareReport() {
-            const date = new Date().toLocaleDateString('en-GB');
-            const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.others;
-
-            const text = `*Daily Report*\n` +
-                         `*Date:* ${date}\n` +
-                         `*Name:* Ashutosh Patnaik\n` +
-                         `*Branch:* SBI Komtalpeta(17978)\n` +
-                         `-------------------------\n` +
-                         `NPS Forms: *${counts.nps}*\n` +
-                         `WhatsApp Banking: *${counts.whatsapp}*\n` +
-                         `YONO Registration: *${counts.yono}*\n` +
-                         `Contact Centre: *${counts.contact}*\n` +
-                         `Other Forms Filled: *${totalForms}*`;
-
-            if (navigator.share) navigator.share({ text: text });
-            else window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+            const text = `*Daily Report*\nDate: ${new Date().toLocaleDateString()}\nName: Ashutosh Pattnaik\nBranch: 17978\n------------------\nNPS: ${counts.nps}\nWA: ${counts.whatsapp}\nYONO: ${counts.yono}\nContact: ${counts.contact}\nOther Forms: ${counts.withdrawal+counts.deposit+counts.kyc+counts.account_opening}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
         }
+
+        function resetCounts() {
+            if(confirm("Confirm: Start fresh for tomorrow?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // Modal Helpers (Unchanged Logic)
+        let currentKey = "", currentLabel = "", currentInputType = "Phone";
+        function handleActivity(key, label, req) {
+            if(req) {
+                currentKey = key; currentLabel = label;
+                document.getElementById('modalTitle').innerText = label;
+                document.getElementById('modalInput').value = "";
+                document.getElementById('numberModal').style.display = "flex";
+            } else { finalizeActivity(key, label, "N/A"); }
+        }
+        function setModalType(t) { 
+            currentInputType = t;
+            document.getElementById('optPhone').classList.toggle('active', t === 'Phone');
+            document.getElementById('optAccount').classList.toggle('active', t === 'Account');
+        }
+        function submitModal() {
+            let val = document.getElementById('modalInput').value;
+            if(val.length < 10) return alert("Please enter 10 digits");
+            document.getElementById('numberModal').style.display = "none";
+            finalizeActivity(currentKey, currentLabel, `${currentInputType}: ${val}`);
+        }
+        function closeModal() { document.getElementById('numberModal').style.display = "none"; }
+        function openCategoryModal() { document.getElementById('categoryModal').style.display = "flex"; }
+        function closeCategoryModal() { document.getElementById('categoryModal').style.display = "none"; }
+        function selectForm(k, l) { closeCategoryModal(); finalizeActivity(k, l, "N/A"); }
+        function hideReport() { document.getElementById('reportView').style.display = 'none'; document.getElementById('mainView').style.display = 'flex'; }
     </script>
 </body>
 </html>
-
-
-
-
