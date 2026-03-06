@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SBI Informa v6.6</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SBI Informa v6.7</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -15,10 +15,13 @@
             --sbi-bg: #f8fafc; --text-dark: #0f172a;
         }
 
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: var(--sbi-bg); margin: 0; padding: 0;
-            display: flex; justify-content: center; min-height: 100vh;
+            display: flex; justify-content: center; min-height: 100dvh;
+            overflow-x: hidden;
         }
 
         .app-shell { width: 100%; max-width: 480px; background: #fff; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
@@ -28,7 +31,7 @@
             background: linear-gradient(135deg, var(--sbi-navy) 0%, #001a4d 100%);
             color: white; border-bottom: 5px solid var(--sbi-yellow);
             display: flex; align-items: center; justify-content: space-between;
-            border-radius: 0 0 20px 20px;
+            border-radius: 0 0 20px 20px; flex-shrink: 0;
         }
 
         .header-left { display: flex; align-items: center; gap: 12px; }
@@ -36,9 +39,9 @@
         header h1 { margin: 0; font-size: 18px; font-weight: 900; letter-spacing: 0.8px; }
         .header-right { text-align: right; }
         #clock { font-size: 18px; font-weight: 800; color: var(--sbi-yellow); font-family: 'Courier New', monospace; }
-        #date { font-size: 9px; opacity: 0.8; text-transform: uppercase; font-weight: 600; }
+        #date { font-size: 9px; opacity: 0.8; font-weight: 600; }
 
-        .content { padding: 20px; flex-grow: 1; }
+        .content { padding: 20px; flex-grow: 1; overflow-y: auto; }
         .section-label { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--sbi-navy); margin: 20px 0 12px 5px; display: flex; align-items: center; gap: 10px; }
         .section-label::after { content: ""; height: 2px; flex: 1; background: #e2e8f0; }
 
@@ -49,21 +52,45 @@
             font-size: 15px; font-weight: 700; cursor: pointer; display: flex;
             align-items: center; justify-content: space-between;
             transition: 0.2s; margin-bottom: 12px; border: 1px solid #e2e8f0;
-            background: #ffffff; color: var(--sbi-navy); box-sizing: border-box;
+            background: #ffffff; color: var(--sbi-navy);
         }
         .btn:active { transform: scale(0.97); background: #f8fafc; }
-        .btn-attendance { background: var(--sbi-navy); color: white; justify-content: center; border: none; padding: 20px; font-size: 16px; box-shadow: 0 6px 15px rgba(0,51,153,0.2); }
+        .btn-attendance { background: var(--sbi-navy); color: white; justify-content: center; border: none; padding: 20px; font-size: 16px; }
 
         .counter-badge { background: var(--sbi-navy); color: white; padding: 3px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; }
 
         .bottom-nav { padding: 30px 20px 50px; background: white; border-top: 1px solid #f1f5f9; }
-        .btn-main-action { background: var(--sbi-yellow); color: #000; justify-content: center; font-weight: 900; border: none; height: 60px; font-size: 16px; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .btn-main-action { background: var(--sbi-yellow); color: #000; justify-content: center; font-weight: 900; border: none; height: 60px; font-size: 16px; border-radius: 18px; }
 
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,20,60,0.7); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-        .modal { background: white; width: 100%; max-width: 350px; border-radius: 25px; padding: 30px; border-top: 10px solid var(--sbi-navy); }
-        input { width: 100%; padding: 18px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 22px; text-align: center; margin-bottom: 25px; box-sizing: border-box; color: var(--sbi-navy); font-weight: 800; }
+        /* FIXED & CENTERED MODAL LOGIC */
+        .overlay { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 9999; 
+            align-items: center; justify-content: center;
+        }
         
-        #reportView { display: none; }
+        .modal { 
+            background: white; width: 92%; max-width: 400px; border-radius: 25px; 
+            padding: 25px; border-top: 10px solid var(--sbi-navy);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            margin: auto;
+        }
+
+        .modal h2 { font-size: 18px; color: var(--sbi-navy); margin-top: 0; text-align: center; }
+
+        input { 
+            width: 100%; padding: 18px; border: 2px solid #e2e8f0; border-radius: 15px; 
+            font-size: 24px; text-align: center; margin-bottom: 20px; outline: none;
+            background: #fcfdfe; color: var(--sbi-navy); font-weight: 800;
+        }
+        input:focus { border-color: var(--sbi-cyan); background: #fff; }
+
+        .modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn-m { padding: 15px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; font-size: 14px; }
+        .btn-save { background: var(--sbi-navy); color: white; }
+        .btn-back { background: #94a3b8; color: white; }
+
+        #reportView { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 10000; overflow-y: auto; }
         .summary-item { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-weight: 600; font-size: 14px; }
     </style>
 </head>
@@ -73,10 +100,7 @@
         <header>
             <div class="header-left">
                 <div class="sbi-logo-box">
-                    <svg viewBox="0 0 100 100" width="28" fill="#003399">
-                        <circle cx="50" cy="50" r="40" stroke="#003399" stroke-width="14" fill="none"/>
-                        <rect x="43" y="50" width="14" height="38" />
-                    </svg>
+                    <svg viewBox="0 0 100 100" width="28" fill="#003399"><circle cx="50" cy="50" r="40" stroke="#003399" stroke-width="14" fill="none"/><rect x="43" y="50" width="14" height="38" /></svg>
                 </div>
                 <h1>SBI INFORMA</h1>
             </div>
@@ -105,11 +129,11 @@
         <div class="bottom-nav"><button class="btn btn-main-action" onclick="showReport()">GENERATE SUMMARY REPORT</button></div>
     </div>
 
-    <div class="app-shell" id="reportView">
+    <div id="reportView">
         <header style="background: white; color: var(--sbi-navy); border-bottom: 2px solid #eee; height: 60px; padding: 0 20px; border-radius:0;">
             <h1 style="color:var(--sbi-navy); line-height: 60px; font-size: 18px;">Branch Summary</h1>
         </header>
-        <div class="content">
+        <div style="padding: 20px;">
             <div class="card" id="reportSummaryContainer"></div>
             <div class="section-label">Detailed Exports</div>
             <button class="btn" style="background:#25D366; color:white; border:none; justify-content:center;" onclick="shareReport()">SHARE SUMMARY WHATSAPP</button>
@@ -123,28 +147,31 @@
 
     <div id="numberModal" class="overlay">
         <div class="modal">
+            <h2>Reference Log</h2>
             <div style="display:flex; background:#f1f5f9; border-radius:12px; padding:6px; margin-bottom:20px;">
                 <div id="optPhone" style="flex:1; padding:12px; font-size:13px; font-weight:800; text-align:center; cursor:pointer; border-radius:10px;" onclick="setModalType('Phone')">PHONE</div>
                 <div id="optAccount" style="flex:1; padding:12px; font-size:13px; font-weight:800; text-align:center; cursor:pointer; border-radius:10px;" onclick="setModalType('Account')">ACCOUNT</div>
             </div>
-            <input type="tel" id="modalInput" placeholder="Reference No">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                <button class="btn" style="background:#94a3b8; color:white; border:none; justify-content:center;" onclick="closeModal()">BACK</button>
-                <button class="btn" style="background:var(--sbi-navy); color:white; border:none; justify-content:center;" onclick="submitModal()">SAVE</button>
+            <input type="tel" id="modalInput" inputmode="numeric" placeholder="Enter Details">
+            <div class="modal-btns">
+                <button class="btn-m btn-back" onclick="closeModal()">BACK</button>
+                <button class="btn-m btn-save" onclick="submitModal()">SAVE</button>
             </div>
         </div>
     </div>
 
     <div id="categoryModal" class="overlay">
         <div class="modal">
-            <h2 style="font-size:18px; color:var(--sbi-navy); margin-bottom:20px; text-align:center;">Select Form</h2>
-            <button class="btn" onclick="selectForm('withdrawal', 'Withdrawal')">Withdrawal Form</button>
-            <button class="btn" onclick="selectForm('deposit', 'Deposit')">Deposit Form</button>
-            <button class="btn" onclick="selectForm('kyc', 'KYC Update')">KYC Form</button>
-            <button class="btn" onclick="selectForm('account_opening', 'A/C Open')">A/C Opening</button>
-            <button class="btn" onclick="selectForm('voucher', 'Voucher')">Credit/Debit Voucher</button>
-            <button class="btn" onclick="selectForm('others', 'Misc')">Misc Other Forms</button>
-            <button class="btn btn-cancel" style="background:#94a3b8; color:white; border:none; justify-content:center; margin-top:10px;" onclick="closeCategoryModal()">BACK</button>
+            <h2>Select Form</h2>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button class="btn" onclick="selectForm('withdrawal', 'Withdrawal')">Withdrawal Form</button>
+                <button class="btn" onclick="selectForm('deposit', 'Deposit')">Deposit Form</button>
+                <button class="btn" onclick="selectForm('kyc', 'KYC Update')">KYC Form</button>
+                <button class="btn" onclick="selectForm('account_opening', 'A/C Open')">A/C Opening</button>
+                <button class="btn" onclick="selectForm('voucher', 'Voucher')">Credit/Debit Voucher</button>
+                <button class="btn" onclick="selectForm('others', 'Misc')">Misc Other Forms</button>
+                <button class="btn-m btn-back" style="width: 100%; margin-top: 10px;" onclick="closeCategoryModal()">CLOSE</button>
+            </div>
         </div>
     </div>
 
@@ -162,14 +189,10 @@
         }
         setInterval(updateClock, 1000); updateClock();
 
-        // Helper to get formatted filename
         function getFileName() {
             const now = new Date();
-            const day = now.getDate();
             const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            const month = months[now.getMonth()];
-            const year = now.getFullYear();
-            return `${day} ${month} ${year} SBI Logs`;
+            return `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} SBI Logs`;
         }
 
         window.onload = function() {
@@ -206,12 +229,7 @@
         function generatePDF(isShare = false) {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
             doc.text(`SBI Branch Audit Detailed Log - ${new Date().toLocaleDateString()}`, 14, 15);
-            doc.autoTable({ 
-                head: [['Timestamp', 'Activity', 'Reference']], 
-                body: logHistory.map(h => [h.time, h.label, h.detail]), 
-                startY: 25, 
-                headStyles: {fillColor: [0, 51, 153]} 
-            });
+            doc.autoTable({ head: [['Timestamp', 'Activity', 'Reference']], body: logHistory.map(h => [h.time, h.label, h.detail]), startY: 25, headStyles: {fillColor: [0, 51, 153]} });
             if(isShare) return doc.output('blob'); 
             doc.save(`${getFileName()}.pdf`); wipe();
         }
@@ -220,16 +238,13 @@
             const blob = generatePDF(true);
             const file = new File([blob], `${getFileName()}.pdf`, { type: 'application/pdf' });
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try { await navigator.share({ files: [file], title: 'SBI Full Audit Log' }); } catch (err) { console.error(err); }
-            } else alert("Feature not supported.");
+                try { await navigator.share({ files: [file], title: 'SBI Audit Log' }); } catch (err) { console.error(err); }
+            } else alert("Not supported.");
         }
 
         function generateExcel() {
-            const ws = XLSX.utils.json_to_sheet(logHistory.map(h => ({
-                "Time": h.time, "Activity": h.label, "Detail": h.detail
-            }))); 
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Log"); 
+            const ws = XLSX.utils.json_to_sheet(logHistory.map(h => ({ "Time": h.time, "Activity": h.label, "Detail": h.detail }))); 
+            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Log"); 
             XLSX.writeFile(wb, `${getFileName()}.xlsx`); wipe();
         }
 
@@ -237,20 +252,14 @@
         function hardReset() { if(confirm("Confirm: Wipe all data?")) wipe(); }
         
         function showReport() {
-            document.getElementById('mainView').style.display = 'none'; document.getElementById('reportView').style.display = 'flex';
+            document.getElementById('mainView').style.display = 'none'; document.getElementById('reportView').style.display = 'block';
             const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-            document.getElementById('reportSummaryContainer').innerHTML = `
-                <div class="summary-item"><span>NPS Enrollments</span><span>${counts.nps}</span></div>
-                <div class="summary-item"><span>WhatsApp Banking</span><span>${counts.whatsapp}</span></div>
-                <div class="summary-item"><span>YONO Registrations</span><span>${counts.yono}</span></div>
-                <div class="summary-item"><span>CC Support</span><span>${counts.contact}</span></div>
-                <div class="summary-item" style="border:none; color:var(--sbi-navy)"><span>Misc Forms Total</span><span>${totalForms}</span></div>
-            `;
+            document.getElementById('reportSummaryContainer').innerHTML = `<div class="summary-item"><span>NPS Enrollments</span><span>${counts.nps}</span></div><div class="summary-item"><span>WhatsApp Banking</span><span>${counts.whatsapp}</span></div><div class="summary-item"><span>YONO Registrations</span><span>${counts.yono}</span></div><div class="summary-item"><span>CC Support</span><span>${counts.contact}</span></div><div class="summary-item" style="border:none; color:var(--sbi-navy)"><span>Misc Forms Total</span><span>${totalForms}</span></div>`;
         }
 
         let ck, cl, cit = "Phone";
         function handleActivity(k,l,r) { if(r) { ck=k; cl=l; document.getElementById('numberModal').style.display='flex'; setModalType('Phone'); } else finalizeActivity(k,l,"N/A"); }
-        function setModalType(t) { cit = t; const i = document.getElementById('modalInput'); i.value = ""; document.getElementById('optPhone').style.background = t==='Phone'?'var(--sbi-navy)':'#f1f5f9'; document.getElementById('optPhone').style.color = t==='Phone'?'white':'#000'; document.getElementById('optAccount').style.background = t==='Account'?'var(--sbi-navy)':'#f1f5f9'; document.getElementById('optAccount').style.color = t==='Account'?'white':'#000'; if (t === 'Phone') { i.setAttribute('maxlength', '10'); i.placeholder = "10 Digit Phone"; } else { i.removeAttribute('maxlength'); i.placeholder = "Account Number"; } }
+        function setModalType(t) { cit = t; const i = document.getElementById('modalInput'); i.value = ""; document.getElementById('optPhone').className = t==='Phone'?'toggle-opt active':'toggle-opt'; document.getElementById('optAccount').className = t==='Account'?'toggle-opt active':'toggle-opt'; if (t === 'Phone') { i.setAttribute('maxlength', '10'); i.placeholder = "10 Digit Phone"; } else { i.removeAttribute('maxlength'); i.placeholder = "Account Number"; } }
         function submitModal() { let v = document.getElementById('modalInput').value; if(!v) return; if(cit === 'Phone' && v.length !== 10) return alert("Phone must be 10 digits"); closeModal(); finalizeActivity(ck, cl, `${cit}: ${v}`); }
         function closeModal() { document.getElementById('numberModal').style.display='none'; }
         function openCategoryModal() { document.getElementById('categoryModal').style.display='flex'; }
