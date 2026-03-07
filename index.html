@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SBI Informa v6.7</title>
+    <title>SBI Informa v6.8</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -62,20 +62,8 @@
         .bottom-nav { padding: 30px 20px 50px; background: white; border-top: 1px solid #f1f5f9; }
         .btn-main-action { background: var(--sbi-yellow); color: #000; justify-content: center; font-weight: 900; border: none; height: 60px; font-size: 16px; border-radius: 18px; }
 
-        /* FIXED & CENTERED MODAL LOGIC */
-        .overlay { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 9999; 
-            align-items: center; justify-content: center;
-        }
-        
-        .modal { 
-            background: white; width: 92%; max-width: 400px; border-radius: 25px; 
-            padding: 25px; border-top: 10px solid var(--sbi-navy);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            margin: auto;
-        }
-
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; }
+        .modal { background: white; width: 92%; max-width: 400px; border-radius: 25px; padding: 25px; border-top: 10px solid var(--sbi-navy); box-shadow: 0 20px 40px rgba(0,0,0,0.3); margin: auto; }
         .modal h2 { font-size: 18px; color: var(--sbi-navy); margin-top: 0; text-align: center; }
 
         input { 
@@ -83,7 +71,6 @@
             font-size: 24px; text-align: center; margin-bottom: 20px; outline: none;
             background: #fcfdfe; color: var(--sbi-navy); font-weight: 800;
         }
-        input:focus { border-color: var(--sbi-cyan); background: #fff; }
 
         .modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .btn-m { padding: 15px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; font-size: 14px; }
@@ -122,7 +109,7 @@
                 <button class="btn" onclick="handleActivity('whatsapp', 'WA Banking Reg', true)">WhatsApp Banking <span class="counter-badge" id="badge-whatsapp">0</span></button>
                 <button class="btn" onclick="handleActivity('yono', 'YONO SBI Reg', true)">YONO SBI Reg <span class="counter-badge" id="badge-yono">0</span></button>
                 <button class="btn" onclick="handleActivity('contact', 'Contact Centre', true)">Contact Centre <span class="counter-badge" id="badge-contact">0</span></button>
-                <button class="btn" onclick="openCategoryModal()" style="border-right: 6px solid var(--sbi-yellow);">Other Forms <span class="counter-badge" id="badge-all_forms">0</span></button>
+                <button class="btn" onclick="openCategoryModal()" style="border-right: 5px solid var(--sbi-yellow);">Other Forms <span class="counter-badge" id="badge-all_forms">0</span></button>
             </div>
         </div>
 
@@ -136,8 +123,8 @@
         <div style="padding: 20px;">
             <div class="card" id="reportSummaryContainer"></div>
             <div class="section-label">Detailed Exports</div>
-            <button class="btn" style="background:#25D366; color:white; border:none; justify-content:center;" onclick="shareReport()">SHARE SUMMARY WHATSAPP</button>
-            <button class="btn" style="background:var(--sbi-cyan) !important; color:white; border:none; justify-content:center;" onclick="shareToDrive()">SAVE FULL LOG TO DRIVE</button>
+            <button class="btn" style="background:#25D366; color:white; border:none; justify-content:center;" onclick="shareReport()">SHARE VIA WHATSAPP</button>
+            <button class="btn" style="background:var(--sbi-cyan); color:white; border:none; justify-content:center;" onclick="shareToDrive()">SAVE FULL LOG TO DRIVE</button>
             <button class="btn" style="background:var(--sbi-navy); color:white; border:none; justify-content:center;" onclick="generatePDF()">DOWNLOAD FULL PDF</button>
             <button class="btn" style="background:#1D6F42; color:white; border:none; justify-content:center;" onclick="generateExcel()">EXPORT FULL EXCEL</button>
             <button class="btn" style="color: #ef4444; border: 1.5px solid #ef4444; justify-content:center; margin-top: 10px;" onclick="hardReset()">HARD RESET</button>
@@ -188,6 +175,11 @@
             document.getElementById('date').innerText = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' });
         }
         setInterval(updateClock, 1000); updateClock();
+
+        function getFormattedDate() {
+            const now = new Date();
+            return `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+        }
 
         function getFileName() {
             const now = new Date();
@@ -254,7 +246,7 @@
         function showReport() {
             document.getElementById('mainView').style.display = 'none'; document.getElementById('reportView').style.display = 'block';
             const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-            document.getElementById('reportSummaryContainer').innerHTML = `<div class="summary-item"><span>NPS Enrollments</span><span>${counts.nps}</span></div><div class="summary-item"><span>WhatsApp Banking</span><span>${counts.whatsapp}</span></div><div class="summary-item"><span>YONO Registrations</span><span>${counts.yono}</span></div><div class="summary-item"><span>CC Support</span><span>${counts.contact}</span></div><div class="summary-item" style="border:none; color:var(--sbi-navy)"><span>Misc Forms Total</span><span>${totalForms}</span></div>`;
+            document.getElementById('reportSummaryContainer').innerHTML = `<div class="summary-item"><span>NPS</span><span>${counts.nps}</span></div><div class="summary-item"><span>WhatsApp</span><span>${counts.whatsapp}</span></div><div class="summary-item"><span>YONO</span><span>${counts.yono}</span></div><div class="summary-item"><span>Contact Centre</span><span>${counts.contact}</span></div><div class="summary-item" style="border:none; color:var(--sbi-navy)"><span>Other Forms Total</span><span>${totalForms}</span></div>`;
         }
 
         let ck, cl, cit = "Phone";
@@ -266,9 +258,23 @@
         function closeCategoryModal() { document.getElementById('categoryModal').style.display='none'; }
         function selectForm(k,l) { closeCategoryModal(); finalizeActivity(k,l,"N/A"); }
         function hideReport() { document.getElementById('reportView').style.display='none'; document.getElementById('mainView').style.display='flex'; }
+        
         function shareReport() { 
             const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-            window.open(`https://wa.me/?text=${encodeURIComponent('*SBI Summary Report*\nNPS: '+counts.nps+'\nWA: '+counts.whatsapp+'\nYONO: '+counts.yono+'\nCC: '+counts.contact+'\nOthers: '+totalForms)}`); 
+            const dateStr = getFormattedDate();
+            
+            const message = `*Daily Report*\n` +
+                          `Date: ${dateStr}\n` +
+                          `Name: Ashutosh Pattnaik\n` +
+                          `Branch: SBI Komtalpeta (17978)\n` +
+                          `------------------\n` +
+                          `NPS: ${counts.nps}\n` +
+                          `WA Services: ${counts.whatsapp}\n` +
+                          `YONO Services : ${counts.yono}\n` +
+                          `Contact: ${counts.contact}\n` +
+                          `Other Forms: ${totalForms}`;
+                          
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`); 
         }
     </script>
 </body>
