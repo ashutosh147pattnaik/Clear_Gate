@@ -55,7 +55,7 @@
         
         .goal-bar { position: absolute; bottom: 0; left: 0; height: 4px; background: var(--sbi-cyan); width: 0%; transition: width 0.4s ease; }
         .goal-reached .goal-bar { background: var(--success); height: 6px; }
-        .goal-reached { border-color: var(--success) !important; }
+        .goal-reached { border-color: var(--success) !important; border-width: 2px; }
 
         .counter-badge { background: var(--sbi-navy); color: white; padding: 3px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; z-index: 2; }
         .goal-reached .counter-badge { background: var(--success); }
@@ -95,7 +95,12 @@
                 <button class="btn" id="btn-nps" onclick="handleActivity('nps', 'NPS Enrollment', true)">NPS Enrollment <span class="counter-badge" id="badge-nps">0</span><div class="goal-bar" id="bar-nps"></div></button>
                 <button class="btn" id="btn-whatsapp" onclick="handleActivity('whatsapp', 'WA Banking Reg', true)">WhatsApp Banking <span class="counter-badge" id="badge-whatsapp">0</span><div class="goal-bar" id="bar-whatsapp"></div></button>
                 <button class="btn" id="btn-yono" onclick="handleActivity('yono', 'YONO SBI Reg', true)">YONO SBI Reg <span class="counter-badge" id="badge-yono">0</span><div class="goal-bar" id="bar-yono"></div></button>
-                <button class="btn" onclick="handleActivity('contact', 'Contact Centre', true)">Contact Centre <span class="counter-badge" id="badge-contact">0</span></button>
+                
+                <button class="btn" id="btn-contact" onclick="handleActivity('contact', 'Contact Centre', true)">
+                    Contact Centre <span class="counter-badge" id="badge-contact">0</span>
+                    <div class="goal-bar" id="bar-contact"></div>
+                </button>
+                
                 <button class="btn" onclick="openCategoryModal()" style="border-right: 5px solid var(--sbi-yellow);">Other Forms <span class="counter-badge" id="badge-all_forms">0</span></button>
             </div>
         </div>
@@ -150,7 +155,9 @@
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxeLcVyTN-v9pEqaI9PdreobrUoPlMqMGl07epMz4ECJOBkrWtRJCXveN1hDIX5K2Yv/exec";
-        const targets = { nps: 10, whatsapp: 5, yono: 5 };
+        
+        // Target updated to include Contact Centre (5)
+        const targets = { nps: 10, whatsapp: 5, yono: 5, contact: 5 };
         const defaultCounts = { nps: 0, whatsapp: 0, yono: 0, contact: 0, withdrawal: 0, deposit: 0, kyc: 0, account_opening: 0, voucher: 0, others: 0 };
         
         let counts = JSON.parse(localStorage.getItem('informa_counts')) || {...defaultCounts};
@@ -165,7 +172,7 @@
 
         window.onload = function() {
             updateBadges();
-            if (logHistory.length > 0) alert("Your last session has been resumed.");
+            if (logHistory.length > 0) console.log("Session resumed.");
             if (attDone) document.getElementById('attSection').style.display = 'none';
         };
 
@@ -189,6 +196,7 @@
         }
 
         function updateBadges() {
+            // Logic applied to all keys in the target list
             ['nps', 'whatsapp', 'yono', 'contact'].forEach(k => {
                 const badge = document.getElementById('badge-'+k);
                 if (badge) badge.innerText = counts[k];
@@ -241,8 +249,6 @@
         function setModalType(t) { 
             cit = t; 
             const i = document.getElementById('modalInput');
-            // NO LONGER CLEARING i.value HERE
-            
             document.getElementById('optPhone').style.background = t==='Phone'?'var(--sbi-navy)':'#f1f5f9';
             document.getElementById('optPhone').style.color = t==='Phone'?'white':'#000';
             document.getElementById('optAccount').style.background = t==='Account'?'var(--sbi-navy)':'#f1f5f9';
@@ -261,6 +267,7 @@
             let v = document.getElementById('modalInput').value; 
             if(!v) return; 
             if(cit === 'Phone' && v.length !== 10) return alert("Phone must be 10 digits");
+            document.getElementById('modalInput').value = ""; // Clear for next use
             closeModal(); 
             finalizeActivity(ck, cl, `${cit}: ${v}`); 
         }
