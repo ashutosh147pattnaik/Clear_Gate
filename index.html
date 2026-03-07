@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SBI Informa v6.9</title>
+    <title>SBI Informa v7.0</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -220,11 +220,18 @@
 
         function generatePDF(isShare = false) {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.text(`SBI Branch Audit Detailed Log - ${new Date().toLocaleDateString()}`, 14, 15);
+            const now = new Date();
+            const timestamp = now.toLocaleDateString('en-IN') + " at " + now.toLocaleTimeString('en-IN');
+
+            doc.setFontSize(16);
+            doc.text(`SBI Branch Audit Detailed Log`, 14, 15);
+            doc.setFontSize(10);
+            doc.text(`Exported on: ${timestamp}`, 14, 22);
+
             doc.autoTable({ 
                 head: [['S.No', 'Timestamp', 'Activity', 'Reference']], 
                 body: logHistory.map((h, index) => [index + 1, h.time, h.label, h.detail]), 
-                startY: 25, 
+                startY: 28, 
                 headStyles: {fillColor: [0, 51, 153]} 
             });
             if(isShare) return doc.output('blob'); 
