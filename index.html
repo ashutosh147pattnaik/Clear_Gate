@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SBI Informa v7.0</title>
+    <title>SBI Informa v7.2</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -12,7 +12,7 @@
     <style>
         :root {
             --sbi-navy: #003399; --sbi-cyan: #2892ff; --sbi-yellow: #ffcc00;
-            --sbi-bg: #f8fafc; --text-dark: #0f172a;
+            --sbi-bg: #f8fafc; --success: #10b981;
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
@@ -21,7 +21,6 @@
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: var(--sbi-bg); margin: 0; padding: 0;
             display: flex; justify-content: center; min-height: 100dvh;
-            overflow-x: hidden;
         }
 
         .app-shell { width: 100%; max-width: 480px; background: #fff; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
@@ -37,9 +36,7 @@
         .header-left { display: flex; align-items: center; gap: 12px; }
         .sbi-logo-box { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,0.2); }
         header h1 { margin: 0; font-size: 18px; font-weight: 900; letter-spacing: 0.8px; }
-        .header-right { text-align: right; }
-        #clock { font-size: 18px; font-weight: 800; color: var(--sbi-yellow); font-family: 'Courier New', monospace; }
-        #date { font-size: 9px; opacity: 0.8; font-weight: 600; }
+        #clock { font-size: 18px; font-weight: 800; color: var(--sbi-yellow); font-family: monospace; }
 
         .content { padding: 20px; flex-grow: 1; overflow-y: auto; }
         .section-label { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--sbi-navy); margin: 20px 0 12px 5px; display: flex; align-items: center; gap: 10px; }
@@ -52,30 +49,23 @@
             font-size: 15px; font-weight: 700; cursor: pointer; display: flex;
             align-items: center; justify-content: space-between;
             transition: 0.2s; margin-bottom: 12px; border: 1px solid #e2e8f0;
-            background: #ffffff; color: var(--sbi-navy);
+            background: #ffffff; color: var(--sbi-navy); position: relative; overflow: hidden;
         }
         .btn:active { transform: scale(0.97); background: #f8fafc; }
-        .btn-attendance { background: var(--sbi-navy); color: white; justify-content: center; border: none; padding: 20px; font-size: 16px; }
+        
+        .goal-bar { position: absolute; bottom: 0; left: 0; height: 4px; background: var(--sbi-cyan); width: 0%; transition: width 0.4s ease; }
+        .goal-reached .goal-bar { background: var(--success); height: 6px; }
+        .goal-reached { border-color: var(--success) !important; }
 
-        .counter-badge { background: var(--sbi-navy); color: white; padding: 3px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; }
+        .counter-badge { background: var(--sbi-navy); color: white; padding: 3px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; z-index: 2; }
+        .goal-reached .counter-badge { background: var(--success); }
 
         .bottom-nav { padding: 30px 20px 50px; background: white; border-top: 1px solid #f1f5f9; }
         .btn-main-action { background: var(--sbi-yellow); color: #000; justify-content: center; font-weight: 900; border: none; height: 60px; font-size: 16px; border-radius: 18px; }
 
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; }
-        .modal { background: white; width: 92%; max-width: 400px; border-radius: 25px; padding: 25px; border-top: 10px solid var(--sbi-navy); box-shadow: 0 20px 40px rgba(0,0,0,0.3); margin: auto; }
-        .modal h2 { font-size: 18px; color: var(--sbi-navy); margin-top: 0; text-align: center; }
-
-        input { 
-            width: 100%; padding: 18px; border: 2px solid #e2e8f0; border-radius: 15px; 
-            font-size: 24px; text-align: center; margin-bottom: 20px; outline: none;
-            background: #fcfdfe; color: var(--sbi-navy); font-weight: 800;
-        }
-
-        .modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn-m { padding: 15px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; font-size: 14px; }
-        .btn-save { background: var(--sbi-navy); color: white; }
-        .btn-back { background: #94a3b8; color: white; }
+        .modal { background: white; width: 92%; max-width: 400px; border-radius: 25px; padding: 25px; border-top: 10px solid var(--sbi-navy); }
+        input { width: 100%; padding: 18px; border: 2px solid #e2e8f0; border-radius: 15px; font-size: 24px; text-align: center; margin-bottom: 20px; outline: none; font-weight: 800; }
 
         #reportView { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 10000; overflow-y: auto; }
         .summary-item { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-weight: 600; font-size: 14px; }
@@ -91,23 +81,20 @@
                 </div>
                 <h1>SBI INFORMA</h1>
             </div>
-            <div class="header-right">
-                <div id="clock">00:00:00</div>
-                <div id="date">Loading...</div>
-            </div>
+            <div id="clock">00:00:00</div>
         </header>
 
         <div class="content">
             <div id="attSection">
                 <div class="section-label">Shift Identification</div>
-                <div class="card"><button id="attBtn" class="btn btn-attendance" onclick="markPresent()">LOG ATTENDANCE</button></div>
+                <div class="card"><button id="attBtn" class="btn" style="background:var(--sbi-navy); color:white; justify-content:center;" onclick="markPresent()">LOG ATTENDANCE</button></div>
             </div>
 
-            <div class="section-label">Operational Logs</div>
+            <div class="section-label">Operational Goals</div>
             <div class="card">
-                <button class="btn" onclick="handleActivity('nps', 'NPS Enrollment', true)">NPS Enrollment <span class="counter-badge" id="badge-nps">0</span></button>
-                <button class="btn" onclick="handleActivity('whatsapp', 'WA Banking Reg', true)">WhatsApp Banking <span class="counter-badge" id="badge-whatsapp">0</span></button>
-                <button class="btn" onclick="handleActivity('yono', 'YONO SBI Reg', true)">YONO SBI Reg <span class="counter-badge" id="badge-yono">0</span></button>
+                <button class="btn" id="btn-nps" onclick="handleActivity('nps', 'NPS Enrollment', true)">NPS Enrollment <span class="counter-badge" id="badge-nps">0</span><div class="goal-bar" id="bar-nps"></div></button>
+                <button class="btn" id="btn-whatsapp" onclick="handleActivity('whatsapp', 'WA Banking Reg', true)">WhatsApp Banking <span class="counter-badge" id="badge-whatsapp">0</span><div class="goal-bar" id="bar-whatsapp"></div></button>
+                <button class="btn" id="btn-yono" onclick="handleActivity('yono', 'YONO SBI Reg', true)">YONO SBI Reg <span class="counter-badge" id="badge-yono">0</span><div class="goal-bar" id="bar-yono"></div></button>
                 <button class="btn" onclick="handleActivity('contact', 'Contact Centre', true)">Contact Centre <span class="counter-badge" id="badge-contact">0</span></button>
                 <button class="btn" onclick="openCategoryModal()" style="border-right: 5px solid var(--sbi-yellow);">Other Forms <span class="counter-badge" id="badge-all_forms">0</span></button>
             </div>
@@ -117,8 +104,8 @@
     </div>
 
     <div id="reportView">
-        <header style="background: white; color: var(--sbi-navy); border-bottom: 2px solid #eee; height: 60px; padding: 0 20px; border-radius:0;">
-            <h1 style="color:var(--sbi-navy); line-height: 60px; font-size: 18px;">Branch Summary</h1>
+        <header style="background:white; color:var(--sbi-navy); border-bottom:2px solid #eee; height:60px; padding:0 20px; border-radius:0;">
+            <h1 style="line-height:60px; font-size:18px;">Branch Summary</h1>
         </header>
         <div style="padding: 20px;">
             <div class="card" id="reportSummaryContainer"></div>
@@ -127,44 +114,45 @@
             <button class="btn" style="background:var(--sbi-cyan); color:white; border:none; justify-content:center;" onclick="shareToDrive()">SAVE FULL LOG TO DRIVE</button>
             <button class="btn" style="background:var(--sbi-navy); color:white; border:none; justify-content:center;" onclick="generatePDF()">DOWNLOAD FULL PDF</button>
             <button class="btn" style="background:#1D6F42; color:white; border:none; justify-content:center;" onclick="generateExcel()">EXPORT FULL EXCEL</button>
-            <button class="btn" style="color: #ef4444; border: 1.5px solid #ef4444; justify-content:center; margin-top: 10px;" onclick="hardReset()">HARD RESET</button>
             <button class="btn" style="background:#94a3b8; color:white; border:none; justify-content:center; margin-top:15px" onclick="hideReport()">BACK</button>
         </div>
     </div>
 
     <div id="numberModal" class="overlay">
         <div class="modal">
-            <h2>Reference Log</h2>
+            <h2 style="text-align:center; color:var(--sbi-navy)">Reference Log</h2>
             <div style="display:flex; background:#f1f5f9; border-radius:12px; padding:6px; margin-bottom:20px;">
-                <div id="optPhone" style="flex:1; padding:12px; font-size:13px; font-weight:800; text-align:center; cursor:pointer; border-radius:10px;" onclick="setModalType('Phone')">PHONE</div>
-                <div id="optAccount" style="flex:1; padding:12px; font-size:13px; font-weight:800; text-align:center; cursor:pointer; border-radius:10px;" onclick="setModalType('Account')">ACCOUNT</div>
+                <div id="optPhone" class="toggle-opt active" style="flex:1; padding:12px; font-size:13px; font-weight:800; text-align:center; cursor:pointer; border-radius:10px;" onclick="setModalType('Phone')">PHONE</div>
+                <div id="optAccount" class="toggle-opt" style="flex:1; padding:12px; font-size:13px; font-weight:800; text-align:center; cursor:pointer; border-radius:10px;" onclick="setModalType('Account')">ACCOUNT</div>
             </div>
             <input type="tel" id="modalInput" inputmode="numeric" placeholder="Enter Details">
-            <div class="modal-btns">
-                <button class="btn-m btn-back" onclick="closeModal()">BACK</button>
-                <button class="btn-m btn-save" onclick="submitModal()">SAVE</button>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                <button class="btn" style="background:#94a3b8; color:white; border:none; justify-content:center;" onclick="closeModal()">BACK</button>
+                <button class="btn" style="background:var(--sbi-navy); color:white; border:none; justify-content:center;" onclick="submitModal()">SAVE</button>
             </div>
         </div>
     </div>
 
     <div id="categoryModal" class="overlay">
         <div class="modal">
-            <h2>Select Form</h2>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
+            <h2 style="text-align:center; color:var(--sbi-navy)">Select Form</h2>
+            <div style="display:flex; flex-direction:column; gap:8px;">
                 <button class="btn" onclick="selectForm('withdrawal', 'Withdrawal')">Withdrawal Form</button>
                 <button class="btn" onclick="selectForm('deposit', 'Deposit')">Deposit Form</button>
                 <button class="btn" onclick="selectForm('kyc', 'KYC Update')">KYC Form</button>
                 <button class="btn" onclick="selectForm('account_opening', 'A/C Open')">A/C Opening</button>
                 <button class="btn" onclick="selectForm('voucher', 'Voucher')">Credit/Debit Voucher</button>
                 <button class="btn" onclick="selectForm('others', 'Misc')">Misc Other Forms</button>
-                <button class="btn-m btn-back" style="width: 100%; margin-top: 10px;" onclick="closeCategoryModal()">CLOSE</button>
+                <button class="btn" style="background:#94a3b8; color:white; border:none; justify-content:center;" onclick="closeCategoryModal()">CLOSE</button>
             </div>
         </div>
     </div>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxeLcVyTN-v9pEqaI9PdreobrUoPlMqMGl07epMz4ECJOBkrWtRJCXveN1hDIX5K2Yv/exec";
+        const targets = { nps: 10, whatsapp: 5, yono: 5 };
         const defaultCounts = { nps: 0, whatsapp: 0, yono: 0, contact: 0, withdrawal: 0, deposit: 0, kyc: 0, account_opening: 0, voucher: 0, others: 0 };
+        
         let counts = JSON.parse(localStorage.getItem('informa_counts')) || {...defaultCounts};
         let logHistory = JSON.parse(localStorage.getItem('informa_history')) || [];
         let attDone = localStorage.getItem('attendance_done') === 'true';
@@ -172,20 +160,8 @@
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            document.getElementById('date').innerText = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' });
         }
         setInterval(updateClock, 1000); updateClock();
-
-        function getFormattedDate() {
-            const now = new Date();
-            return `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
-        }
-
-        function getFileName() {
-            const now = new Date();
-            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            return `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} SBI Logs`;
-        }
 
         window.onload = function() {
             updateBadges();
@@ -200,7 +176,6 @@
             localStorage.setItem('informa_history', JSON.stringify(logHistory));
             localStorage.setItem('attendance_done', 'true'); attDone = true;
             document.getElementById('attSection').style.display = 'none';
-            new Image().src = `${SCRIPT_URL}?sheet=Attendance&type=Present&detail=${t}`;
         }
 
         function finalizeActivity(k, l, d) {
@@ -214,52 +189,46 @@
         }
 
         function updateBadges() {
-            ['nps', 'whatsapp', 'yono', 'contact'].forEach(k => document.getElementById('badge-'+k).innerText = counts[k]);
+            ['nps', 'whatsapp', 'yono', 'contact'].forEach(k => {
+                const badge = document.getElementById('badge-'+k);
+                if (badge) badge.innerText = counts[k];
+                if (targets[k]) {
+                    const percent = Math.min((counts[k] / targets[k]) * 100, 100);
+                    const bar = document.getElementById('bar-'+k);
+                    const btn = document.getElementById('btn-'+k);
+                    if(bar) bar.style.width = percent + '%';
+                    if(btn && percent >= 100) btn.classList.add('goal-reached');
+                }
+            });
             document.getElementById('badge-all_forms').innerText = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
         }
 
         function generatePDF(isShare = false) {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
             const now = new Date();
-            const timestamp = now.toLocaleDateString('en-IN') + " at " + now.toLocaleTimeString('en-IN');
-
-            doc.setFontSize(16);
             doc.text(`SBI Branch Audit Detailed Log`, 14, 15);
             doc.setFontSize(10);
-            doc.text(`Exported on: ${timestamp}`, 14, 22);
-
-            doc.autoTable({ 
-                head: [['S.No', 'Timestamp', 'Activity', 'Reference']], 
-                body: logHistory.map((h, index) => [index + 1, h.time, h.label, h.detail]), 
-                startY: 28, 
-                headStyles: {fillColor: [0, 51, 153]} 
-            });
+            doc.text(`Exported on: ${now.toLocaleDateString()} at ${now.toLocaleTimeString()}`, 14, 22);
+            doc.autoTable({ head: [['S.No', 'Timestamp', 'Activity', 'Reference']], body: logHistory.map((h, i) => [i + 1, h.time, h.label, h.detail]), startY: 28, headStyles: {fillColor: [0, 51, 153]} });
             if(isShare) return doc.output('blob'); 
-            doc.save(`${getFileName()}.pdf`); wipe();
+            const filename = `${now.getDate()} ${["January","February","March","April","May","June","July","August","September","October","November","December"][now.getMonth()]} ${now.getFullYear()} SBI Logs`;
+            doc.save(`${filename}.pdf`); localStorage.clear(); location.reload();
         }
 
         async function shareToDrive() {
             const blob = generatePDF(true);
-            const file = new File([blob], `${getFileName()}.pdf`, { type: 'application/pdf' });
+            const file = new File([blob], `SBI_Audit.pdf`, { type: 'application/pdf' });
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try { await navigator.share({ files: [file], title: 'SBI Audit Log' }); } catch (err) { console.error(err); }
-            } else alert("Not supported.");
+                await navigator.share({ files: [file], title: 'SBI Audit Log' });
+            }
         }
 
         function generateExcel() {
-            const ws = XLSX.utils.json_to_sheet(logHistory.map((h, index) => ({ 
-                "S.No": index + 1,
-                "Time": h.time, 
-                "Activity": h.label, 
-                "Detail": h.detail 
-            }))); 
+            const ws = XLSX.utils.json_to_sheet(logHistory.map((h, i) => ({ "S.No": i + 1, "Time": h.time, "Activity": h.label, "Detail": h.detail }))); 
             const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Log"); 
-            XLSX.writeFile(wb, `${getFileName()}.xlsx`); wipe();
+            XLSX.writeFile(wb, `SBI_Audit.xlsx`); localStorage.clear(); location.reload();
         }
 
-        function wipe() { setTimeout(() => { localStorage.clear(); location.reload(); }, 1500); }
-        function hardReset() { if(confirm("Confirm: Wipe all data?")) wipe(); }
-        
         function showReport() {
             document.getElementById('mainView').style.display = 'none'; document.getElementById('reportView').style.display = 'block';
             const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
@@ -268,8 +237,34 @@
 
         let ck, cl, cit = "Phone";
         function handleActivity(k,l,r) { if(r) { ck=k; cl=l; document.getElementById('numberModal').style.display='flex'; setModalType('Phone'); } else finalizeActivity(k,l,"N/A"); }
-        function setModalType(t) { cit = t; const i = document.getElementById('modalInput'); i.value = ""; document.getElementById('optPhone').className = t==='Phone'?'toggle-opt active':'toggle-opt'; document.getElementById('optAccount').className = t==='Account'?'toggle-opt active':'toggle-opt'; if (t === 'Phone') { i.setAttribute('maxlength', '10'); i.placeholder = "10 Digit Phone"; } else { i.removeAttribute('maxlength'); i.placeholder = "Account Number"; } }
-        function submitModal() { let v = document.getElementById('modalInput').value; if(!v) return; if(cit === 'Phone' && v.length !== 10) return alert("Phone must be 10 digits"); closeModal(); finalizeActivity(ck, cl, `${cit}: ${v}`); }
+        
+        function setModalType(t) { 
+            cit = t; 
+            const i = document.getElementById('modalInput');
+            // NO LONGER CLEARING i.value HERE
+            
+            document.getElementById('optPhone').style.background = t==='Phone'?'var(--sbi-navy)':'#f1f5f9';
+            document.getElementById('optPhone').style.color = t==='Phone'?'white':'#000';
+            document.getElementById('optAccount').style.background = t==='Account'?'var(--sbi-navy)':'#f1f5f9';
+            document.getElementById('optAccount').style.color = t==='Account'?'white':'#000';
+            
+            if (t === 'Phone') { 
+                i.setAttribute('maxlength', '10'); 
+                i.placeholder = "10 Digit Phone"; 
+            } else { 
+                i.removeAttribute('maxlength'); 
+                i.placeholder = "Account Number"; 
+            } 
+        }
+
+        function submitModal() { 
+            let v = document.getElementById('modalInput').value; 
+            if(!v) return; 
+            if(cit === 'Phone' && v.length !== 10) return alert("Phone must be 10 digits");
+            closeModal(); 
+            finalizeActivity(ck, cl, `${cit}: ${v}`); 
+        }
+
         function closeModal() { document.getElementById('numberModal').style.display='none'; }
         function openCategoryModal() { document.getElementById('categoryModal').style.display='flex'; }
         function closeCategoryModal() { document.getElementById('categoryModal').style.display='none'; }
@@ -278,19 +273,8 @@
         
         function shareReport() { 
             const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-            const dateStr = getFormattedDate();
-            
-            const message = `*Daily Report*\n` +
-                          `Date: ${dateStr}\n` +
-                          `Name: Ashutosh Pattnaik\n` +
-                          `Branch: 17978\n` +
-                          `------------------\n` +
-                          `NPS: ${counts.nps}\n` +
-                          `WA: ${counts.whatsapp}\n` +
-                          `YONO: ${counts.yono}\n` +
-                          `Contact: ${counts.contact}\n` +
-                          `Other Forms: ${totalForms}`;
-                          
+            const now = new Date();
+            const message = `*Daily Report*\nDate: ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}\nName: Ashutosh Pattnaik\nBranch: 17978\n------------------\nNPS: ${counts.nps}\nWA: ${counts.whatsapp}\nYONO: ${counts.yono}\nContact: ${counts.contact}\nOther Forms: ${totalForms}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`); 
         }
     </script>
