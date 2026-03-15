@@ -92,7 +92,11 @@
 
             <div class="section-label">Operational Goals</div>
             <div class="card">
-                <button class="btn" id="btn-nps" onclick="handleActivity('nps', 'NPS Enrollment', true)">NPS Enrollment <span class="counter-badge" id="badge-nps">0</span><div class="goal-bar" id="bar-nps"></div></button>
+                <button class="btn" id="btn-nps" onclick="finalizeActivity('nps', 'NPS Enrollment', 'Auto-Incremented')">
+                    NPS Enrollment <span class="counter-badge" id="badge-nps">0</span>
+                    <div class="goal-bar" id="bar-nps"></div>
+                </button>
+
                 <button class="btn" id="btn-whatsapp" onclick="handleActivity('whatsapp', 'WA Banking Reg', true)">WhatsApp Banking <span class="counter-badge" id="badge-whatsapp">0</span><div class="goal-bar" id="bar-whatsapp"></div></button>
                 <button class="btn" id="btn-yono" onclick="handleActivity('yono', 'YONO SBI Reg', true)">YONO SBI Reg <span class="counter-badge" id="badge-yono">0</span><div class="goal-bar" id="bar-yono"></div></button>
                 
@@ -146,8 +150,8 @@
                 <button class="btn" onclick="selectForm('deposit', 'Deposit')">Deposit Form</button>
                 <button class="btn" onclick="selectForm('kyc', 'KYC Update')">KYC Form</button>
                 <button class="btn" onclick="selectForm('account_opening', 'A/C Open')">A/C Opening</button>
-                <button class="btn" onclick="selectForm('voucher', 'Voucher')">Credit/Debit Voucher</button>
-                <button class="btn" onclick="selectForm('others', 'Misc')">Misc Other Forms</button>
+                <button class="btn" onclick="selectForm('voucher', 'Voucher')">Voucher</button>
+                <button class="btn" onclick="selectForm('others', 'Misc')">Other Forms</button>
                 <button class="btn" style="background:#94a3b8; color:white; border:none; justify-content:center;" onclick="closeCategoryModal()">CLOSE</button>
             </div>
         </div>
@@ -156,7 +160,6 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxeLcVyTN-v9pEqaI9PdreobrUoPlMqMGl07epMz4ECJOBkrWtRJCXveN1hDIX5K2Yv/exec";
         
-        // Target updated to include Contact Centre (5)
         const targets = { nps: 10, whatsapp: 5, yono: 5, contact: 5 };
         const defaultCounts = { nps: 0, whatsapp: 0, yono: 0, contact: 0, withdrawal: 0, deposit: 0, kyc: 0, account_opening: 0, voucher: 0, others: 0 };
         
@@ -172,7 +175,6 @@
 
         window.onload = function() {
             updateBadges();
-            if (logHistory.length > 0) console.log("Session resumed.");
             if (attDone) document.getElementById('attSection').style.display = 'none';
         };
 
@@ -196,7 +198,6 @@
         }
 
         function updateBadges() {
-            // Logic applied to all keys in the target list
             ['nps', 'whatsapp', 'yono', 'contact'].forEach(k => {
                 const badge = document.getElementById('badge-'+k);
                 if (badge) badge.innerText = counts[k];
@@ -214,18 +215,14 @@
         function generatePDF(isShare = false) {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
             const now = new Date();
-            doc.text(`SBI Branch Audit Detailed Log`, 14, 15);
-            doc.setFontSize(10);
-            doc.text(`Exported on: ${now.toLocaleDateString()} at ${now.toLocaleTimeString()}`, 14, 22);
-            doc.autoTable({ head: [['S.No', 'Timestamp', 'Activity', 'Reference']], body: logHistory.map((h, i) => [i + 1, h.time, h.label, h.detail]), startY: 28, headStyles: {fillColor: [0, 51, 153]} });
+            doc.text(`SBI Branch Audit Log`, 14, 15);
+            doc.autoTable({ head: [['S.No', 'Time', 'Activity', 'Detail']], body: logHistory.map((h, i) => [i + 1, h.time, h.label, h.detail]), startY: 28 });
             if(isShare) return doc.output('blob'); 
-            const filename = `${now.getDate()} ${["January","February","March","April","May","June","July","August","September","October","November","December"][now.getMonth()]} ${now.getFullYear()} SBI Logs`;
-            doc.save(`${filename}.pdf`); localStorage.clear(); location.reload();
+            doc.save(`SBI_Logs.pdf`); localStorage.clear(); location.reload();
         }
 
         async function shareToDrive() {
-            const blob = generatePDF(true);
-            const file = new File([blob], `SBI_Audit.pdf`, { type: 'application/pdf' });
+            const file = new File([generatePDF(true)], `SBI_Audit.pdf`, { type: 'application/pdf' });
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 await navigator.share({ files: [file], title: 'SBI Audit Log' });
             }
@@ -240,7 +237,7 @@
         function showReport() {
             document.getElementById('mainView').style.display = 'none'; document.getElementById('reportView').style.display = 'block';
             const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-            document.getElementById('reportSummaryContainer').innerHTML = `<div class="summary-item"><span>NPS</span><span>${counts.nps}</span></div><div class="summary-item"><span>WhatsApp</span><span>${counts.whatsapp}</span></div><div class="summary-item"><span>YONO</span><span>${counts.yono}</span></div><div class="summary-item"><span>Contact Centre</span><span>${counts.contact}</span></div><div class="summary-item" style="border:none; color:var(--sbi-navy)"><span>Other Forms Total</span><span>${totalForms}</span></div>`;
+            document.getElementById('reportSummaryContainer').innerHTML = `<div class="summary-item"><span>NPS</span><span>${counts.nps}</span></div><div class="summary-item"><span>WhatsApp</span><span>${counts.whatsapp}</span></div><div class="summary-item"><span>YONO</span><span>${counts.yono}</span></div><div class="summary-item"><span>Contact Centre</span><span>${counts.contact}</span></div><div class="summary-item"><span>Other Forms</span><span>${totalForms}</span></div>`;
         }
 
         let ck, cl, cit = "Phone";
@@ -253,22 +250,14 @@
             document.getElementById('optPhone').style.color = t==='Phone'?'white':'#000';
             document.getElementById('optAccount').style.background = t==='Account'?'var(--sbi-navy)':'#f1f5f9';
             document.getElementById('optAccount').style.color = t==='Account'?'white':'#000';
-            
-            if (t === 'Phone') { 
-                i.setAttribute('maxlength', '10'); 
-                i.placeholder = "10 Digit Phone"; 
-            } else { 
-                i.removeAttribute('maxlength'); 
-                i.placeholder = "Account Number"; 
-            } 
+            i.placeholder = t === 'Phone' ? "10 Digit Phone" : "Account Number";
+            if (t === 'Phone') i.setAttribute('maxlength', '10'); else i.removeAttribute('maxlength');
         }
 
         function submitModal() { 
             let v = document.getElementById('modalInput').value; 
-            if(!v) return; 
-            if(cit === 'Phone' && v.length !== 10) return alert("Phone must be 10 digits");
-            document.getElementById('modalInput').value = ""; // Clear for next use
-            closeModal(); 
+            if(!v || (cit === 'Phone' && v.length !== 10)) return; 
+            document.getElementById('modalInput').value = ""; closeModal(); 
             finalizeActivity(ck, cl, `${cit}: ${v}`); 
         }
 
@@ -280,8 +269,7 @@
         
         function shareReport() { 
             const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-            const now = new Date();
-            const message = `*Daily Report*\nDate: ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}\nName: Ashutosh Pattnaik\nBranch: 17978\n------------------\nNPS: ${counts.nps}\nWA: ${counts.whatsapp}\nYONO: ${counts.yono}\nContact: ${counts.contact}\nOther Forms: ${totalForms}`;
+            const message = `*Daily Report*\nNPS: ${counts.nps}\nWA: ${counts.whatsapp}\nYONO: ${counts.yono}\nContact: ${counts.contact}\nOther Forms: ${totalForms}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`); 
         }
     </script>
