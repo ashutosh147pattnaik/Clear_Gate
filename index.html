@@ -269,7 +269,7 @@
         
         function shareReport() { 
             const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-            const message = `*Daily Report*\nName: Ashutosh Pattnaik\nBranch Name: Komtalpeta (17978)\nNPS: ${counts.nps}\nWA: ${counts.whatsapp}\nYONO: ${counts.yono}\nContact: ${counts.contact}\nOther Forms: ${totalForms}`;
+            const message = `*Daily Report*\nName: Ashutosh Pattnaik\nBranch: Komtalpeta (17978)\nNPS: ${counts.nps}\nWA: ${counts.whatsapp}\nYONO: ${counts.yono}\nContact: ${counts.contact}\nOther Forms: ${totalForms}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`); 
         }
     </script>
