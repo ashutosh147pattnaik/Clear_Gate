@@ -161,7 +161,7 @@
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxeLcVyTN-v9pEqaI9PdreobrUoPlMqMGl07epMz4ECJOBkrWtRJCXveN1hDIX5K2Yv/exec";
         
         const targets = { nps: 10, whatsapp: 5, yono: 5, contact: 5 };
-        const defaultCounts = { nps: 0, whatsapp: 0, yono: 0, contact: 0, withdrawal: 0, deposit: 0, kyc: 0, account_opening: 0, voucher: 0, others: 0 };
+        const defaultCounts = { nps: 0, whatsapp: 0, yono: 0, contact: 0, withdrawal: 0, deposit: 0, kyc: 0, account_opening: 0, voucher: 0, others: 0, summary_clicks: 0 };
         
         let counts = JSON.parse(localStorage.getItem('informa_counts')) || {...defaultCounts};
         let logHistory = JSON.parse(localStorage.getItem('informa_history')) || [];
@@ -172,6 +172,13 @@
             document.getElementById('clock').innerText = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         }
         setInterval(updateClock, 1000); updateClock();
+
+        // New function to get the formatted date for filenames
+        function getFileDate() {
+            const now = new Date();
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return now.toLocaleDateString('en-IN', options); // e.g., "30 March 2026"
+        }
 
         window.onload = function() {
             updateBadges();
@@ -214,15 +221,19 @@
 
         function generatePDF(isShare = false) {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            const now = new Date();
             doc.text(`SBI Branch Audit Log`, 14, 15);
             doc.autoTable({ head: [['S.No', 'Time', 'Activity', 'Detail']], body: logHistory.map((h, i) => [i + 1, h.time, h.label, h.detail]), startY: 28 });
+            
             if(isShare) return doc.output('blob'); 
-            doc.save(`SBI_Logs.pdf`); localStorage.clear(); location.reload();
+            
+            const fileName = `${getFileDate()} SBI logs.pdf`;
+            doc.save(fileName); 
+            localStorage.clear(); location.reload();
         }
 
         async function shareToDrive() {
-            const file = new File([generatePDF(true)], `SBI_Audit.pdf`, { type: 'application/pdf' });
+            const fileName = `${getFileDate()} SBI logs.pdf`;
+            const file = new File([generatePDF(true)], fileName, { type: 'application/pdf' });
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 await navigator.share({ files: [file], title: 'SBI Audit Log' });
             }
@@ -231,13 +242,28 @@
         function generateExcel() {
             const ws = XLSX.utils.json_to_sheet(logHistory.map((h, i) => ({ "S.No": i + 1, "Time": h.time, "Activity": h.label, "Detail": h.detail }))); 
             const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Log"); 
-            XLSX.writeFile(wb, `SBI_Audit.xlsx`); localStorage.clear(); location.reload();
+            
+            const fileName = `${getFileDate()} SBI logs.xlsx`;
+            XLSX.writeFile(wb, fileName); 
+            localStorage.clear(); location.reload();
         }
 
         function showReport() {
-            document.getElementById('mainView').style.display = 'none'; document.getElementById('reportView').style.display = 'block';
+            counts.summary_clicks = (counts.summary_clicks || 0) + 1;
+            localStorage.setItem('informa_counts', JSON.stringify(counts));
+
+            document.getElementById('mainView').style.display = 'none'; 
+            document.getElementById('reportView').style.display = 'block';
             const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-            document.getElementById('reportSummaryContainer').innerHTML = `<div class="summary-item"><span>NPS</span><span>${counts.nps}</span></div><div class="summary-item"><span>WhatsApp</span><span>${counts.whatsapp}</span></div><div class="summary-item"><span>YONO</span><span>${counts.yono}</span></div><div class="summary-item"><span>Contact Centre</span><span>${counts.contact}</span></div><div class="summary-item"><span>Other Forms</span><span>${totalForms}</span></div>`;
+            document.getElementById('reportSummaryContainer').innerHTML = `
+                <div class="summary-item"><span>NPS</span><span>${counts.nps}</span></div>
+                <div class="summary-item"><span>WhatsApp</span><span>${counts.whatsapp}</span></div>
+                <div class="summary-item"><span>YONO</span><span>${counts.yono}</span></div>
+                <div class="summary-item"><span>Contact Centre</span><span>${counts.contact}</span></div>
+                <div class="summary-item"><span>Other Forms</span><span>${totalForms}</span></div>
+                <div class="summary-item" style="color:var(--sbi-cyan); border-top:2px solid #eee; margin-top:10px;">
+                    <span>Summary Gen. Count</span><span>${counts.summary_clicks}</span>
+                </div>`;
         }
 
         let ck, cl, cit = "Phone";
@@ -269,7 +295,7 @@
         
         function shareReport() { 
             const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-            const message = `*Daily Report*\nName: Ashutosh Pattnaik\nBranch: Komtalpeta (17978)\nNPS: ${counts.nps}\nWA: ${counts.whatsapp}\nYONO: ${counts.yono}\nContact: ${counts.contact}\nOther Forms: ${totalForms}`;
+            const message = `*Daily Report*\nName: Ashutosh Pattnaik\nBranch: Komtalpeta (17978)\nNPS: ${counts.nps}\nWA: ${counts.whatsapp}\nYONO: ${counts.yono}\nContact: ${counts.contact}\nOther Forms: ${totalForms}\nSummary Clicks: ${counts.summary_clicks}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`); 
         }
     </script>
