@@ -161,7 +161,8 @@
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxeLcVyTN-v9pEqaI9PdreobrUoPlMqMGl07epMz4ECJOBkrWtRJCXveN1hDIX5K2Yv/exec";
         
         const targets = { nps: 10, whatsapp: 5, yono: 5, contact: 5 };
-        const defaultCounts = { nps: 0, whatsapp: 0, yono: 0, contact: 0, withdrawal: 0, deposit: 0, kyc: 0, account_opening: 0, voucher: 0, others: 0 };
+        // Added summary_clicks to the default counts
+        const defaultCounts = { nps: 0, whatsapp: 0, yono: 0, contact: 0, withdrawal: 0, deposit: 0, kyc: 0, account_opening: 0, voucher: 0, others: 0, summary_clicks: 0 };
         
         let counts = JSON.parse(localStorage.getItem('informa_counts')) || {...defaultCounts};
         let logHistory = JSON.parse(localStorage.getItem('informa_history')) || [];
@@ -235,9 +236,25 @@
         }
 
         function showReport() {
-            document.getElementById('mainView').style.display = 'none'; document.getElementById('reportView').style.display = 'block';
+            // Increment the summary click counter
+            counts.summary_clicks = (counts.summary_clicks || 0) + 1;
+            localStorage.setItem('informa_counts', JSON.stringify(counts));
+
+            document.getElementById('mainView').style.display = 'none'; 
+            document.getElementById('reportView').style.display = 'block';
+            
             const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-            document.getElementById('reportSummaryContainer').innerHTML = `<div class="summary-item"><span>NPS</span><span>${counts.nps}</span></div><div class="summary-item"><span>WhatsApp</span><span>${counts.whatsapp}</span></div><div class="summary-item"><span>YONO</span><span>${counts.yono}</span></div><div class="summary-item"><span>Contact Centre</span><span>${counts.contact}</span></div><div class="summary-item"><span>Other Forms</span><span>${totalForms}</span></div>`;
+            
+            // Added Summary Count to the HTML output
+            document.getElementById('reportSummaryContainer').innerHTML = `
+                <div class="summary-item"><span>NPS</span><span>${counts.nps}</span></div>
+                <div class="summary-item"><span>WhatsApp</span><span>${counts.whatsapp}</span></div>
+                <div class="summary-item"><span>YONO</span><span>${counts.yono}</span></div>
+                <div class="summary-item"><span>Contact Centre</span><span>${counts.contact}</span></div>
+                <div class="summary-item"><span>Other Forms</span><span>${totalForms}</span></div>
+                <div class="summary-item" style="color:var(--sbi-cyan); border-top:2px solid #eee; margin-top:10px;">
+                    <span>Summary Gen. Count</span><span>${counts.summary_clicks}</span>
+                </div>`;
         }
 
         let ck, cl, cit = "Phone";
@@ -269,7 +286,7 @@
         
         function shareReport() { 
             const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-            const message = `*Daily Report*\nName: Ashutosh Pattnaik\nBranch: Komtalpeta (17978)\nNPS: ${counts.nps}\nWA: ${counts.whatsapp}\nYONO: ${counts.yono}\nContact: ${counts.contact}\nOther Forms: ${totalForms}`;
+            const message = `*Daily Report*\nName: Ashutosh Pattnaik\nBranch: Komtalpeta (17978)\nNPS: ${counts.nps}\nWA: ${counts.whatsapp}\nYONO: ${counts.yono}\nContact: ${counts.contact}\nOther Forms: ${totalForms}\nSummary Clicks: ${counts.summary_clicks}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`); 
         }
     </script>
