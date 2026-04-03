@@ -2,302 +2,242 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SBI Informa Jlqshf84</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HPI Bank - Advanced Ops Portal</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
+    
     <style>
         :root {
-            --sbi-navy: #003399; --sbi-cyan: #2892ff; --sbi-yellow: #ffcc00;
-            --sbi-bg: #f8fafc; --success: #10b981;
+            --primary: #003366; --accent: #ffcc00; --bg: #f4f7f9; --white: #ffffff;
         }
-
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--sbi-bg); margin: 0; padding: 0;
-            display: flex; justify-content: center; min-height: 100dvh;
-        }
-
-        .app-shell { width: 100%; max-width: 480px; background: #fff; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
-
-        header {
-            padding: 18px 20px;
-            background: linear-gradient(135deg, var(--sbi-navy) 0%, #001a4d 100%);
-            color: white; border-bottom: 5px solid var(--sbi-yellow);
-            display: flex; align-items: center; justify-content: space-between;
-            border-radius: 0 0 20px 20px; flex-shrink: 0;
-        }
-
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        .sbi-logo-box { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,0.2); }
-        header h1 { margin: 0; font-size: 18px; font-weight: 900; letter-spacing: 0.8px; }
-        #clock { font-size: 18px; font-weight: 800; color: var(--sbi-yellow); font-family: monospace; }
-
-        .content { padding: 20px; flex-grow: 1; overflow-y: auto; }
-        .section-label { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--sbi-navy); margin: 20px 0 12px 5px; display: flex; align-items: center; gap: 10px; }
-        .section-label::after { content: ""; height: 2px; flex: 1; background: #e2e8f0; }
-
-        .card { background: white; border-radius: 20px; padding: 18px; border: 1px solid #f1f5f9; box-shadow: 0 8px 20px rgba(0,0,0,0.04); margin-bottom: 20px; }
-
-        .btn {
-            width: 100%; border-radius: 14px; padding: 16px;
-            font-size: 15px; font-weight: 700; cursor: pointer; display: flex;
-            align-items: center; justify-content: space-between;
-            transition: 0.2s; margin-bottom: 12px; border: 1px solid #e2e8f0;
-            background: #ffffff; color: var(--sbi-navy); position: relative; overflow: hidden;
-        }
-        .btn:active { transform: scale(0.97); background: #f8fafc; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 30px; }
         
-        .goal-bar { position: absolute; bottom: 0; left: 0; height: 4px; background: var(--sbi-cyan); width: 0%; transition: width 0.4s ease; }
-        .goal-reached .goal-bar { background: var(--success); height: 6px; }
-        .goal-reached { border-color: var(--success) !important; border-width: 2px; }
+        header {
+            background: var(--primary); color: white; padding: 15px;
+            border-bottom: 4px solid var(--accent);
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000;
+        }
 
-        .counter-badge { background: var(--sbi-navy); color: white; padding: 3px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; z-index: 2; }
-        .goal-reached .counter-badge { background: var(--success); }
+        #main-content { padding: 15px; max-width: 600px; margin: auto; }
 
-        .bottom-nav { padding: 30px 20px 50px; background: white; border-top: 1px solid #f1f5f9; }
-        .btn-main-action { background: var(--sbi-yellow); color: #000; justify-content: center; font-weight: 900; border: none; height: 60px; font-size: 16px; border-radius: 18px; }
+        /* Cards and Grid */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 450px) { .grid { grid-template-columns: 1fr; } }
+        
+        .card {
+            background: white; padding: 15px; border-radius: 12px; text-align: center;
+            border-top: 4px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .count { font-size: 1.8rem; font-weight: bold; margin: 10px 0; color: #333; }
 
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; }
-        .modal { background: white; width: 92%; max-width: 400px; border-radius: 25px; padding: 25px; border-top: 10px solid var(--sbi-navy); }
-        input { width: 100%; padding: 18px; border: 2px solid #e2e8f0; border-radius: 15px; font-size: 24px; text-align: center; margin-bottom: 20px; outline: none; font-weight: 800; }
+        button { 
+            padding: 14px; border: none; border-radius: 8px; font-weight: bold; 
+            width: 100%; cursor: pointer; transition: 0.2s;
+        }
+        button:active { opacity: 0.7; transform: scale(0.98); }
+        
+        .btn-blue { background: var(--primary); color: white; }
+        .btn-green { background: #28a745; color: white; margin-top: 15px; }
+        .btn-red { background: #dc3545; color: white; margin-top: 10px; }
 
-        #reportView { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 10000; overflow-y: auto; }
-        .summary-item { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-weight: 600; font-size: 14px; }
+        /* Modals */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center;
+            z-index: 2000; padding: 20px;
+        }
+        .modal-content { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 400px; }
+        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 6px; font-size: 1.1rem; }
+
+        .hidden { display: none !important; }
+        .log-time { font-size: 0.8rem; color: var(--accent); margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <div class="app-shell" id="mainView">
-        <header>
-            <div class="header-left">
-                <div class="sbi-logo-box">
-                    <svg viewBox="0 0 100 100" width="28" fill="#003399"><circle cx="50" cy="50" r="40" stroke="#003399" stroke-width="14" fill="none"/><rect x="43" y="50" width="14" height="38" /></svg>
-                </div>
-                <h1>SBI INFORMA Jlqshf84 </h1>
-            </div>
-            <div id="clock">00:00:00</div>
-        </header>
+<header>
+    <div style="font-weight:bold; letter-spacing:1px;">HPI BANK</div>
+    <div id="live-clock">00:00:00</div>
+</header>
 
-        <div class="content">
-            <div id="attSection">
-                <div class="section-label">Shift Identification</div>
-                <div class="card"><button id="attBtn" class="btn" style="background:var(--sbi-navy); color:white; justify-content:center;" onclick="markPresent()">LOG ATTENDANCE</button></div>
-            </div>
-
-            <div class="section-label">Operational Goals</div>
-            <div class="card">
-                <button class="btn" id="btn-nps" onclick="finalizeActivity('nps', 'NPS Enrollment', 'Auto-Incremented')">
-                    NPS Enrollment <span class="counter-badge" id="badge-nps">0</span>
-                    <div class="goal-bar" id="bar-nps"></div>
-                </button>
-
-                <button class="btn" id="btn-whatsapp" onclick="handleActivity('whatsapp', 'WA Banking Reg', true)">WhatsApp Banking <span class="counter-badge" id="badge-whatsapp">0</span><div class="goal-bar" id="bar-whatsapp"></div></button>
-                <button class="btn" id="btn-yono" onclick="handleActivity('yono', 'YONO SBI Reg', true)">YONO SBI Reg <span class="counter-badge" id="badge-yono">0</span><div class="goal-bar" id="bar-yono"></div></button>
-                
-                <button class="btn" id="btn-contact" onclick="handleActivity('contact', 'Contact Centre', true)">
-                    Contact Centre <span class="counter-badge" id="badge-contact">0</span>
-                    <div class="goal-bar" id="bar-contact"></div>
-                </button>
-                
-                <button class="btn" onclick="openCategoryModal()" style="border-right: 5px solid var(--sbi-yellow);">Other Forms <span class="counter-badge" id="badge-all_forms">0</span></button>
-            </div>
-        </div>
-
-        <div class="bottom-nav"><button class="btn btn-main-action" onclick="showReport()">GENERATE SUMMARY REPORT</button></div>
+<div id="main-content">
+    <div id="login-page" style="text-align:center; padding-top:80px;">
+        <h2 style="color:var(--primary)">Staff Portal</h2>
+        <button class="btn-blue" style="width:200px;" onclick="doLogin()">Login</button>
     </div>
 
-    <div id="reportView">
-        <header style="background:white; color:var(--sbi-navy); border-bottom:2px solid #eee; height:60px; padding:0 20px; border-radius:0;">
-            <h1 style="line-height:60px; font-size:18px;">Branch Summary</h1>
-        </header>
-        <div style="padding: 20px;">
-            <div class="card" id="reportSummaryContainer"></div>
-            <div class="section-label">Detailed Exports</div>
-            <button class="btn" style="background:#25D366; color:white; border:none; justify-content:center;" onclick="shareReport()">SHARE VIA WHATSAPP</button>
-            <button class="btn" style="background:var(--sbi-cyan); color:white; border:none; justify-content:center;" onclick="shareToDrive()">SAVE FULL LOG TO DRIVE</button>
-            <button class="btn" style="background:var(--sbi-navy); color:white; border:none; justify-content:center;" onclick="generatePDF()">DOWNLOAD FULL PDF</button>
-            <button class="btn" style="background:#1D6F42; color:white; border:none; justify-content:center;" onclick="generateExcel()">EXPORT FULL EXCEL</button>
-            <button class="btn" style="background:#94a3b8; color:white; border:none; justify-content:center; margin-top:15px" onclick="hideReport()">BACK</button>
+    <div id="dashboard" class="hidden">
+        <div id="login-display" class="log-time" style="text-align:right; margin-bottom:10px; color:#666;"></div>
+        <div class="grid">
+            <div class="card"><h3>NPS</h3><div class="count" id="c-nps">0</div><button class="btn-blue" onclick="addSimple('NPS')">Increment</button></div>
+            <div class="card"><h3>WhatsApp</h3><div class="count" id="c-wa">0</div><button class="btn-blue" onclick="askType('WhatsApp')">Action</button></div>
+            <div class="card"><h3>Yono SBI</h3><div class="count" id="c-yono">0</div><button class="btn-blue" onclick="askType('Yono SBI')">Action</button></div>
+            <div class="card:active"><h3>Contact</h3><div class="count" id="c-contact">0</div><button class="btn-blue" onclick="addSimple('Contact Centre')">Increment</button></div>
+            <div class="card"><h3>CBDC</h3><div class="count" id="c-cbdc">0</div><button class="btn-blue" onclick="askType('CBDC')">Action</button></div>
+            <div class="card"><h3>Other Forms</h3><div class="count" id="c-other">0</div><button class="btn-blue" onclick="addSimple('Other Forms')">Increment</button></div>
         </div>
+        <button class="btn-green" onclick="generatePDF()">Generate Summary PDF</button>
+        <button class="btn-blue" style="background:#25D366; margin-top:10px;" onclick="shareWA()">WhatsApp Summary</button>
+        <button class="btn-red" onclick="resetApp()">Reset All Data</button>
     </div>
+</div>
 
-    <div id="numberModal" class="overlay">
-        <div class="modal">
-            <h2 style="text-align:center; color:var(--sbi-navy)">Reference Log</h2>
-            <div style="display:flex; background:#f1f5f9; border-radius:12px; padding:6px; margin-bottom:20px;">
-                <div id="optPhone" class="toggle-opt active" style="flex:1; padding:12px; font-size:13px; font-weight:800; text-align:center; cursor:pointer; border-radius:10px;" onclick="setModalType('Phone')">PHONE</div>
-                <div id="optAccount" class="toggle-opt" style="flex:1; padding:12px; font-size:13px; font-weight:800; text-align:center; cursor:pointer; border-radius:10px;" onclick="setModalType('Account')">ACCOUNT</div>
-            </div>
-            <input type="tel" id="modalInput" inputmode="numeric" placeholder="Enter Details">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                <button class="btn" style="background:#94a3b8; color:white; border:none; justify-content:center;" onclick="closeModal()">BACK</button>
-                <button class="btn" style="background:var(--sbi-navy); color:white; border:none; justify-content:center;" onclick="submitModal()">SAVE</button>
-            </div>
-        </div>
+<div id="modal-sel" class="modal hidden">
+    <div class="modal-content">
+        <h3>Input Type</h3>
+        <button class="btn-blue" style="margin-bottom:10px" onclick="openInput('Mobile Number')">Mobile Number</button>
+        <button class="btn-blue" onclick="openInput('Account Number')">Account Number</button>
+        <button style="background:none; color:gray; margin-top:10px" onclick="closeAll()">Cancel</button>
     </div>
+</div>
 
-    <div id="categoryModal" class="overlay">
-        <div class="modal">
-            <h2 style="text-align:center; color:var(--sbi-navy)">Select Form</h2>
-            <div style="display:flex; flex-direction:column; gap:8px;">
-                <button class="btn" onclick="selectForm('withdrawal', 'Withdrawal')">Withdrawal Form</button>
-                <button class="btn" onclick="selectForm('deposit', 'Deposit')">Deposit Form</button>
-                <button class="btn" onclick="selectForm('kyc', 'KYC Update')">KYC Form</button>
-                <button class="btn" onclick="selectForm('account_opening', 'A/C Open')">A/C Opening</button>
-                <button class="btn" onclick="selectForm('voucher', 'Voucher')">Voucher</button>
-                <button class="btn" onclick="selectForm('others', 'Misc')">Other Forms</button>
-                <button class="btn" style="background:#94a3b8; color:white; border:none; justify-content:center;" onclick="closeCategoryModal()">CLOSE</button>
-            </div>
-        </div>
+<div id="modal-val" class="modal hidden">
+    <div class="modal-content">
+        <h3 id="val-title">Enter Digits</h3>
+        <input type="number" id="val-field" placeholder="Enter number here...">
+        <button class="btn-blue" onclick="saveEntry()">Save & Increment</button>
+        <button style="background:none; color:gray; margin-top:10px" onclick="closeAll()">Cancel</button>
     </div>
+</div>
 
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxeLcVyTN-v9pEqaI9PdreobrUoPlMqMGl07epMz4ECJOBkrWtRJCXveN1hDIX5K2Yv/exec";
+<script>
+    const { jsPDF } = window.jspdf;
+
+    // State logic
+    let state = JSON.parse(localStorage.getItem('hpi_final_v1')) || {
+        counts: { NPS: 0, WhatsApp: 0, "Yono SBI": 0, "Contact Centre": 0, CBDC: 0, "Other Forms": 0 },
+        logs: [],
+        loginTime: null
+    };
+
+    let activeCat = '';
+    let activeType = '';
+
+    function updateClock() {
+        document.getElementById('live-clock').innerText = new Date().toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+
+    function doLogin() {
+        if(!state.loginTime) {
+            state.loginTime = new Date().toLocaleString();
+        }
+        document.getElementById('login-page').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        document.getElementById('login-display').innerText = "Logged in at: " + state.loginTime;
+        save();
+        refreshUI();
+    }
+
+    function addSimple(cat) {
+        state.counts[cat]++;
+        addLog(cat, "Incremented by 1");
+        save();
+    }
+
+    function askType(cat) {
+        activeCat = cat;
+        document.getElementById('modal-sel').classList.remove('hidden');
+    }
+
+    function openInput(type) {
+        activeType = type;
+        document.getElementById('modal-sel').classList.add('hidden');
+        document.getElementById('val-title').innerText = "Enter " + type;
+        document.getElementById('val-field').value = '';
+        document.getElementById('modal-val').classList.remove('hidden');
+    }
+
+    function saveEntry() {
+        const val = document.getElementById('val-field').value;
+        if(!val) return alert("Please enter digits");
         
-        const targets = { nps: 10, whatsapp: 5, yono: 5, contact: 5 };
-        const defaultCounts = { nps: 0, whatsapp: 0, yono: 0, contact: 0, withdrawal: 0, deposit: 0, kyc: 0, account_opening: 0, voucher: 0, others: 0, summary_clicks: 0 };
+        state.counts[activeCat]++;
+        addLog(`${activeCat} - ${activeType}`, val);
+        save();
+        closeAll();
+    }
+
+    function addLog(cat, val) {
+        const timestamp = new Date().toLocaleTimeString();
+        state.logs.push({ 
+            id: state.logs.length + 1,
+            time: timestamp,
+            category: cat,
+            value: val
+        });
+    }
+
+    function closeAll() {
+        document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden'));
+    }
+
+    function save() {
+        localStorage.setItem('hpi_final_v1', JSON.stringify(state));
+        refreshUI();
+    }
+
+    function refreshUI() {
+        document.getElementById('c-nps').innerText = state.counts['NPS'];
+        document.getElementById('c-wa').innerText = state.counts['WhatsApp'];
+        document.getElementById('c-yono').innerText = state.counts['Yono SBI'];
+        document.getElementById('c-contact').innerText = state.counts['Contact Centre'];
+        document.getElementById('c-cbdc').innerText = state.counts['CBDC'];
+        document.getElementById('c-other').innerText = state.counts['Other Forms'];
+    }
+
+    function generatePDF() {
+        const doc = new jsPDF();
         
-        let counts = JSON.parse(localStorage.getItem('informa_counts')) || {...defaultCounts};
-        let logHistory = JSON.parse(localStorage.getItem('informa_history')) || [];
-        let attDone = localStorage.getItem('attendance_done') === 'true';
+        // Header
+        doc.setFontSize(18);
+        doc.text("HPI BANK - BRANCH SUMMARY REPORT", 14, 20);
+        doc.setFontSize(10);
+        doc.text(`Login Time: ${state.loginTime}`, 14, 30);
+        doc.text(`Report Generated: ${new Date().toLocaleString()}`, 14, 35);
 
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        // Build Table Data
+        const body = state.logs.map(log => [
+            log.id,
+            `${log.category} (${log.time})`,
+            log.value
+        ]);
+
+        doc.autoTable({
+            startY: 45,
+            head: [['S.No', 'Account / Mobile / Category', 'Input Value / Action']],
+            body: body,
+            theme: 'grid',
+            headStyles: { fillColor: [0, 51, 102] }
+        });
+
+        doc.save(`HPI_Report_${new Date().getTime()}.pdf`);
+    }
+
+    function shareWA() {
+        let txt = `*HPI BANK SUMMARY*\nLogin: ${state.loginTime}\n----------\n`;
+        for(let key in state.counts) {
+            txt += `${key}: ${state.counts[key]}\n`;
         }
-        setInterval(updateClock, 1000); updateClock();
+        window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`);
+    }
 
-        // New function to get the formatted date for filenames
-        function getFileDate() {
-            const now = new Date();
-            const options = { day: 'numeric', month: 'long', year: 'numeric' };
-            return now.toLocaleDateString('en-IN', options); // e.g., "30 March 2026"
+    function resetApp() {
+        if(confirm("Confirm: Wipe all data and logs?")) {
+            state = { 
+                counts: { NPS: 0, WhatsApp: 0, "Yono SBI": 0, "Contact Centre": 0, CBDC: 0, "Other Forms": 0 },
+                logs: [],
+                loginTime: null
+            };
+            localStorage.clear();
+            location.reload();
         }
+    }
 
-        window.onload = function() {
-            updateBadges();
-            if (attDone) document.getElementById('attSection').style.display = 'none';
-        };
-
-        function markPresent() {
-            if(attDone) return; if(navigator.vibrate) navigator.vibrate(20);
-            const t = new Date().toLocaleTimeString('en-IN');
-            logHistory.push({ time: t, label: "ATTENDANCE", detail: "Present" });
-            localStorage.setItem('informa_history', JSON.stringify(logHistory));
-            localStorage.setItem('attendance_done', 'true'); attDone = true;
-            document.getElementById('attSection').style.display = 'none';
-        }
-
-        function finalizeActivity(k, l, d) {
-            if(navigator.vibrate) navigator.vibrate(20); counts[k]++;
-            const t = new Date().toLocaleTimeString('en-IN');
-            logHistory.push({ time: t, label: l, detail: d });
-            localStorage.setItem('informa_counts', JSON.stringify(counts));
-            localStorage.setItem('informa_history', JSON.stringify(logHistory));
-            updateBadges();
-            new Image().src = `${SCRIPT_URL}?sheet=Activities&type=${encodeURIComponent(l)}&detail=${encodeURIComponent(d)}`;
-        }
-
-        function updateBadges() {
-            ['nps', 'whatsapp', 'yono', 'contact'].forEach(k => {
-                const badge = document.getElementById('badge-'+k);
-                if (badge) badge.innerText = counts[k];
-                if (targets[k]) {
-                    const percent = Math.min((counts[k] / targets[k]) * 100, 100);
-                    const bar = document.getElementById('bar-'+k);
-                    const btn = document.getElementById('btn-'+k);
-                    if(bar) bar.style.width = percent + '%';
-                    if(btn && percent >= 100) btn.classList.add('goal-reached');
-                }
-            });
-            document.getElementById('badge-all_forms').innerText = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-        }
-
-        function generatePDF(isShare = false) {
-            const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.text(`SBI Branch Audit Log`, 14, 15);
-            doc.autoTable({ head: [['S.No', 'Time', 'Activity', 'Detail']], body: logHistory.map((h, i) => [i + 1, h.time, h.label, h.detail]), startY: 28 });
-            
-            if(isShare) return doc.output('blob'); 
-            
-            const fileName = `${getFileDate()} SBI logs.pdf`;
-            doc.save(fileName); 
-            localStorage.clear(); location.reload();
-        }
-
-        async function shareToDrive() {
-            const fileName = `${getFileDate()} SBI logs.pdf`;
-            const file = new File([generatePDF(true)], fileName, { type: 'application/pdf' });
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                await navigator.share({ files: [file], title: 'SBI Audit Log' });
-            }
-        }
-
-        function generateExcel() {
-            const ws = XLSX.utils.json_to_sheet(logHistory.map((h, i) => ({ "S.No": i + 1, "Time": h.time, "Activity": h.label, "Detail": h.detail }))); 
-            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Log"); 
-            
-            const fileName = `${getFileDate()} SBI logs.xlsx`;
-            XLSX.writeFile(wb, fileName); 
-            localStorage.clear(); location.reload();
-        }
-
-        function showReport() {
-            counts.summary_clicks = (counts.summary_clicks || 0) + 1;
-            localStorage.setItem('informa_counts', JSON.stringify(counts));
-
-            document.getElementById('mainView').style.display = 'none'; 
-            document.getElementById('reportView').style.display = 'block';
-            const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-            document.getElementById('reportSummaryContainer').innerHTML = `
-                <div class="summary-item"><span>NPS</span><span>${counts.nps}</span></div>
-                <div class="summary-item"><span>WhatsApp</span><span>${counts.whatsapp}</span></div>
-                <div class="summary-item"><span>YONO</span><span>${counts.yono}</span></div>
-                <div class="summary-item"><span>Contact Centre</span><span>${counts.contact}</span></div>
-                <div class="summary-item"><span>Other Forms</span><span>${totalForms}</span></div>
-                <div class="summary-item" style="color:var(--sbi-cyan); border-top:2px solid #eee; margin-top:10px;">
-                    <span>Summary Gen. Count</span><span>${counts.summary_clicks}</span>
-                </div>`;
-        }
-
-        let ck, cl, cit = "Phone";
-        function handleActivity(k,l,r) { if(r) { ck=k; cl=l; document.getElementById('numberModal').style.display='flex'; setModalType('Phone'); } else finalizeActivity(k,l,"N/A"); }
-        
-        function setModalType(t) { 
-            cit = t; 
-            const i = document.getElementById('modalInput');
-            document.getElementById('optPhone').style.background = t==='Phone'?'var(--sbi-navy)':'#f1f5f9';
-            document.getElementById('optPhone').style.color = t==='Phone'?'white':'#000';
-            document.getElementById('optAccount').style.background = t==='Account'?'var(--sbi-navy)':'#f1f5f9';
-            document.getElementById('optAccount').style.color = t==='Account'?'white':'#000';
-            i.placeholder = t === 'Phone' ? "10 Digit Phone" : "Account Number";
-            if (t === 'Phone') i.setAttribute('maxlength', '10'); else i.removeAttribute('maxlength');
-        }
-
-        function submitModal() { 
-            let v = document.getElementById('modalInput').value; 
-            if(!v || (cit === 'Phone' && v.length !== 10)) return; 
-            document.getElementById('modalInput').value = ""; closeModal(); 
-            finalizeActivity(ck, cl, `${cit}: ${v}`); 
-        }
-
-        function closeModal() { document.getElementById('numberModal').style.display='none'; }
-        function openCategoryModal() { document.getElementById('categoryModal').style.display='flex'; }
-        function closeCategoryModal() { document.getElementById('categoryModal').style.display='none'; }
-        function selectForm(k,l) { closeCategoryModal(); finalizeActivity(k,l,"N/A"); }
-        function hideReport() { document.getElementById('reportView').style.display='none'; document.getElementById('mainView').style.display='flex'; }
-        
-        function shareReport() { 
-            const totalForms = counts.withdrawal + counts.deposit + counts.kyc + counts.account_opening + counts.voucher + counts.others;
-            const message = `*Daily Report*\nName: Ashutosh Pattnaik\nBranch: Komtalpeta (17978)\nNPS: ${counts.nps}\nWA: ${counts.whatsapp}\nYONO: ${counts.yono}\nContact: ${counts.contact}\nOther Forms: ${totalForms}\nSummary Clicks: ${counts.summary_clicks}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`); 
-        }
-    </script>
+    window.onload = () => { if(state.loginTime) doLogin(); };
+</script>
 </body>
 </html>
