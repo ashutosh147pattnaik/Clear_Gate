@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HPI Bank Ops - Full Input Portal</title>
+    <title>SBI Bank Ops - Full Input Portal</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
@@ -56,7 +56,7 @@
 <body>
 
 <header>
-    <div style="font-weight:bold;">HPI BANK</div>
+    <div style="font-weight:bold;">SBI BANK</div>
     <div id="live-clock">00:00:00</div>
 </header>
 
@@ -81,28 +81,28 @@
                 <h3>WhatsApp</h3>
                 <span class="target-label">Target: 15</span>
                 <div class="count" id="c-wa">0</div>
-                <button id="btn-wa" class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Action</button>
+                <button id="btn-wa" class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Add</button>
             </div>
 
             <div class="card">
                 <h3>Yono SBI</h3>
                 <span class="target-label">Target: 5</span>
                 <div class="count" id="c-yono">0</div>
-                <button id="btn-yono" class="btn-blue" onclick="openUnifiedModal('Yono SBI')">Action</button>
+                <button id="btn-yono" class="btn-blue" onclick="openUnifiedModal('Yono SBI')">Add</button>
             </div>
 
             <div class="card">
                 <h3>Contact Centre</h3>
                 <span class="target-label">Target: 10</span>
                 <div class="count" id="c-contact">0</div>
-                <button id="btn-contact" class="btn-blue" onclick="openUnifiedModal('Contact Centre')">Action</button>
+                <button id="btn-contact" class="btn-blue" onclick="openUnifiedModal('Contact Centre')">Add</button>
             </div>
 
             <div class="card" style="grid-column: span 2;">
                 <h3>CBDC</h3>
                 <span class="target-label">No Target</span>
                 <div class="count" id="c-cbdc">0</div>
-                <button id="btn-cbdc" class="btn-blue" onclick="openUnifiedModal('CBDC')">Action</button>
+                <button id="btn-cbdc" class="btn-blue" onclick="openUnifiedModal('CBDC')">Add</button>
             </div>
         </div>
         
@@ -120,7 +120,7 @@
             <button id="toggle-mob" class="toggle-btn" onclick="setEntryType('Mobile Number')">Mobile</button>
         </div>
         <input type="number" id="val-field" placeholder="Enter Digits">
-        <button class="btn-blue" onclick="saveUnifiedEntry()">Save & Increment</button>
+        <button class="btn-blue" onclick="saveUnifiedEntry()">Save</button>
         <button style="background:none; color:gray; margin-top:10px" onclick="closeModal()">Cancel</button>
     </div>
 </div>
@@ -237,9 +237,9 @@
 
     function shareWA() {
         const msg = `*Date:* ${new Date().toLocaleDateString()}\n` +
-                    `*Branch Name:* ${state.brName}\n` +
-                    `*Branch Code:* ${state.brCode}\n` +
-                    `*Name:* ${state.userName}\n\n` +
+                    `*Branch Name:* "SBI KOMTALPETA"\n` +
+                    `*Branch Code:* "17978"\n` +
+                    `*Name:* "ASHUTOSH PATTNAIK"\n\n` +
                     `NPS: ${state.counts.NPS}\n` +
                     `WhatsApp: ${state.counts.WhatsApp}\n` +
                     `Yono SBI Registration: ${state.counts['Yono SBI']}\n` +
