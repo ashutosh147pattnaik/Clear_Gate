@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HPI Bank Ops - Auto-Reset Portal</title>
+    <title>SBI Bank Ops - Full Input Portal</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
@@ -71,34 +71,38 @@
         
         <div class="grid">
             <div class="card">
-                <h3>NPS</h3>
+                <h3>NPS Feedback</h3>
                 <span class="target-label">Target: 10</span>
                 <div class="count" id="c-nps">0</div>
                 <button id="btn-nps" class="btn-blue" onclick="addSimple('NPS')">Add</button>
             </div>
+            
             <div class="card">
-                <h3>WhatsApp</h3>
+                <h3>WhatsApp Banking</h3>
                 <span class="target-label">Target: 15</span>
                 <div class="count" id="c-wa">0</div>
-                <button id="btn-wa" class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Action</button>
+                <button id="btn-wa" class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Add</button>
             </div>
+
             <div class="card">
-                <h3>Yono SBI</h3>
+                <h3>Yono</h3>
                 <span class="target-label">Target: 5</span>
                 <div class="count" id="c-yono">0</div>
-                <button id="btn-yono" class="btn-blue" onclick="openUnifiedModal('Yono SBI')">Action</button>
+                <button id="btn-yono" class="btn-blue" onclick="openUnifiedModal('Yono SBI')">Add</button>
             </div>
+
             <div class="card">
                 <h3>Contact Centre</h3>
                 <span class="target-label">Target: 10</span>
                 <div class="count" id="c-contact">0</div>
-                <button id="btn-contact" class="btn-blue" onclick="addSimple('Contact Centre')">Add</button>
+                <button id="btn-contact" class="btn-blue" onclick="openUnifiedModal('Contact Centre')">Add</button>
             </div>
+
             <div class="card" style="grid-column: span 2;">
                 <h3>CBDC</h3>
                 <span class="target-label">No Target</span>
                 <div class="count" id="c-cbdc">0</div>
-                <button id="btn-cbdc" class="btn-blue" onclick="openUnifiedModal('CBDC')">Action</button>
+                <button id="btn-cbdc" class="btn-blue" onclick="openUnifiedModal('CBDC')">Add</button>
             </div>
         </div>
         
@@ -116,7 +120,7 @@
             <button id="toggle-mob" class="toggle-btn" onclick="setEntryType('Mobile Number')">Mobile</button>
         </div>
         <input type="number" id="val-field" placeholder="Enter Digits">
-        <button class="btn-blue" onclick="saveUnifiedEntry()">Save & Increment</button>
+        <button class="btn-blue" onclick="saveUnifiedEntry()">Save</button>
         <button style="background:none; color:gray; margin-top:10px" onclick="closeModal()">Cancel</button>
     </div>
 </div>
@@ -126,7 +130,7 @@
     
     const TARGETS = { 'NPS': 10, 'WhatsApp': 15, 'Yono SBI': 5, 'Contact Centre': 10 };
 
-    let state = JSON.parse(localStorage.getItem('hpi_v11')) || {
+    let state = JSON.parse(localStorage.getItem('hpi_v12')) || {
         counts: { NPS: 0, WhatsApp: 0, "Yono SBI": 0, "Contact Centre": 0, CBDC: 0, "Other Forms": 0 },
         logs: [], loginTime: null,
         brName: "Rayagada Branch", brCode: "SBIN0000167", userName: "Laxmi Pribaka"
@@ -158,6 +162,7 @@
         document.getElementById('val-field').value = '';
         setEntryType('Account Number');
         document.getElementById('unified-modal').classList.remove('hidden');
+        setTimeout(() => document.getElementById('val-field').focus(), 100);
     }
 
     function setEntryType(type) {
@@ -171,13 +176,18 @@
         const val = document.getElementById('val-field').value;
         if(!val) return alert("Please enter digits");
         state.counts[activeCat]++;
-        state.logs.push({ id: state.logs.length + 1, cat: `${activeCat} (${selectedType})`, val: val, time: new Date().toLocaleTimeString() });
+        state.logs.push({ 
+            id: state.logs.length + 1, 
+            cat: `${activeCat} (${selectedType})`, 
+            val: val, 
+            time: new Date().toLocaleTimeString() 
+        });
         save();
         closeModal();
     }
 
     function closeModal() { document.getElementById('unified-modal').classList.add('hidden'); }
-    function save() { localStorage.setItem('hpi_v11', JSON.stringify(state)); refreshUI(); }
+    function save() { localStorage.setItem('hpi_v12', JSON.stringify(state)); refreshUI(); }
 
     function refreshUI() {
         const mapping = { 'NPS': 'nps', 'WhatsApp': 'wa', 'Yono SBI': 'yono', 'Contact Centre': 'contact', 'CBDC': 'cbdc' };
@@ -196,10 +206,7 @@
     }
 
     function generatePDF() {
-        if (state.logs.length === 0) {
-            alert("No data to export.");
-            return;
-        }
+        if (state.logs.length === 0) { alert("No data to export."); return; }
 
         const doc = new jsPDF();
         const now = new Date();
@@ -219,22 +226,20 @@
             theme: 'grid'
         });
 
-        // Save PDF
         doc.save(`SB_${d}_${m}_${y}.pdf`);
 
-        // AUTO-RESET LOGIC
         setTimeout(() => {
             localStorage.clear();
-            alert("Report Downloaded Successfully. Data has been reset for the next session.");
+            alert("Report Saved. App will now reset.");
             location.reload();
-        }, 1500); // Short delay to ensure download starts
+        }, 1500);
     }
 
     function shareWA() {
         const msg = `*Date:* ${new Date().toLocaleDateString()}\n` +
-                    `*Branch Name:* ${state.brName}\n` +
-                    `*Branch Code:* ${state.brCode}\n` +
-                    `*Name:* ${state.userName}\n\n` +
+                    `*Branch Name:* "SBI KOMTALPETA"\n` +
+                    `*Branch Code:* "17978"\n` +
+                    `*Name:* "ASHUTOSH PATTNAIK"\n\n` +
                     `NPS: ${state.counts.NPS}\n` +
                     `WhatsApp: ${state.counts.WhatsApp}\n` +
                     `Yono SBI Registration: ${state.counts['Yono SBI']}\n` +
