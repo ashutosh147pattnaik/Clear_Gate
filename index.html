@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SBI Bank Ops - Full Input Portal</title>
+    <title>SBI Bank Ops - Target Portal</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
@@ -81,28 +81,21 @@
                 <h3>WhatsApp</h3>
                 <span class="target-label">Target: 15</span>
                 <div class="count" id="c-wa">0</div>
-                <button id="btn-wa" class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Add</button>
+                <button id="btn-wa" class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Action</button>
             </div>
 
             <div class="card">
                 <h3>Yono SBI</h3>
                 <span class="target-label">Target: 5</span>
                 <div class="count" id="c-yono">0</div>
-                <button id="btn-yono" class="btn-blue" onclick="openUnifiedModal('Yono SBI')">Add</button>
+                <button id="btn-yono" class="btn-blue" onclick="openUnifiedModal('Yono SBI')">Action</button>
             </div>
 
             <div class="card">
                 <h3>Contact Centre</h3>
                 <span class="target-label">Target: 10</span>
                 <div class="count" id="c-contact">0</div>
-                <button id="btn-contact" class="btn-blue" onclick="openUnifiedModal('Contact Centre')">Add</button>
-            </div>
-
-            <div class="card" style="grid-column: span 2;">
-                <h3>CBDC</h3>
-                <span class="target-label">No Target</span>
-                <div class="count" id="c-cbdc">0</div>
-                <button id="btn-cbdc" class="btn-blue" onclick="openUnifiedModal('CBDC')">Add</button>
+                <button id="btn-contact" class="btn-blue" onclick="openUnifiedModal('Contact Centre')">Action</button>
             </div>
         </div>
         
@@ -127,13 +120,12 @@
 
 <script>
     const { jsPDF } = window.jspdf;
-    
     const TARGETS = { 'NPS': 10, 'WhatsApp': 15, 'Yono SBI': 5, 'Contact Centre': 10 };
 
-    let state = JSON.parse(localStorage.getItem('hpi_v12')) || {
-        counts: { NPS: 0, WhatsApp: 0, "Yono SBI": 0, "Contact Centre": 0, CBDC: 0, "Other Forms": 0 },
+    let state = JSON.parse(localStorage.getItem('sbi_v14')) || {
+        counts: { NPS: 0, WhatsApp: 0, "Yono SBI": 0, "Contact Centre": 0, "Other Forms": 0 },
         logs: [], loginTime: null,
-        brName: "Rayagada Branch", brCode: "SBIN0000167", userName: "Laxmi Pribaka"
+        brName: "SBI KOMTALPETA", brCode: "17978", userName: "ASHUTOSH PATTNAIK"
     };
 
     let activeCat = '';
@@ -187,10 +179,10 @@
     }
 
     function closeModal() { document.getElementById('unified-modal').classList.add('hidden'); }
-    function save() { localStorage.setItem('hpi_v12', JSON.stringify(state)); refreshUI(); }
+    function save() { localStorage.setItem('sbi_v14', JSON.stringify(state)); refreshUI(); }
 
     function refreshUI() {
-        const mapping = { 'NPS': 'nps', 'WhatsApp': 'wa', 'Yono SBI': 'yono', 'Contact Centre': 'contact', 'CBDC': 'cbdc' };
+        const mapping = { 'NPS': 'nps', 'WhatsApp': 'wa', 'Yono SBI': 'yono', 'Contact Centre': 'contact' };
         for(let key in mapping) {
             const count = state.counts[key];
             const shortKey = mapping[key];
@@ -206,15 +198,13 @@
     }
 
     function generatePDF() {
-        if (state.logs.length === 0) { alert("No data to export."); return; }
-
         const doc = new jsPDF();
         const now = new Date();
         const d = String(now.getDate()).padStart(2, '0');
         const m = String(now.getMonth() + 1).padStart(2, '0');
         const y = now.getFullYear();
         
-        doc.setFontSize(16); doc.setTextColor(0, 51, 102); doc.text("HPI BANK SUMMARY REPORT", 14, 15);
+        doc.setFontSize(16); doc.setTextColor(0, 51, 102); doc.text("SBI BANK SUMMARY REPORT", 14, 15);
         doc.setFontSize(10); doc.setTextColor(100); doc.text(`Login Time: ${state.loginTime || 'N/A'}`, 14, 22);
         doc.text(`Date: ${d}/${m}/${y}`, 14, 27);
         
@@ -230,22 +220,24 @@
 
         setTimeout(() => {
             localStorage.clear();
-            alert("Report Saved. App will now reset.");
+            alert("Report Saved. App will reset.");
             location.reload();
         }, 1500);
     }
 
     function shareWA() {
+        // Calculate dynamic Other Forms (Base 25 + any internal increments)
+        const totalOther = 25 + (state.counts['Other Forms'] || 0);
+
         const msg = `*Date:* ${new Date().toLocaleDateString()}\n` +
-                    `*Branch Name:* "SBI KOMTALPETA"\n` +
-                    `*Branch Code:* "17978"\n` +
-                    `*Name:* "ASHUTOSH PATTNAIK"\n\n` +
+                    `*Branch Name:* "${state.brName}"\n` +
+                    `*Branch Code:* "${state.brCode}"\n` +
+                    `*Name:* "${state.userName}"\n\n` +
                     `NPS: ${state.counts.NPS}\n` +
                     `WhatsApp: ${state.counts.WhatsApp}\n` +
                     `Yono SBI Registration: ${state.counts['Yono SBI']}\n` +
                     `Contact Centre: ${state.counts['Contact Centre']}\n` +
-                    `CBDC: ${state.counts.CBDC}\n` +
-                    `Other Forms: ${state.counts['Other Forms']}`;
+                    `Other Forms: ${totalOther}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
     }
 
