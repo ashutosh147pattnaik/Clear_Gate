@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HPI Bank Ops - Target Tracker</title>
+    <title>HPI Bank Ops - Auto-Reset Portal</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
@@ -56,7 +56,7 @@
 <body>
 
 <header>
-    <div style="font-weight:bold;">HPI BANK</div>
+    <div style="font-weight:bold;">SBI BANK</div>
     <div id="live-clock">00:00:00</div>
 </header>
 
@@ -94,23 +94,17 @@
                 <div class="count" id="c-contact">0</div>
                 <button id="btn-contact" class="btn-blue" onclick="addSimple('Contact Centre')">Add</button>
             </div>
-            <div class="card">
+            <div class="card" style="grid-column: span 2;">
                 <h3>CBDC</h3>
                 <span class="target-label">No Target</span>
                 <div class="count" id="c-cbdc">0</div>
                 <button id="btn-cbdc" class="btn-blue" onclick="openUnifiedModal('CBDC')">Action</button>
             </div>
-            <div class="card">
-                <h3>Other Forms</h3>
-                <span class="target-label">No Target</span>
-                <div class="count" id="c-other">0</div>
-                <button id="btn-other" class="btn-blue" onclick="addSimple('Other Forms')">Add</button>
-            </div>
         </div>
         
-        <button class="btn-summary" onclick="generatePDF()">Download PDF Report</button>
+        <button class="btn-summary" onclick="generatePDF()">Download PDF & Reset</button>
         <button class="btn-blue" style="background:#25D366; margin-top:10px;" onclick="shareWA()">Share via WhatsApp</button>
-        <button class="btn-red" onclick="resetApp()">Reset All Data</button>
+        <button class="btn-red" onclick="resetApp()">Manual Reset</button>
     </div>
 </div>
 
@@ -130,20 +124,12 @@
 <script>
     const { jsPDF } = window.jspdf;
     
-    const TARGETS = {
-        'NPS': 10,
-        'WhatsApp': 15,
-        'Yono SBI': 5,
-        'Contact Centre': 10
-    };
+    const TARGETS = { 'NPS': 10, 'WhatsApp': 15, 'Yono SBI': 5, 'Contact Centre': 10 };
 
-    let state = JSON.parse(localStorage.getItem('hpi_v9')) || {
+    let state = JSON.parse(localStorage.getItem('hpi_v11')) || {
         counts: { NPS: 0, WhatsApp: 0, "Yono SBI": 0, "Contact Centre": 0, CBDC: 0, "Other Forms": 0 },
-        logs: [],
-        loginTime: null,
-        brName: "Rayagada Branch", 
-        brCode: "SBIN0000167", 
-        userName: "Laxmi Pribaka"
+        logs: [], loginTime: null,
+        brName: "Rayagada Branch", brCode: "SBIN0000167", userName: "Laxmi Pribaka"
     };
 
     let activeCat = '';
@@ -162,12 +148,7 @@
 
     function addSimple(cat) {
         state.counts[cat]++;
-        state.logs.push({ 
-            id: state.logs.length + 1, 
-            cat: cat, 
-            val: "Incremented by 1",
-            time: new Date().toLocaleTimeString() 
-        });
+        state.logs.push({ id: state.logs.length + 1, cat: cat, val: "Incremented by 1", time: new Date().toLocaleTimeString() });
         save();
     }
 
@@ -190,53 +171,44 @@
         const val = document.getElementById('val-field').value;
         if(!val) return alert("Please enter digits");
         state.counts[activeCat]++;
-        state.logs.push({ 
-            id: state.logs.length + 1, 
-            cat: `${activeCat} (${selectedType})`, 
-            val: val,
-            time: new Date().toLocaleTimeString()
-        });
+        state.logs.push({ id: state.logs.length + 1, cat: `${activeCat} (${selectedType})`, val: val, time: new Date().toLocaleTimeString() });
         save();
         closeModal();
     }
 
     function closeModal() { document.getElementById('unified-modal').classList.add('hidden'); }
-    function save() { localStorage.setItem('hpi_v9', JSON.stringify(state)); refreshUI(); }
+    function save() { localStorage.setItem('hpi_v11', JSON.stringify(state)); refreshUI(); }
 
     function refreshUI() {
-        const mapping = { 'NPS': 'nps', 'WhatsApp': 'wa', 'Yono SBI': 'yono', 'Contact Centre': 'contact', 'CBDC': 'cbdc', 'Other Forms': 'other' };
-        
-        for(let key in state.counts) {
+        const mapping = { 'NPS': 'nps', 'WhatsApp': 'wa', 'Yono SBI': 'yono', 'Contact Centre': 'contact', 'CBDC': 'cbdc' };
+        for(let key in mapping) {
             const count = state.counts[key];
             const shortKey = mapping[key];
+            const displayEl = document.getElementById('c-' + shortKey);
+            if (displayEl) displayEl.innerText = count;
             
-            // Update Text
-            document.getElementById('c-' + shortKey).innerText = count;
-            
-            // Check Targets and Change Button Color
             const btn = document.getElementById('btn-' + shortKey);
-            if (TARGETS[key] && count >= TARGETS[key]) {
-                btn.classList.add('btn-target-met');
-            } else {
-                btn.classList.remove('btn-target-met');
+            if (btn) {
+                if (TARGETS[key] && count >= TARGETS[key]) btn.classList.add('btn-target-met');
+                else btn.classList.remove('btn-target-met');
             }
         }
     }
 
     function generatePDF() {
+        if (state.logs.length === 0) {
+            alert("No data to export.");
+            return;
+        }
+
         const doc = new jsPDF();
         const now = new Date();
         const d = String(now.getDate()).padStart(2, '0');
         const m = String(now.getMonth() + 1).padStart(2, '0');
         const y = now.getFullYear();
-        const fileName = `SB_${d}_${m}_${y}.pdf`;
-
-        doc.setFontSize(16);
-        doc.setTextColor(0, 51, 102);
-        doc.text("HPI BANK SUMMARY REPORT", 14, 15);
-        doc.setFontSize(10);
-        doc.setTextColor(100);
-        doc.text(`Login Time: ${state.loginTime || 'N/A'}`, 14, 22);
+        
+        doc.setFontSize(16); doc.setTextColor(0, 51, 102); doc.text("HPI BANK SUMMARY REPORT", 14, 15);
+        doc.setFontSize(10); doc.setTextColor(100); doc.text(`Login Time: ${state.loginTime || 'N/A'}`, 14, 22);
         doc.text(`Date: ${d}/${m}/${y}`, 14, 27);
         
         doc.autoTable({
@@ -246,7 +218,16 @@
             headStyles: { fillColor: [0, 51, 102] },
             theme: 'grid'
         });
-        doc.save(fileName);
+
+        // Save PDF
+        doc.save(`SB_${d}_${m}_${y}.pdf`);
+
+        // AUTO-RESET LOGIC
+        setTimeout(() => {
+            localStorage.clear();
+            alert("Report Downloaded Successfully. Data has been reset for the next session.");
+            location.reload();
+        }, 1500); // Short delay to ensure download starts
     }
 
     function shareWA() {
@@ -263,7 +244,7 @@
         window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
     }
 
-    function resetApp() { if(confirm("Wipe all logs and counts?")) { localStorage.clear(); location.reload(); } }
+    function resetApp() { if(confirm("Manual Override: Wipe all data?")) { localStorage.clear(); location.reload(); } }
     window.onload = () => { if(state.loginTime) doLogin(); };
 </script>
 </body>
