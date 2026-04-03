@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HPI Bank Ops - SB Named Export</title>
+    <title>SBI Bank Ops - Final Clean View</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
@@ -20,10 +20,7 @@
 
         #main-content { padding: 10px; max-width: 500px; margin: auto; }
 
-        .branch-info { background: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .branch-info input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem; width: 100%; }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .card {
             background: white; padding: 12px; border-radius: 10px; text-align: center;
             border-top: 3px solid var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -50,6 +47,7 @@
         input#val-field { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
 
         .hidden { display: none !important; }
+        .login-info-box { font-size: 0.75rem; color: #666; text-align: right; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -60,17 +58,14 @@
 </header>
 
 <div id="main-content">
-    <div id="login-page" style="text-align:center; padding-top:50px;">
-        <button class="btn-blue" style="width:120px;" onclick="doLogin()">Login</button>
+    <div id="login-page" style="text-align:center; padding-top:80px;">
+        <h2 style="color:var(--primary)">Operations Portal</h2>
+        <button class="btn-blue" style="width:140px; font-size:1rem;" onclick="doLogin()">Login</button>
     </div>
 
     <div id="dashboard" class="hidden">
-        <div class="branch-info">
-            <input type="text" id="br-name" placeholder="Branch Name" oninput="saveInfo()">
-            <input type="text" id="br-code" placeholder="Branch Code" oninput="saveInfo()">
-            <input type="text" id="user-name" placeholder="Staff Name" oninput="saveInfo()" style="grid-column: span 2;">
-        </div>
-
+        <div id="login-timestamp-ui" class="login-info-box"></div>
+        
         <div class="grid">
             <div class="card"><h3>NPS</h3><div class="count" id="c-nps">0</div><button class="btn-blue" onclick="addSimple('NPS')">Add</button></div>
             <div class="card"><h3>WhatsApp</h3><div class="count" id="c-wa">0</div><button class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Action</button></div>
@@ -101,9 +96,16 @@
 
 <script>
     const { jsPDF } = window.jspdf;
-    let state = JSON.parse(localStorage.getItem('hpi_v6')) || {
+    
+    // state now handles loginTime
+    let state = JSON.parse(localStorage.getItem('hpi_v8')) || {
         counts: { NPS: 0, WhatsApp: 0, "Yono SBI": 0, "Contact Centre": 0, CBDC: 0, "Other Forms": 0 },
-        logs: [], brName: '', brCode: '', userName: ''
+        logs: [],
+        loginTime: null,
+        // Preset your details here for WhatsApp Export
+        brName: "Rayagada Branch", 
+        brCode: "SBIN0000167", 
+        userName: "Laxmi Pribaka"
     };
 
     let activeCat = '';
@@ -112,24 +114,24 @@
     setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
     function doLogin() {
+        if (!state.loginTime) {
+            state.loginTime = new Date().toLocaleTimeString();
+        }
         document.getElementById('login-page').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
-        document.getElementById('br-name').value = state.brName || '';
-        document.getElementById('br-code').value = state.brCode || '';
-        document.getElementById('user-name').value = state.userName || '';
-        refreshUI();
-    }
-
-    function saveInfo() {
-        state.brName = document.getElementById('br-name').value;
-        state.brCode = document.getElementById('br-code').value;
-        state.userName = document.getElementById('user-name').value;
+        document.getElementById('login-timestamp-ui').innerText = "Logged in at: " + state.loginTime;
         save();
+        refreshUI();
     }
 
     function addSimple(cat) {
         state.counts[cat]++;
-        state.logs.push({ id: state.logs.length + 1, cat: cat, val: "Incremented by 1" });
+        state.logs.push({ 
+            id: state.logs.length + 1, 
+            cat: cat, 
+            val: "Incremented by 1",
+            time: new Date().toLocaleTimeString() 
+        });
         save();
     }
 
@@ -152,43 +154,51 @@
         const val = document.getElementById('val-field').value;
         if(!val) return alert("Please enter digits");
         state.counts[activeCat]++;
-        state.logs.push({ id: state.logs.length + 1, cat: `${activeCat} (${selectedType})`, val: val });
+        state.logs.push({ 
+            id: state.logs.length + 1, 
+            cat: `${activeCat} (${selectedType})`, 
+            val: val,
+            time: new Date().toLocaleTimeString()
+        });
         save();
         closeModal();
     }
 
     function closeModal() { document.getElementById('unified-modal').classList.add('hidden'); }
-    function save() { localStorage.setItem('hpi_v6', JSON.stringify(state)); refreshUI(); }
+    function save() { localStorage.setItem('hpi_v8', JSON.stringify(state)); refreshUI(); }
 
     function refreshUI() {
-        document.getElementById('c-nps').innerText = state.counts['NPS'];
-        document.getElementById('c-wa').innerText = state.counts['WhatsApp'];
-        document.getElementById('c-yono').innerText = state.counts['Yono SBI'];
-        document.getElementById('c-contact').innerText = state.counts['Contact Centre'];
-        document.getElementById('c-cbdc').innerText = state.counts['CBDC'];
-        document.getElementById('c-other').innerText = state.counts['Other Forms'];
+        const mapping = { 'NPS': 'nps', 'WhatsApp': 'wa', 'Yono SBI': 'yono', 'Contact Centre': 'contact', 'CBDC': 'cbdc', 'Other Forms': 'other' };
+        for(let key in state.counts) {
+            const el = document.getElementById('c-' + mapping[key]);
+            if(el) el.innerText = state.counts[key];
+        }
     }
 
     function generatePDF() {
         const doc = new jsPDF();
-        const dateObj = new Date();
-        const day = String(dateObj.getDate()).padStart(2, '0');
-        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-        const year = dateObj.getFullYear();
-        
-        // Custom Filename: SB Date
-        const fileName = `SB_${day}_${month}_${year}.pdf`;
+        const now = new Date();
+        const d = String(now.getDate()).padStart(2, '0');
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const y = now.getFullYear();
+        const fileName = `SB_${d}_${m}_${y}.pdf`;
 
+        // PDF Header
         doc.setFontSize(16);
+        doc.setTextColor(0, 51, 102);
         doc.text("HPI BANK SUMMARY REPORT", 14, 15);
+        
         doc.setFontSize(10);
-        doc.text(`Branch: ${state.brName} | Code: ${state.brCode} | Staff: ${state.userName}`, 14, 22);
+        doc.setTextColor(100);
+        doc.text(`Login Time: ${state.loginTime || 'N/A'}`, 14, 22);
+        doc.text(`Date: ${d}/${m}/${y}`, 14, 27);
         
         doc.autoTable({
-            startY: 30,
-            head: [['S.No', 'Category / Details', 'Value']],
-            body: state.logs.map(l => [l.id, l.cat, l.val]),
-            headStyles: { fillColor: [0, 51, 102] }
+            startY: 32,
+            head: [['S.No', 'Details (Action Time)', 'Value / Action']],
+            body: state.logs.map(l => [l.id, `${l.cat} [${l.time}]`, l.val]),
+            headStyles: { fillColor: [0, 51, 102] },
+            theme: 'grid'
         });
 
         doc.save(fileName);
@@ -196,9 +206,9 @@
 
     function shareWA() {
         const msg = `*Date:* ${new Date().toLocaleDateString()}\n` +
-                    `*Branch Name:* ${state.brName || 'N/A'}\n` +
-                    `*Branch Code:* ${state.brCode || 'N/A'}\n` +
-                    `*Name:* ${state.userName || 'N/A'}\n\n` +
+                    `*Branch Name:* ${state.brName}\n` +
+                    `*Branch Code:* ${state.brCode}\n` +
+                    `*Name:* ${state.userName}\n\n` +
                     `NPS: ${state.counts.NPS}\n` +
                     `WhatsApp: ${state.counts.WhatsApp}\n` +
                     `Yono SBI Registration: ${state.counts['Yono SBI']}\n` +
@@ -208,8 +218,10 @@
         window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
     }
 
-    function resetApp() { if(confirm("Clear all data?")) { localStorage.clear(); location.reload(); } }
-    window.onload = () => { if(state.brName || state.counts.NPS > 0) doLogin(); };
+    function resetApp() { if(confirm("Wipe all logs and counts?")) { localStorage.clear(); location.reload(); } }
+    
+    // Auto-login if session exists
+    window.onload = () => { if(state.loginTime) doLogin(); };
 </script>
 </body>
 </html>
