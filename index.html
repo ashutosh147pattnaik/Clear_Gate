@@ -252,7 +252,7 @@
 
     function shareWA() {
         const totalOther = 25 + (state.counts['Other Forms'] || 0);
-        const msg = `*SBI Daily Report*\n*Date:* ${new Date().toLocaleDateString()}\n*User:* ${state.userName}\n\nNPS: ${state.counts.NPS}\nWA: ${state.counts.WhatsApp}\nYono: ${state.counts['Yono SBI']}\nContact: ${state.counts['Contact Centre']}\nOther: ${totalOther}`;
+        const msg = `*SBI KOMTLPETA (17978)*\n*Date:* ${new Date().toLocaleDateString()}\n*Name:* ${state.userName}\n\nNPS: ${state.counts.NPS}\nWA: ${state.counts.WhatsApp}\nYono: ${state.counts['Yono SBI']}\nContact: ${state.counts['Contact Centre']}\nOther: ${totalOther}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
     }
 
