@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SBI Bank Ops - Final Clean View</title>
+    <title>HPI Bank Ops - Target Tracker</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
     <style>
-        :root { --primary: #003366; --accent: #ffcc00; --bg: #f4f7f9; --white: #ffffff; }
+        :root { --primary: #003366; --accent: #ffcc00; --bg: #f4f7f9; --white: #ffffff; --success: #28a745; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 30px; }
         
@@ -26,11 +26,14 @@
             border-top: 3px solid var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .card h3 { margin: 0; font-size: 0.85rem; color: #444; height: 34px; display: flex; align-items: center; justify-content: center; }
+        .target-label { font-size: 0.65rem; color: #888; display: block; margin-top: 2px; }
         .count { font-size: 1.4rem; font-weight: bold; margin: 5px 0; color: var(--primary); }
 
-        button { padding: 8px 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem; width: 100%; }
+        button { padding: 8px 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem; width: 100%; transition: background 0.3s; }
         .btn-blue { background: var(--primary); color: white; }
-        .btn-green { background: #28a745; color: white; margin-top: 15px; }
+        .btn-target-met { background: var(--success) !important; color: white; }
+        
+        .btn-summary { background: #28a745; color: white; margin-top: 15px; }
         .btn-red { background: #dc3545; color: white; margin-top: 10px; font-size: 0.7rem; padding: 5px; }
 
         .modal {
@@ -53,7 +56,7 @@
 <body>
 
 <header>
-    <div style="font-weight:bold;">SBI BANK</div>
+    <div style="font-weight:bold;">HPI BANK</div>
     <div id="live-clock">00:00:00</div>
 </header>
 
@@ -67,15 +70,45 @@
         <div id="login-timestamp-ui" class="login-info-box"></div>
         
         <div class="grid">
-            <div class="card"><h3>NPS</h3><div class="count" id="c-nps">0</div><button class="btn-blue" onclick="addSimple('NPS')">Add</button></div>
-            <div class="card"><h3>WhatsApp</h3><div class="count" id="c-wa">0</div><button class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Action</button></div>
-            <div class="card"><h3>Yono SBI</h3><div class="count" id="c-yono">0</div><button class="btn-blue" onclick="openUnifiedModal('Yono SBI')">Action</button></div>
-            <div class="card"><h3>Contact Centre</h3><div class="count" id="c-contact">0</div><button class="btn-blue" onclick="addSimple('Contact Centre')">Add</button></div>
-            <div class="card"><h3>CBDC</h3><div class="count" id="c-cbdc">0</div><button class="btn-blue" onclick="openUnifiedModal('CBDC')">Action</button></div>
-            <div class="card"><h3>Other Forms</h3><div class="count" id="c-other">0</div><button class="btn-blue" onclick="addSimple('Other Forms')">Add</button></div>
+            <div class="card">
+                <h3>NPS</h3>
+                <span class="target-label">Target: 10</span>
+                <div class="count" id="c-nps">0</div>
+                <button id="btn-nps" class="btn-blue" onclick="addSimple('NPS')">Add</button>
+            </div>
+            <div class="card">
+                <h3>WhatsApp</h3>
+                <span class="target-label">Target: 15</span>
+                <div class="count" id="c-wa">0</div>
+                <button id="btn-wa" class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Action</button>
+            </div>
+            <div class="card">
+                <h3>Yono SBI</h3>
+                <span class="target-label">Target: 5</span>
+                <div class="count" id="c-yono">0</div>
+                <button id="btn-yono" class="btn-blue" onclick="openUnifiedModal('Yono SBI')">Action</button>
+            </div>
+            <div class="card">
+                <h3>Contact Centre</h3>
+                <span class="target-label">Target: 10</span>
+                <div class="count" id="c-contact">0</div>
+                <button id="btn-contact" class="btn-blue" onclick="addSimple('Contact Centre')">Add</button>
+            </div>
+            <div class="card">
+                <h3>CBDC</h3>
+                <span class="target-label">No Target</span>
+                <div class="count" id="c-cbdc">0</div>
+                <button id="btn-cbdc" class="btn-blue" onclick="openUnifiedModal('CBDC')">Action</button>
+            </div>
+            <div class="card">
+                <h3>Other Forms</h3>
+                <span class="target-label">No Target</span>
+                <div class="count" id="c-other">0</div>
+                <button id="btn-other" class="btn-blue" onclick="addSimple('Other Forms')">Add</button>
+            </div>
         </div>
         
-        <button class="btn-green" onclick="generatePDF()">Download PDF Report</button>
+        <button class="btn-summary" onclick="generatePDF()">Download PDF Report</button>
         <button class="btn-blue" style="background:#25D366; margin-top:10px;" onclick="shareWA()">Share via WhatsApp</button>
         <button class="btn-red" onclick="resetApp()">Reset All Data</button>
     </div>
@@ -97,12 +130,17 @@
 <script>
     const { jsPDF } = window.jspdf;
     
-    // state now handles loginTime
-    let state = JSON.parse(localStorage.getItem('hpi_v8')) || {
+    const TARGETS = {
+        'NPS': 10,
+        'WhatsApp': 15,
+        'Yono SBI': 5,
+        'Contact Centre': 10
+    };
+
+    let state = JSON.parse(localStorage.getItem('hpi_v9')) || {
         counts: { NPS: 0, WhatsApp: 0, "Yono SBI": 0, "Contact Centre": 0, CBDC: 0, "Other Forms": 0 },
         logs: [],
         loginTime: null,
-        // Preset your details here for WhatsApp Export
         brName: "Rayagada Branch", 
         brCode: "SBIN0000167", 
         userName: "Laxmi Pribaka"
@@ -114,9 +152,7 @@
     setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
     function doLogin() {
-        if (!state.loginTime) {
-            state.loginTime = new Date().toLocaleTimeString();
-        }
+        if (!state.loginTime) state.loginTime = new Date().toLocaleTimeString();
         document.getElementById('login-page').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
         document.getElementById('login-timestamp-ui').innerText = "Logged in at: " + state.loginTime;
@@ -165,13 +201,25 @@
     }
 
     function closeModal() { document.getElementById('unified-modal').classList.add('hidden'); }
-    function save() { localStorage.setItem('hpi_v8', JSON.stringify(state)); refreshUI(); }
+    function save() { localStorage.setItem('hpi_v9', JSON.stringify(state)); refreshUI(); }
 
     function refreshUI() {
         const mapping = { 'NPS': 'nps', 'WhatsApp': 'wa', 'Yono SBI': 'yono', 'Contact Centre': 'contact', 'CBDC': 'cbdc', 'Other Forms': 'other' };
+        
         for(let key in state.counts) {
-            const el = document.getElementById('c-' + mapping[key]);
-            if(el) el.innerText = state.counts[key];
+            const count = state.counts[key];
+            const shortKey = mapping[key];
+            
+            // Update Text
+            document.getElementById('c-' + shortKey).innerText = count;
+            
+            // Check Targets and Change Button Color
+            const btn = document.getElementById('btn-' + shortKey);
+            if (TARGETS[key] && count >= TARGETS[key]) {
+                btn.classList.add('btn-target-met');
+            } else {
+                btn.classList.remove('btn-target-met');
+            }
         }
     }
 
@@ -183,11 +231,9 @@
         const y = now.getFullYear();
         const fileName = `SB_${d}_${m}_${y}.pdf`;
 
-        // PDF Header
         doc.setFontSize(16);
         doc.setTextColor(0, 51, 102);
         doc.text("HPI BANK SUMMARY REPORT", 14, 15);
-        
         doc.setFontSize(10);
         doc.setTextColor(100);
         doc.text(`Login Time: ${state.loginTime || 'N/A'}`, 14, 22);
@@ -200,7 +246,6 @@
             headStyles: { fillColor: [0, 51, 102] },
             theme: 'grid'
         });
-
         doc.save(fileName);
     }
 
@@ -219,8 +264,6 @@
     }
 
     function resetApp() { if(confirm("Wipe all logs and counts?")) { localStorage.clear(); location.reload(); } }
-    
-    // Auto-login if session exists
     window.onload = () => { if(state.loginTime) doLogin(); };
 </script>
 </body>
