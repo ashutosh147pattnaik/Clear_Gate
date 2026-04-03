@@ -3,67 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SBI Bank Ops - Target Portal</title>
+    <title>SBI Ops | Target Portal</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
     <style>
-        :root { --primary: #003366; --accent: #ffcc00; --bg: #f4f7f9; --white: #ffffff; --success: #28a745; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 30px; }
+        :root { 
+            --primary: #003366; 
+            --primary-light: #00509d;
+            --accent: #ffcc00; 
+            --bg: #eef2f7; 
+            --white: #ffffff; 
+            --success: #2ecc71; 
+            --danger: #e74c3c;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; transition: all 0.2s ease; }
+        
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            margin: 0; 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
         
         header {
-            background: var(--primary); color: white; padding: 10px 15px;
-            border-bottom: 3px solid var(--accent);
-            display: flex; justify-content: space-between; align-items: center;
+            background: var(--primary); 
+            color: white; 
+            padding: 15px 20px;
+            border-bottom: 4px solid var(--accent);
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        #main-content { padding: 10px; max-width: 500px; margin: auto; }
+        .logo-text { font-weight: 800; letter-spacing: 1px; font-size: 1.1rem; }
+        #live-clock { font-family: monospace; font-size: 1rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; }
 
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .card {
-            background: white; padding: 12px; border-radius: 10px; text-align: center;
-            border-top: 3px solid var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        #main-content { padding: 20px; max-width: 600px; margin: auto; }
+
+        /* Login Page */
+        #login-page {
+            background: var(--white);
+            padding: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-top: 50px;
         }
-        .card h3 { margin: 0; font-size: 0.85rem; color: #444; height: 34px; display: flex; align-items: center; justify-content: center; }
-        .target-label { font-size: 0.65rem; color: #888; display: block; margin-top: 2px; }
-        .count { font-size: 1.4rem; font-weight: bold; margin: 5px 0; color: var(--primary); }
 
-        button { padding: 8px 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem; width: 100%; transition: background 0.3s; }
-        .btn-blue { background: var(--primary); color: white; }
-        .btn-target-met { background: var(--success) !important; color: white; }
+        /* Dashboard Grid */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
         
-        .btn-summary { background: #28a745; color: white; margin-top: 15px; }
-        .btn-red { background: #dc3545; color: white; margin-top: 10px; font-size: 0.7rem; padding: 5px; }
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px; 
+            border-radius: 16px; 
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
 
+        .card h3 { margin: 0; font-size: 1rem; color: var(--primary); font-weight: 700; }
+        .target-label { font-size: 0.75rem; color: var(--text-light); margin-top: 4px; display: block; }
+        .count { font-size: 2rem; font-weight: 800; margin: 10px 0; color: var(--text-dark); }
+
+        /* Progress Bar */
+        .progress-container { background: #eee; height: 6px; border-radius: 10px; margin: 10px 0; overflow: hidden; }
+        .progress-bar { background: var(--primary); height: 100%; width: 0%; transition: width 0.5s ease-in-out; }
+
+        /* Buttons */
+        button { 
+            padding: 12px; border: none; border-radius: 8px; 
+            font-weight: 700; cursor: pointer; font-size: 0.9rem; 
+            width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        button:active { transform: scale(0.96); }
+        
+        .btn-blue { background: var(--primary); color: white; }
+        .btn-blue:hover { background: var(--primary-light); }
+        
+        .btn-target-met { background: var(--success) !important; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
+
+        .btn-summary { background: var(--success); color: white; margin-top: 25px; }
+        .btn-wa { background: #25D366; color: white; margin-top: 12px; }
+        .btn-red { background: transparent; color: var(--danger); margin-top: 20px; font-size: 0.75rem; border: 1px solid var(--danger); box-shadow: none; }
+
+        /* Modal Overhaul */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center;
-            z-index: 2000; padding: 20px;
+            background: rgba(0, 51, 102, 0.4); backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 2000;
         }
-        .modal-content { background: white; padding: 20px; border-radius: 12px; width: 100%; max-width: 320px; }
+        .modal-content { 
+            background: white; padding: 30px; border-radius: 20px; 
+            width: 90%; max-width: 380px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
         
-        .toggle-container { display: flex; gap: 5px; margin-bottom: 15px; }
-        .toggle-btn { background: #eee; color: #333; flex: 1; border: 1px solid #ddd; padding: 8px; border-radius: 4px; font-size: 0.75rem; }
-        .toggle-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .toggle-container { display: flex; gap: 10px; margin-bottom: 20px; background: #f0f2f5; padding: 5px; border-radius: 10px; }
+        .toggle-btn { background: none; color: var(--text-light); flex: 1; padding: 10px; border-radius: 7px; font-size: 0.85rem; box-shadow: none; }
+        .toggle-btn.active { background: var(--white); color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        input#val-field { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
+        input#val-field { 
+            width: 100%; padding: 15px; margin-bottom: 20px; 
+            border: 2px solid #eee; border-radius: 10px; font-size: 1.1rem; outline: none;
+        }
+        input#val-field:focus { border-color: var(--primary); }
 
         .hidden { display: none !important; }
-        .login-info-box { font-size: 0.75rem; color: #666; text-align: right; margin-bottom: 5px; }
+        .login-info-box { font-size: 0.8rem; color: var(--text-light); text-align: center; margin: 15px 0; background: rgba(255,255,255,0.5); padding: 8px; border-radius: 8px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="font-weight:bold;">SBI BANK</div>
+    <div class="logo-text">SBI BANK OPS</div>
     <div id="live-clock">00:00:00</div>
 </header>
 
 <div id="main-content">
-    <div id="login-page" style="text-align:center; padding-top:80px;">
-        <h2 style="color:var(--primary)">Operations Portal</h2>
-        <button class="btn-blue" style="width:140px; font-size:1rem;" onclick="doLogin()">Login</button>
+    <div id="login-page" style="text-align:center;">
+        <div style="font-size: 3rem; margin-bottom: 10px;">🏦</div>
+        <h2 style="color:var(--primary); margin-bottom: 30px;">Branch Operations<br><span style="font-size: 0.9rem; color: var(--text-light); font-weight: 400;">Data Entry & Target Tracker</span></h2>
+        <button class="btn-blue" style="width:200px; font-size:1.1rem;" onclick="doLogin()">Start Session</button>
     </div>
 
     <div id="dashboard" class="hidden">
@@ -74,47 +148,51 @@
                 <h3>NPS</h3>
                 <span class="target-label">Target: 10</span>
                 <div class="count" id="c-nps">0</div>
-                <button id="btn-nps" class="btn-blue" onclick="addSimple('NPS')">Add</button>
+                <div class="progress-container"><div id="p-nps" class="progress-bar"></div></div>
+                <button id="btn-nps" class="btn-blue" onclick="addSimple('NPS')">Quick Add</button>
             </div>
             
             <div class="card">
                 <h3>WhatsApp</h3>
                 <span class="target-label">Target: 15</span>
                 <div class="count" id="c-wa">0</div>
-                <button id="btn-wa" class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Action</button>
+                <div class="progress-container"><div id="p-wa" class="progress-bar"></div></div>
+                <button id="btn-wa" class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Record</button>
             </div>
 
             <div class="card">
                 <h3>Yono SBI</h3>
                 <span class="target-label">Target: 5</span>
                 <div class="count" id="c-yono">0</div>
-                <button id="btn-yono" class="btn-blue" onclick="openUnifiedModal('Yono SBI')">Action</button>
+                <div class="progress-container"><div id="p-yono" class="progress-bar"></div></div>
+                <button id="btn-yono" class="btn-blue" onclick="openUnifiedModal('Yono SBI')">Record</button>
             </div>
 
             <div class="card">
                 <h3>Contact Centre</h3>
                 <span class="target-label">Target: 10</span>
                 <div class="count" id="c-contact">0</div>
-                <button id="btn-contact" class="btn-blue" onclick="openUnifiedModal('Contact Centre')">Action</button>
+                <div class="progress-container"><div id="p-contact" class="progress-bar"></div></div>
+                <button id="btn-contact" class="btn-blue" onclick="openUnifiedModal('Contact Centre')">Record</button>
             </div>
         </div>
         
-        <button class="btn-summary" onclick="generatePDF()">Download PDF & Reset</button>
-        <button class="btn-blue" style="background:#25D366; margin-top:10px;" onclick="shareWA()">Share via WhatsApp</button>
-        <button class="btn-red" onclick="resetApp()">Manual Reset</button>
+        <button class="btn-summary" onclick="generatePDF()">💾 Download Report & Reset</button>
+        <button class="btn-wa" onclick="shareWA()">💬 Share via WhatsApp</button>
+        <button class="btn-red" onclick="resetApp()">Emergency Reset</button>
     </div>
 </div>
 
 <div id="unified-modal" class="modal hidden">
     <div class="modal-content">
-        <h4 id="modal-title" style="margin-top:0">Entry Details</h4>
+        <h3 id="modal-title" style="margin-top:0; color: var(--primary);">Entry Details</h3>
         <div class="toggle-container">
             <button id="toggle-acc" class="toggle-btn active" onclick="setEntryType('Account Number')">Account</button>
             <button id="toggle-mob" class="toggle-btn" onclick="setEntryType('Mobile Number')">Mobile</button>
         </div>
-        <input type="number" id="val-field" placeholder="Enter Digits">
-        <button class="btn-blue" onclick="saveUnifiedEntry()">Save</button>
-        <button style="background:none; color:gray; margin-top:10px" onclick="closeModal()">Cancel</button>
+        <input type="number" id="val-field" placeholder="Enter Digits" inputmode="numeric">
+        <button class="btn-blue" onclick="saveUnifiedEntry()">Save Record</button>
+        <button style="background:none; color:gray; margin-top:15px; box-shadow: none;" onclick="closeModal()">Cancel</button>
     </div>
 </div>
 
@@ -122,7 +200,7 @@
     const { jsPDF } = window.jspdf;
     const TARGETS = { 'NPS': 10, 'WhatsApp': 15, 'Yono SBI': 5, 'Contact Centre': 10 };
 
-    let state = JSON.parse(localStorage.getItem('sbi_v14')) || {
+    let state = JSON.parse(localStorage.getItem('sbi_v15')) || {
         counts: { NPS: 0, WhatsApp: 0, "Yono SBI": 0, "Contact Centre": 0, "Other Forms": 0 },
         logs: [], loginTime: null,
         brName: "SBI KOMTALPETA", brCode: "17978", userName: "ASHUTOSH PATTNAIK"
@@ -137,20 +215,19 @@
         if (!state.loginTime) state.loginTime = new Date().toLocaleTimeString();
         document.getElementById('login-page').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
-        document.getElementById('login-timestamp-ui').innerText = "Logged in at: " + state.loginTime;
+        document.getElementById('login-timestamp-ui').innerText = "Session Started: " + state.loginTime;
         save();
-        refreshUI();
     }
 
     function addSimple(cat) {
         state.counts[cat]++;
-        state.logs.push({ id: state.logs.length + 1, cat: cat, val: "Incremented by 1", time: new Date().toLocaleTimeString() });
+        state.logs.push({ id: state.logs.length + 1, cat: cat, val: "Direct Entry", time: new Date().toLocaleTimeString() });
         save();
     }
 
     function openUnifiedModal(cat) {
         activeCat = cat;
-        document.getElementById('modal-title').innerText = cat + " Entry";
+        document.getElementById('modal-title').innerText = cat;
         document.getElementById('val-field').value = '';
         setEntryType('Account Number');
         document.getElementById('unified-modal').classList.remove('hidden');
@@ -179,19 +256,34 @@
     }
 
     function closeModal() { document.getElementById('unified-modal').classList.add('hidden'); }
-    function save() { localStorage.setItem('sbi_v14', JSON.stringify(state)); refreshUI(); }
+    
+    function save() { 
+        localStorage.setItem('sbi_v15', JSON.stringify(state)); 
+        refreshUI(); 
+    }
 
     function refreshUI() {
         const mapping = { 'NPS': 'nps', 'WhatsApp': 'wa', 'Yono SBI': 'yono', 'Contact Centre': 'contact' };
         for(let key in mapping) {
             const count = state.counts[key];
             const shortKey = mapping[key];
+            
+            // Update Text
             const displayEl = document.getElementById('c-' + shortKey);
             if (displayEl) displayEl.innerText = count;
             
+            // Update Progress Bar
+            const progBar = document.getElementById('p-' + shortKey);
+            if (progBar) {
+                const perc = Math.min((count / TARGETS[key]) * 100, 100);
+                progBar.style.width = perc + "%";
+                if(perc === 100) progBar.style.backgroundColor = "var(--success)";
+            }
+            
+            // Update Button
             const btn = document.getElementById('btn-' + shortKey);
             if (btn) {
-                if (TARGETS[key] && count >= TARGETS[key]) btn.classList.add('btn-target-met');
+                if (count >= TARGETS[key]) btn.classList.add('btn-target-met');
                 else btn.classList.remove('btn-target-met');
             }
         }
@@ -204,44 +296,44 @@
         const m = String(now.getMonth() + 1).padStart(2, '0');
         const y = now.getFullYear();
         
-        doc.setFontSize(16); doc.setTextColor(0, 51, 102); doc.text("SBI BANK SUMMARY REPORT", 14, 15);
-        doc.setFontSize(10); doc.setTextColor(100); doc.text(`Login Time: ${state.loginTime || 'N/A'}`, 14, 22);
-        doc.text(`Date: ${d}/${m}/${y}`, 14, 27);
+        doc.setFontSize(18); doc.setTextColor(0, 51, 102); doc.text("SBI OPS SUMMARY REPORT", 14, 20);
+        doc.setFontSize(10); doc.setTextColor(100); 
+        doc.text(`Branch: ${state.brName} (${state.brCode})`, 14, 28);
+        doc.text(`User: ${state.userName} | Date: ${d}/${m}/${y}`, 14, 33);
         
         doc.autoTable({
-            startY: 32,
-            head: [['S.No', 'Details (Action Time)', 'Value / Action']],
-            body: state.logs.map(l => [l.id, `${l.cat} [${l.time}]`, l.val]),
-            headStyles: { fillColor: [0, 51, 102] },
-            theme: 'grid'
+            startY: 40,
+            head: [['S.No', 'Activity & Time', 'Value/Detail']],
+            body: state.logs.map(l => [l.id, `${l.cat}\n[${l.time}]`, l.val]),
+            headStyles: { fillColor: [0, 51, 102], fontSize: 11 },
+            theme: 'striped'
         });
 
-        doc.save(`SB_${d}_${m}_${y}.pdf`);
+        doc.save(`SBI_Report_${d}_${m}.pdf`);
 
         setTimeout(() => {
-            localStorage.clear();
-            alert("Report Saved. App will reset.");
-            location.reload();
-        }, 1500);
+            if(confirm("Report Downloaded. Reset dashboard for next session?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }, 1000);
     }
 
     function shareWA() {
-        // Calculate dynamic Other Forms (Base 25 + any internal increments)
         const totalOther = 25 + (state.counts['Other Forms'] || 0);
-
-        const msg = `*Date:* ${new Date().toLocaleDateString()}\n` +
-                    `*Branch Name:* "${state.brName}"\n` +
-                    `*Branch Code:* "${state.brCode}"\n` +
-                    `*Name:* "${state.userName}"\n\n` +
+        const msg = `*SBI OPS REPORT*\n*Date:* ${new Date().toLocaleDateString()}\n` +
+                    `*Branch:* ${state.brName} (${state.brCode})\n` +
+                    `*Officer:* ${state.userName}\n` +
+                    `--------------------------\n` +
                     `NPS: ${state.counts.NPS}\n` +
                     `WhatsApp: ${state.counts.WhatsApp}\n` +
-                    `Yono SBI Registration: ${state.counts['Yono SBI']}\n` +
+                    `Yono SBI: ${state.counts['Yono SBI']}\n` +
                     `Contact Centre: ${state.counts['Contact Centre']}\n` +
                     `Other Forms: ${totalOther}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
     }
 
-    function resetApp() { if(confirm("Manual Override: Wipe all data?")) { localStorage.clear(); location.reload(); } }
+    function resetApp() { if(confirm("This will wipe all unsaved data. Continue?")) { localStorage.clear(); location.reload(); } }
     window.onload = () => { if(state.loginTime) doLogin(); };
 </script>
 </body>
