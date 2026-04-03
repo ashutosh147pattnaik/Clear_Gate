@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HPI Bank Operations</title>
+    <title>HPI Bank Ops - Smart Entry</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
@@ -20,39 +20,35 @@
 
         #main-content { padding: 10px; max-width: 500px; margin: auto; }
 
-        /* Branch Info Inputs */
-        .branch-info { background: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .branch-info input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem; }
+        .branch-info { background: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .branch-info input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem; width: 100%; }
 
-        /* Grid - Compact */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; justify-items: center; }
-        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .card {
             background: white; padding: 12px; border-radius: 10px; text-align: center;
             border-top: 3px solid var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            width: 100%; display: flex; flex-direction: column; align-items: center;
         }
-        
-        .card h3 { margin: 0; font-size: 0.9rem; color: #444; }
+        .card h3 { margin: 0; font-size: 0.85rem; color: #444; height: 34px; display: flex; align-items: center; justify-content: center; }
         .count { font-size: 1.4rem; font-weight: bold; margin: 5px 0; color: var(--primary); }
 
-        /* Smaller Buttons */
-        button { 
-            padding: 8px 12px; border: none; border-radius: 6px; font-weight: bold; 
-            cursor: pointer; font-size: 0.85rem; width: 100%; transition: 0.2s;
-        }
-        
+        button { padding: 8px 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem; width: 100%; }
         .btn-blue { background: var(--primary); color: white; }
         .btn-green { background: #28a745; color: white; margin-top: 15px; }
-        .btn-red { background: #dc3545; color: white; margin-top: 10px; }
+        .btn-red { background: #dc3545; color: white; margin-top: 10px; font-size: 0.7rem; padding: 5px; }
 
+        /* Unified Modal Style */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center;
             z-index: 2000; padding: 20px;
         }
-        .modal-content { background: white; padding: 20px; border-radius: 12px; width: 100%; max-width: 300px; text-align: center; }
-        .modal-content input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; }
+        .modal-content { background: white; padding: 20px; border-radius: 12px; width: 100%; max-width: 320px; }
+        
+        .toggle-container { display: flex; gap: 5px; margin-bottom: 15px; }
+        .toggle-btn { background: #eee; color: #333; flex: 1; border: 1px solid #ddd; }
+        .toggle-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        input#val-field { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
 
         .hidden { display: none !important; }
     </style>
@@ -60,64 +56,62 @@
 <body>
 
 <header>
-    <div style="font-weight:bold; font-size: 1rem;">HPI BANK</div>
-    <div id="live-clock" style="font-size: 0.9rem;">00:00:00</div>
+    <div style="font-weight:bold;">HPI BANK</div>
+    <div id="live-clock">00:00:00</div>
 </header>
 
 <div id="main-content">
     <div id="login-page" style="text-align:center; padding-top:50px;">
-        <button class="btn-blue" style="width:150px;" onclick="doLogin()">Login</button>
+        <button class="btn-blue" style="width:120px;" onclick="doLogin()">Login</button>
     </div>
 
     <div id="dashboard" class="hidden">
         <div class="branch-info">
             <input type="text" id="br-name" placeholder="Branch Name" oninput="saveInfo()">
             <input type="text" id="br-code" placeholder="Branch Code" oninput="saveInfo()">
-            <input type="text" id="user-name" placeholder="Your Name" oninput="saveInfo()" style="grid-column: span 2;">
+            <input type="text" id="user-name" placeholder="Staff Name" oninput="saveInfo()" style="grid-column: span 2;">
         </div>
 
         <div class="grid">
             <div class="card"><h3>NPS</h3><div class="count" id="c-nps">0</div><button class="btn-blue" onclick="addSimple('NPS')">Add</button></div>
-            <div class="card"><h3>WhatsApp</h3><div class="count" id="c-wa">0</div><button class="btn-blue" onclick="askType('WhatsApp')">Add</button></div>
-            <div class="card"><h3>Yono SBI</h3><div class="count" id="c-yono">0</div><button class="btn-blue" onclick="askType('Yono SBI')">Add</button></div>
+            <div class="card"><h3>WhatsApp</h3><div class="count" id="c-wa">0</div><button class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Action</button></div>
+            <div class="card"><h3>Yono SBI</h3><div class="count" id="c-yono">0</div><button class="btn-blue" onclick="openUnifiedModal('Yono SBI')">Action</button></div>
             <div class="card"><h3>Contact Centre</h3><div class="count" id="c-contact">0</div><button class="btn-blue" onclick="addSimple('Contact Centre')">Add</button></div>
-            <div class="card"><h3>CBDC</h3><div class="count" id="c-cbdc">0</div><button class="btn-blue" onclick="askType('CBDC')">Add</button></div>
+            <div class="card"><h3>CBDC</h3><div class="count" id="c-cbdc">0</div><button class="btn-blue" onclick="openUnifiedModal('CBDC')">Action</button></div>
             <div class="card"><h3>Other Forms</h3><div class="count" id="c-other">0</div><button class="btn-blue" onclick="addSimple('Other Forms')">Add</button></div>
         </div>
         
         <button class="btn-green" onclick="generatePDF()">Download PDF Report</button>
         <button class="btn-blue" style="background:#25D366; margin-top:10px;" onclick="shareWA()">Share via WhatsApp</button>
-        <button class="btn-red" style="padding: 5px; font-size: 0.75rem;" onclick="resetApp()">Reset All</button>
+        <button class="btn-red" onclick="resetApp()">Reset All Data</button>
     </div>
 </div>
 
-<div id="modal-sel" class="modal hidden">
+<div id="unified-modal" class="modal hidden">
     <div class="modal-content">
-        <h4>Type</h4>
-        <button class="btn-blue" style="margin-bottom:8px" onclick="openInput('Mobile Number')">Mobile Number</button>
-        <button class="btn-blue" onclick="openInput('Account Number')">Account Number</button>
-        <button style="background:none; color:gray; margin-top:10px" onclick="closeAll()">Cancel</button>
-    </div>
-</div>
+        <h4 id="modal-title" style="margin-top:0">Entry Details</h4>
+        
+        <div class="toggle-container">
+            <button id="toggle-acc" class="toggle-btn active" onclick="setEntryType('Account Number')">Account</button>
+            <button id="toggle-mob" class="toggle-btn" onclick="setEntryType('Mobile Number')">Mobile</button>
+        </div>
 
-<div id="modal-val" class="modal hidden">
-    <div class="modal-content">
-        <h4 id="val-title">Enter Digits</h4>
-        <input type="number" id="val-field">
-        <button class="btn-blue" onclick="saveEntry()">Save</button>
-        <button style="background:none; color:gray; margin-top:10px" onclick="closeAll()">Cancel</button>
+        <input type="number" id="val-field" placeholder="Enter Digits">
+        
+        <button class="btn-blue" onclick="saveUnifiedEntry()">Save & Increment</button>
+        <button style="background:none; color:gray; margin-top:10px" onclick="closeModal()">Cancel</button>
     </div>
 </div>
 
 <script>
     const { jsPDF } = window.jspdf;
-    let state = JSON.parse(localStorage.getItem('hpi_v4')) || {
+    let state = JSON.parse(localStorage.getItem('hpi_v5')) || {
         counts: { NPS: 0, WhatsApp: 0, "Yono SBI": 0, "Contact Centre": 0, CBDC: 0, "Other Forms": 0 },
-        logs: [],
-        brName: '', brCode: '', userName: ''
+        logs: [], brName: '', brCode: '', userName: ''
     };
 
-    let activeCat = ''; let activeType = '';
+    let activeCat = '';
+    let selectedType = 'Account Number';
 
     setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
@@ -143,47 +137,74 @@
         save();
     }
 
-    function askType(cat) { activeCat = cat; document.getElementById('modal-sel').classList.remove('hidden'); }
-    function openInput(type) { 
-        activeType = type; document.getElementById('modal-sel').classList.add('hidden');
-        document.getElementById('val-field').value = ''; document.getElementById('modal-val').classList.remove('hidden');
+    // Modal Logic
+    function openUnifiedModal(cat) {
+        activeCat = cat;
+        document.getElementById('modal-title').innerText = cat + " Entry";
+        document.getElementById('val-field').value = '';
+        setEntryType('Account Number'); // Reset to default
+        document.getElementById('unified-modal').classList.remove('hidden');
+        document.getElementById('val-field').focus();
     }
 
-    function saveEntry() {
-        const v = document.getElementById('val-field').value;
-        if(!v) return;
+    function setEntryType(type) {
+        selectedType = type;
+        document.getElementById('toggle-acc').className = (type === 'Account Number') ? 'toggle-btn active' : 'toggle-btn';
+        document.getElementById('toggle-mob').className = (type === 'Mobile Number') ? 'toggle-btn active' : 'toggle-btn';
+        document.getElementById('val-field').placeholder = "Enter " + type;
+    }
+
+    function saveUnifiedEntry() {
+        const val = document.getElementById('val-field').value;
+        if(!val) return alert("Please enter digits");
+        
         state.counts[activeCat]++;
-        state.logs.push({ id: state.logs.length + 1, cat: `${activeCat} (${activeType})`, val: v });
-        save(); closeAll();
+        state.logs.push({ 
+            id: state.logs.length + 1, 
+            cat: `${activeCat} (${selectedType})`, 
+            val: val 
+        });
+        save();
+        closeModal();
     }
 
-    function closeAll() { document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden')); }
-    function save() { localStorage.setItem('hpi_v4', JSON.stringify(state)); refreshUI(); }
+    function closeModal() { document.getElementById('unified-modal').classList.add('hidden'); }
+    function save() { localStorage.setItem('hpi_v5', JSON.stringify(state)); refreshUI(); }
 
     function refreshUI() {
-        document.getElementById('c-nps').innerText = state.counts['NPS'];
-        document.getElementById('c-wa').innerText = state.counts['WhatsApp'];
-        document.getElementById('c-yono').innerText = state.counts['Yono SBI'];
-        document.getElementById('c-contact').innerText = state.counts['Contact Centre'];
-        document.getElementById('c-cbdc').innerText = state.counts['CBDC'];
-        document.getElementById('c-other').innerText = state.counts['Other Forms'];
+        for(let key in state.counts) {
+            const el = document.getElementById('c-' + getShortKey(key));
+            if(el) el.innerText = state.counts[key];
+        }
+    }
+
+    function getShortKey(k) {
+        if(k === 'NPS') return 'nps';
+        if(k === 'WhatsApp') return 'wa';
+        if(k === 'Yono SBI') return 'yono';
+        if(k === 'Contact Centre') return 'contact';
+        if(k === 'CBDC') return 'cbdc';
+        return 'other';
     }
 
     function generatePDF() {
         const doc = new jsPDF();
-        doc.text("HPI BANK SUMMARY", 14, 15);
+        doc.setFontSize(16);
+        doc.text("HPI BANK SUMMARY REPORT", 14, 15);
+        doc.setFontSize(10);
+        doc.text(`Branch: ${state.brName} (${state.brCode}) | Staff: ${state.userName}`, 14, 22);
+        
         doc.autoTable({
-            startY: 25,
-            head: [['S.No', 'Account/Mobile/Category', 'Input Value']],
+            startY: 30,
+            head: [['S.No', 'Category / Details', 'Value']],
             body: state.logs.map(l => [l.id, l.cat, l.val]),
             headStyles: { fillColor: [0, 51, 102] }
         });
-        doc.save("Report.pdf");
+        doc.save("HPI_Report.pdf");
     }
 
     function shareWA() {
-        const date = new Date().toLocaleDateString();
-        const msg = `*Date:* ${date}\n` +
+        const msg = `*Date:* ${new Date().toLocaleDateString()}\n` +
                     `*Branch Name:* ${state.brName || 'N/A'}\n` +
                     `*Branch Code:* ${state.brCode || 'N/A'}\n` +
                     `*Name:* ${state.userName || 'N/A'}\n\n` +
@@ -196,7 +217,7 @@
         window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
     }
 
-    function resetApp() { if(confirm("Reset data?")) { localStorage.clear(); location.reload(); } }
+    function resetApp() { if(confirm("Clear all data?")) { localStorage.clear(); location.reload(); } }
     window.onload = () => { if(state.brName || state.counts.NPS > 0) doLogin(); };
 </script>
 </body>
