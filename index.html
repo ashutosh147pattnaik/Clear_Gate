@@ -1,9 +1,14 @@
+I’ve updated the **Contact Centre** card to match the **WhatsApp**, **Yono**, and **CBDC** cards. It now features an "Action" button that opens the unified modal with the Account/Mobile toggle and a digit input field.
+
+This ensures every major task tracks the specific reference number in your logs and PDF.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SBI Bank Ops - Full Input Portal</title>
+    <title>HPI Bank Ops - Full Input Portal</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
@@ -56,7 +61,7 @@
 <body>
 
 <header>
-    <div style="font-weight:bold;">SBI BANK</div>
+    <div style="font-weight:bold;">HPI BANK</div>
     <div id="live-clock">00:00:00</div>
 </header>
 
@@ -71,38 +76,38 @@
         
         <div class="grid">
             <div class="card">
-                <h3>NPS Feedback</h3>
+                <h3>NPS</h3>
                 <span class="target-label">Target: 10</span>
                 <div class="count" id="c-nps">0</div>
                 <button id="btn-nps" class="btn-blue" onclick="addSimple('NPS')">Add</button>
             </div>
             
             <div class="card">
-                <h3>WhatsApp Banking</h3>
+                <h3>WhatsApp</h3>
                 <span class="target-label">Target: 15</span>
                 <div class="count" id="c-wa">0</div>
-                <button id="btn-wa" class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Add</button>
+                <button id="btn-wa" class="btn-blue" onclick="openUnifiedModal('WhatsApp')">Action</button>
             </div>
 
             <div class="card">
-                <h3>Yono</h3>
+                <h3>Yono SBI</h3>
                 <span class="target-label">Target: 5</span>
                 <div class="count" id="c-yono">0</div>
-                <button id="btn-yono" class="btn-blue" onclick="openUnifiedModal('Yono SBI')">Add</button>
+                <button id="btn-yono" class="btn-blue" onclick="openUnifiedModal('Yono SBI')">Action</button>
             </div>
 
             <div class="card">
                 <h3>Contact Centre</h3>
                 <span class="target-label">Target: 10</span>
                 <div class="count" id="c-contact">0</div>
-                <button id="btn-contact" class="btn-blue" onclick="openUnifiedModal('Contact Centre')">Add</button>
+                <button id="btn-contact" class="btn-blue" onclick="openUnifiedModal('Contact Centre')">Action</button>
             </div>
 
             <div class="card" style="grid-column: span 2;">
                 <h3>CBDC</h3>
                 <span class="target-label">No Target</span>
                 <div class="count" id="c-cbdc">0</div>
-                <button id="btn-cbdc" class="btn-blue" onclick="openUnifiedModal('CBDC')">Add</button>
+                <button id="btn-cbdc" class="btn-blue" onclick="openUnifiedModal('CBDC')">Action</button>
             </div>
         </div>
         
@@ -120,7 +125,7 @@
             <button id="toggle-mob" class="toggle-btn" onclick="setEntryType('Mobile Number')">Mobile</button>
         </div>
         <input type="number" id="val-field" placeholder="Enter Digits">
-        <button class="btn-blue" onclick="saveUnifiedEntry()">Save</button>
+        <button class="btn-blue" onclick="saveUnifiedEntry()">Save & Increment</button>
         <button style="background:none; color:gray; margin-top:10px" onclick="closeModal()">Cancel</button>
     </div>
 </div>
@@ -237,15 +242,15 @@
 
     function shareWA() {
         const msg = `*Date:* ${new Date().toLocaleDateString()}\n` +
-                    `*Branch Name:* 'SBI KOMTALPETA'\n` +
-                    `*Branch Code:* '17978'\n` +
-                    `*Name:* 'ASHUTOSH PATTNAIK'\n\n` +
+                    `*Branch Name:* ${state.brName}\n` +
+                    `*Branch Code:* ${state.brCode}\n` +
+                    `*Name:* ${state.userName}\n\n` +
                     `NPS: ${state.counts.NPS}\n` +
                     `WhatsApp: ${state.counts.WhatsApp}\n` +
                     `Yono SBI Registration: ${state.counts['Yono SBI']}\n` +
                     `Contact Centre: ${state.counts['Contact Centre']}\n` +
-                    `CBDC: ${state.counts.CBDC}\n` + 
-                    `Other Forms: '25+';
+                    `CBDC: ${state.counts.CBDC}\n` +
+                    `Other Forms: ${state.counts['Other Forms']}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
     }
 
@@ -254,3 +259,4 @@
 </script>
 </body>
 </html>
+```
