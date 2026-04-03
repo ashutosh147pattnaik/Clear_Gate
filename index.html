@@ -237,15 +237,15 @@
 
     function shareWA() {
         const msg = `*Date:* ${new Date().toLocaleDateString()}\n` +
-                    `*Branch Name:* "SBI KOMTALPETA"\n` +
-                    `*Branch Code:* "17978"\n` +
-                    `*Name:* "ASHUTOSH PATTNAIK"\n\n` +
+                    `*Branch Name:* 'SBI KOMTALPETA'\n` +
+                    `*Branch Code:* '17978'\n` +
+                    `*Name:* 'ASHUTOSH PATTNAIK'\n\n` +
                     `NPS: ${state.counts.NPS}\n` +
                     `WhatsApp: ${state.counts.WhatsApp}\n` +
                     `Yono SBI Registration: ${state.counts['Yono SBI']}\n` +
                     `Contact Centre: ${state.counts['Contact Centre']}\n` +
                     `CBDC: ${state.counts.CBDC}\n` +
-                    `Other Forms: ${state.counts['Other Forms']}`;
+                    `Other Forms: '25+';
         window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
     }
 
