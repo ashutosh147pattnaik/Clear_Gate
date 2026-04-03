@@ -129,7 +129,7 @@
 <body>
 
 <header>
-    <div class="logo-text">SBI BANK OPS</div>
+    <div class="logo-text">SBI Jlqshf84 </div>
     <div id="live-clock">00:00:00</div>
 </header>
 
@@ -161,7 +161,7 @@
             </div>
 
             <div class="card">
-                <h3>Yono SBI</h3>
+                <h3>Yono</h3>
                 <span class="target-label">Target: 5</span>
                 <div class="count" id="c-yono">0</div>
                 <div class="progress-container"><div id="p-yono" class="progress-bar"></div></div>
@@ -321,13 +321,13 @@
 
     function shareWA() {
         const totalOther = 25 + (state.counts['Other Forms'] || 0);
-        const msg = `*SBI OPS REPORT*\n*Date:* ${new Date().toLocaleDateString()}\n` +
+        const msg = `*DAILY REPORT*\n*Date:* ${new Date().toLocaleDateString()}\n` +
                     `*Branch:* ${state.brName} (${state.brCode})\n` +
-                    `*Officer:* ${state.userName}\n` +
+                    `*NAME:* ${state.userName}\n` +
                     `--------------------------\n` +
                     `NPS: ${state.counts.NPS}\n` +
-                    `WhatsApp: ${state.counts.WhatsApp}\n` +
-                    `Yono SBI: ${state.counts['Yono SBI']}\n` +
+                    `WhatsApp Banking: ${state.counts.WhatsApp}\n` +
+                    `Yono regn: ${state.counts['Yono SBI']}\n` +
                     `Contact Centre: ${state.counts['Contact Centre']}\n` +
                     `Other Forms: ${totalOther}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
