@@ -203,6 +203,8 @@ button:active { transform: scale(.97); }
   </div>
 
   <div id="dashboard" class="hidden">
+    <div id="login-ts" class="login-info-box"></div>
+
     <div class="grid">
       <div class="card" id="card-nps">
         <h3>NPS</h3><span class="target-label">Target: 10</span>
@@ -230,8 +232,10 @@ button:active { transform: scale(.97); }
       </div>
     </div>
 
+    <div class="divider">Actions</div>
     <button class="btn-action btn-pdf"   onclick="generatePDF()">Download PDF &amp; Reset</button>
     <button class="btn-action btn-wa"    onclick="shareWA()">Share via WhatsApp</button>
+    <button class="btn-reset"            onclick="resetApp()">Manual Reset</button>
   </div>
 
 </div>
