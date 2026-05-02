@@ -76,6 +76,7 @@ header {
 .card:nth-child(2){animation-delay:.10s}
 .card:nth-child(3){animation-delay:.15s}
 .card:nth-child(4){animation-delay:.20s}
+.card:nth-child(5){animation-delay:.25s}
 .card::after {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
   background: linear-gradient(90deg, var(--pl), var(--ac));
@@ -85,6 +86,9 @@ header {
 .card:hover::after { opacity: 1; }
 .card.met { border-top-color: var(--ok); }
 .card.met .count { color: var(--ok); }
+
+/* Channel Migration card spans full width */
+.card.full-width { grid-column: 1 / -1; }
 
 .card h3 {
   margin: 0; font-size: .82rem; font-weight: 600; color: var(--tm);
@@ -135,6 +139,16 @@ button:active { transform: scale(.97); }
   border: 1px solid rgba(224,52,52,.25); border-radius: var(--rs);
 }
 .btn-reset:hover { background: rgba(224,52,52,.06); border-color: var(--er); }
+
+/* Channel Migration button accent */
+.btn-cm {
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
+  color: #fff; box-shadow: 0 2px 8px rgba(124,58,237,.25);
+}
+.btn-cm:hover { box-shadow: 0 4px 14px rgba(124,58,237,.38); }
+.btn-cm.btn-target-met {
+  background: linear-gradient(135deg,#0fa36e,#0c8459) !important;
+}
 
 /* DIVIDER */
 .divider {
@@ -230,6 +244,14 @@ button:active { transform: scale(.97); }
         <div class="pb-wrap"><div class="pb-fill" id="pb-contact"></div></div>
         <button id="btn-contact" class="btn-primary" onclick="openModal('Contact Centre')">Action</button>
       </div>
+
+      <!-- ✅ NEW: Channel Migration card — full width, purple accent -->
+      <div class="card full-width" id="card-cm">
+        <h3>Channel Migration</h3><span class="target-label">Target: 10</span>
+        <div class="count" id="c-cm">0</div>
+        <div class="pb-wrap"><div class="pb-fill" id="pb-cm" style="background: linear-gradient(90deg,#7c3aed,#a78bfa);"></div></div>
+        <button id="btn-cm" class="btn-cm" onclick="addSimple('Channel Migration')">Add</button>
+      </div>
     </div>
 
     <div class="divider">Actions</div>
@@ -257,20 +279,41 @@ button:active { transform: scale(.97); }
 const { jsPDF } = window.jspdf;
 
 // ── CONFIG ──────────────────────────────────────────────
-const TARGETS = { NPS:10, WhatsApp:15, 'Yono SBI':5, 'Contact Centre':10 };
+const TARGETS = {
+  NPS: 10,
+  WhatsApp: 15,
+  'Yono SBI': 5,
+  'Contact Centre': 10,
+  'Channel Migration': 10   // ✅ NEW
+};
+
 const MAP = [
-  { key:'NPS',            id:'nps'     },
-  { key:'WhatsApp',       id:'wa'      },
-  { key:'Yono SBI',       id:'yono'    },
-  { key:'Contact Centre', id:'contact' }
+  { key:'NPS',               id:'nps'     },
+  { key:'WhatsApp',          id:'wa'      },
+  { key:'Yono SBI',          id:'yono'    },
+  { key:'Contact Centre',    id:'contact' },
+  { key:'Channel Migration', id:'cm'      }   // ✅ NEW
 ];
 
 // ── STATE ───────────────────────────────────────────────
 let state = JSON.parse(localStorage.getItem('sbi_v14')) || {
-  counts: { NPS:0, WhatsApp:0, 'Yono SBI':0, 'Contact Centre':0, 'Other Forms':0 },
+  counts: {
+    NPS: 0,
+    WhatsApp: 0,
+    'Yono SBI': 0,
+    'Contact Centre': 0,
+    'Other Forms': 0,
+    'Channel Migration': 0   // ✅ NEW
+  },
   logs: [], loginTime: null,
   brName:'SBI KOMTALPETA', brCode:'17978', userName:'ASHUTOSH PATTNAIK'
 };
+
+// Ensure Channel Migration key exists in old saved states
+if (state.counts['Channel Migration'] === undefined) {
+  state.counts['Channel Migration'] = 0;
+}
+
 let activeCat = '', selType = 'Account Number';
 
 // ── CACHE DOM ───────────────────────────────────────────
@@ -339,7 +382,7 @@ function refreshUI() {
     e.count.textContent = count;
     if (count !== prev) {
       e.count.classList.remove('pop');
-      void e.count.offsetWidth;           // force reflow to restart anim
+      void e.count.offsetWidth;
       e.count.classList.add('pop');
     }
     e.pb.style.width = Math.min(100, Math.round(count / TARGETS[key] * 100)) + '%';
@@ -354,17 +397,40 @@ function generatePDF() {
   const doc = new jsPDF();
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-GB');
-  doc.setFontSize(16); doc.setTextColor(0,51,102);
+
+  doc.setFontSize(16); doc.setTextColor(0, 51, 102);
   doc.text('SBI BANK SUMMARY REPORT', 14, 15);
   doc.setFontSize(10); doc.setTextColor(100);
   doc.text(`Login Time: ${state.loginTime || 'N/A'}`, 14, 22);
   doc.text(`Date: ${dateStr}`, 14, 27);
+
+  // ✅ Summary table includes Channel Migration
   doc.autoTable({
     startY: 32,
-    head: [['S.No','Details (Action Time)','Value / Action']],
-    body: state.logs.map(l => [l.id, `${l.cat} [${l.time}]`, l.val]),
-    headStyles: { fillColor: [0,51,102] }, theme: 'grid'
+    head: [['Category', 'Count', 'Target']],
+    body: [
+      ['NPS',               state.counts['NPS'],               TARGETS['NPS']],
+      ['WhatsApp',          state.counts['WhatsApp'],          TARGETS['WhatsApp']],
+      ['Yono SBI',          state.counts['Yono SBI'],          TARGETS['Yono SBI']],
+      ['Contact Centre',    state.counts['Contact Centre'],    TARGETS['Contact Centre']],
+      ['Channel Migration', state.counts['Channel Migration'], TARGETS['Channel Migration']],  // ✅ NEW
+    ],
+    headStyles: { fillColor: [0, 51, 102] },
+    theme: 'grid'
   });
+
+  // Detailed log table
+  const afterSummary = doc.lastAutoTable.finalY + 8;
+  doc.setFontSize(12); doc.setTextColor(0, 51, 102);
+  doc.text('Detailed Log', 14, afterSummary);
+
+  doc.autoTable({
+    startY: afterSummary + 4,
+    head: [['S.No', 'Details (Action Time)', 'Value / Action']],
+    body: state.logs.map(l => [l.id, `${l.cat} [${l.time}]`, l.val]),
+    headStyles: { fillColor: [0, 51, 102] }, theme: 'grid'
+  });
+
   doc.save(`SB_${dateStr.replace(/\//g,'_')}.pdf`);
   setTimeout(() => { localStorage.clear(); alert('Report Saved. App will reset.'); location.reload(); }, 1500);
 }
@@ -380,6 +446,7 @@ function shareWA() {
     `NPS: ${c.NPS}\nWhatsApp: ${c.WhatsApp}\n` +
     `Yono SBI Registration: ${c['Yono SBI']}\n` +
     `Contact Centre: ${c['Contact Centre']}\n` +
+    `Channel Migration: ${c['Channel Migration']}\n` +   // ✅ NEW
     `Other Forms: ${25 + (c['Other Forms'] || 0)}`;
   window.open('https://wa.me/?text=' + encodeURIComponent(msg));
 }
