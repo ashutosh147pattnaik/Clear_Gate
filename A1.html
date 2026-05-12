@@ -96,21 +96,8 @@ header {
   color: var(--p); font-family: 'DM Mono', monospace; line-height: 1;
 }
 
-.pb-wrap { width: 100%; height: 6px; background: #e2e8f0; border-radius: 99px; margin: 8px 0 10px; overflow: hidden; }
+.pb-wrap { width: 100%; height: 6px; background: #e2e8f0; border-radius: 99px; margin: 8px 0 16px; overflow: hidden; }
 .pb-fill  { height: 100%; border-radius: 99px; background: var(--pl); transition: width 0.3s ease; }
-
-/* Last Input Display */
-.last-input {
-  font-size: 0.65rem;
-  color: var(--tm);
-  font-style: italic;
-  margin-bottom: 8px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 600;
-  margin-top: auto; 
-}
 
 /* BUTTONS */
 button {
@@ -121,13 +108,14 @@ button {
 }
 button:active { opacity: 0.8; transform: scale(0.98); }
 
-.btn-primary { background: var(--pl); color: #fff; }
+.btn-primary { background: var(--pl); color: #fff; margin-top: auto; }
 .btn-target-met { background: var(--ok) !important; color: #fff !important; }
 
 .btn-action { margin-top: 12px; padding: 14px; font-size: 0.95rem; color: #fff; }
-.btn-undo { background: #f59e0b; color: #fff; } /* Amber Undo Button */
+.btn-undo { background: #f59e0b; color: #fff; }
 .btn-undo:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; transform: none; }
-.btn-pdf { background: var(--ok); margin-top: 12px; }
+.btn-report { background: #0284c7; } /* Sky Blue for In-Page Report */
+.btn-pdf { background: var(--ok); }
 .btn-wa  { background: #25D366; }
 .btn-reset {
   background: transparent; color: #ff6b6b; margin-top: 12px;
@@ -136,7 +124,7 @@ button:active { opacity: 0.8; transform: scale(0.98); }
 }
 .btn-reset:active { background: #ff6b6b; color: white; }
 
-.btn-cm { background: #7c3aed; color: #fff; }
+.btn-cm { background: #7c3aed; color: #fff; margin-top: auto; }
 .btn-cm.btn-target-met { background: var(--ok) !important; }
 
 /* DIVIDER */
@@ -178,8 +166,16 @@ button:active { opacity: 0.8; transform: scale(0.98); }
   background: #f8fafc; outline: none;
 }
 #val-field:focus { border-color: var(--pl); background: #fff; }
-
 .btn-cancel { background: none; color: var(--tm); border: none; margin-top: 8px; font-size: 0.85rem; padding: 10px; font-weight: 700;}
+
+/* REPORT PAGE TABLES */
+.report-card { background: white; padding: 20px; border-radius: 12px; margin-top: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+.report-card h3 { margin-top: 0; color: #002855; font-size: 1.2rem; }
+.report-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 24px; }
+.report-table th, .report-table td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; color: #333; }
+.report-table th { background: #002855; color: white; font-weight: 600; }
+.report-table tr:nth-child(even) { background-color: #f8fafc; }
+.table-responsive { overflow-x: auto; }
 </style>
 </head>
 <body>
@@ -191,12 +187,14 @@ button:active { opacity: 0.8; transform: scale(0.98); }
 
 <div id="main-content">
 
+  <!-- LOGIN PAGE -->
   <div id="login-page">
     <h2>Operations Portal</h2>
     <p>SBI Bank — Secure Branch Access</p>
     <button class="btn-primary" onclick="doLogin()">Login</button>
   </div>
 
+  <!-- MAIN DASHBOARD -->
   <div id="dashboard" class="hidden">
     <div id="login-ts" class="login-info-box"></div>
 
@@ -205,7 +203,6 @@ button:active { opacity: 0.8; transform: scale(0.98); }
         <h3>NPS</h3><span class="target-label">Target: 10</span>
         <div class="count" id="c-nps">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-nps"></div></div>
-        <div class="last-input" id="last-nps">No entries yet</div>
         <button id="btn-nps" class="btn-primary" onclick="addSimple('NPS')">Add</button>
       </div>
       
@@ -213,7 +210,6 @@ button:active { opacity: 0.8; transform: scale(0.98); }
         <h3>WhatsApp</h3><span class="target-label">Target: 15</span>
         <div class="count" id="c-wa">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-wa"></div></div>
-        <div class="last-input" id="last-wa">No entries yet</div>
         <button id="btn-wa" class="btn-primary" onclick="openModal('WhatsApp')">Action</button>
       </div>
       
@@ -221,7 +217,6 @@ button:active { opacity: 0.8; transform: scale(0.98); }
         <h3>Yono SBI</h3><span class="target-label">Target: 5</span>
         <div class="count" id="c-yono">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-yono"></div></div>
-        <div class="last-input" id="last-yono">No entries yet</div>
         <button id="btn-yono" class="btn-primary" onclick="openModal('Yono SBI')">Action</button>
       </div>
       
@@ -229,7 +224,6 @@ button:active { opacity: 0.8; transform: scale(0.98); }
         <h3>Contact Centre</h3><span class="target-label">Target: 10</span>
         <div class="count" id="c-contact">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-contact"></div></div>
-        <div class="last-input" id="last-contact">No entries yet</div>
         <button id="btn-contact" class="btn-primary" onclick="openModal('Contact Centre')">Action</button>
       </div>
 
@@ -237,22 +231,42 @@ button:active { opacity: 0.8; transform: scale(0.98); }
         <h3>Channel Migration</h3><span class="target-label">Target: 10</span>
         <div class="count" id="c-cm">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-cm" style="background: #7c3aed;"></div></div>
-        <div class="last-input" id="last-cm">No entries yet</div>
         <button id="btn-cm" class="btn-cm" onclick="addSimple('Channel Migration')">Add</button>
       </div>
     </div>
 
     <div class="divider">Actions</div>
-    <!-- NEW UNDO BUTTON -->
     <button id="btn-undo" class="btn-action btn-undo" onclick="undoLast()">⟲ Undo Last Entry</button>
+    <!-- NEW REPORT BUTTON -->
+    <button class="btn-action btn-report" onclick="showReport()">📊 View Report In-Page</button>
     
-    <button class="btn-action btn-pdf"   onclick="generatePDF()">Download PDF &amp; Reset</button>
-    <button class="btn-action btn-wa"    onclick="shareWA()">Share via WhatsApp</button>
-    <button class="btn-reset"            onclick="resetApp()">Manual Reset</button>
+    <button class="btn-action btn-pdf" onclick="generatePDF()">Download PDF &amp; Reset</button>
+    <button class="btn-action btn-wa" onclick="shareWA()">Share via WhatsApp</button>
+    <button class="btn-reset" onclick="resetApp()">Manual Reset</button>
+  </div>
+
+  <!-- NEW REPORT PAGE -->
+  <div id="report-page" class="hidden">
+    <button class="btn-action btn-undo" onclick="hideReport()">⟵ Back to Dashboard</button>
+    
+    <div class="report-card">
+      <h3>Summary</h3>
+      <table class="report-table" id="summary-table">
+        <!-- Populated by JS -->
+      </table>
+      
+      <h3>Detailed Logs</h3>
+      <div class="table-responsive">
+        <table class="report-table" id="logs-table">
+          <!-- Populated by JS -->
+        </table>
+      </div>
+    </div>
   </div>
 
 </div>
 
+<!-- INPUT MODAL -->
 <div id="modal" class="modal hidden">
   <div class="modal-box">
     <h4 id="modal-title">Entry Details</h4>
@@ -302,8 +316,7 @@ MAP.forEach(({ key, id }) => {
       count: $('c-'+id), 
       pb: $('pb-'+id), 
       btn: $('btn-'+id), 
-      card: $('card-'+id),
-      last: $('last-'+id) 
+      card: $('card-'+id)
   };
 });
 
@@ -347,22 +360,13 @@ function saveEntry() {
   save(); closeModal();
 }
 
-// --- NEW UNDO FUNCTION ---
 function undoLast() {
-  if (state.logs.length === 0) return; // Prevent errors if log is empty
-  
-  // 1. Remove the most recent log
+  if (state.logs.length === 0) return;
   const lastLog = state.logs.pop(); 
-  
-  // 2. Identify the base category (e.g., matching "WhatsApp (Account)" to "WhatsApp")
   const baseMap = MAP.find(m => lastLog.cat === m.key || lastLog.cat.startsWith(m.key + ' '));
-  
-  // 3. Subtract 1 from the correct counter safely
   if (baseMap && state.counts[baseMap.key] > 0) {
     state.counts[baseMap.key]--;
   }
-  
-  // 4. Save and rebuild the UI
   save(); 
 }
 
@@ -374,7 +378,6 @@ function save() {
 }
 
 function refreshUI() {
-  // Disable Undo button if nothing to undo
   $('btn-undo').disabled = state.logs.length === 0;
   $('btn-undo').textContent = state.logs.length === 0 ? "⟲ Nothing to Undo" : "⟲ Undo Last Entry";
 
@@ -386,19 +389,38 @@ function refreshUI() {
     const met = count >= TARGETS[key];
     e.btn.classList.toggle('btn-target-met', met);
     e.card.classList.toggle('met', met);
-    
-    // Display the Last Input Data
-    const lastLog = [...state.logs].reverse().find(l => l.cat === key || l.cat.startsWith(key + ' '));
-    if (lastLog) {
-        if (lastLog.val === 'Incremented by 1') {
-            e.last.textContent = `Last: +1 at ${lastLog.time}`;
-        } else {
-            e.last.textContent = `Last: ${lastLog.val} (${lastLog.time})`;
-        }
-    } else {
-        e.last.textContent = 'No entries yet';
-    }
   });
+}
+
+/* NEW IN-PAGE REPORT FUNCTIONS */
+function showReport() {
+  $('dashboard').classList.add('hidden');
+  $('report-page').classList.remove('hidden');
+  
+  // Render Summary Table
+  let summaryHTML = '<tr><th>Category</th><th>Count</th><th>Target</th></tr>';
+  MAP.forEach(({ key }) => {
+    summaryHTML += `<tr><td>${key}</td><td><b>${state.counts[key]}</b></td><td>${TARGETS[key]}</td></tr>`;
+  });
+  $('summary-table').innerHTML = summaryHTML;
+
+  // Render Detailed Logs Table
+  let logsHTML = '<tr><th>#</th><th>Category</th><th>Details/Value</th><th>Time</th></tr>';
+  if (state.logs.length === 0) {
+    logsHTML += '<tr><td colspan="4" style="text-align:center; padding: 20px;">No entries recorded yet.</td></tr>';
+  } else {
+    state.logs.forEach((log, index) => {
+      logsHTML += `<tr><td>${index + 1}</td><td>${log.cat}</td><td>${log.val}</td><td>${log.time}</td></tr>`;
+    });
+  }
+  $('logs-table').innerHTML = logsHTML;
+  window.scrollTo(0,0); // Scroll to top
+}
+
+function hideReport() {
+  $('report-page').classList.add('hidden');
+  $('dashboard').classList.remove('hidden');
+  window.scrollTo(0,0);
 }
 
 function generatePDF() {
@@ -433,7 +455,7 @@ function generatePDF() {
   doc.autoTable({
     startY: afterSummary + 4,
     head: [['S.No', 'Details (Action Time)', 'Value / Action']],
-    body: state.logs.map((l, index) => [index + 1, `${l.cat} [${l.time}]`, l.val]), // Cleanly numbers remaining logs 1,2,3
+    body: state.logs.map((l, index) => [index + 1, `${l.cat} [${l.time}]`, l.val]), 
     headStyles: { fillColor: [0, 51, 102] }, theme: 'grid'
   });
 
