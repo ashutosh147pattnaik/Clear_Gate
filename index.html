@@ -20,11 +20,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Animated Gradient Background */
-            background: linear-gradient(-45deg, #002855, #0052a3, #0a4fa6, #001f40);
+            /* Deep, animated gradient background */
+            background: linear-gradient(-45deg, #001f40, #003f87, #0a4fa6, #001224);
             background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            animation: gradientBG 12s ease infinite;
             overflow: hidden;
+            perspective: 1000px; /* Required for 3D effects */
         }
 
         @keyframes gradientBG {
@@ -33,32 +34,56 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* --- HEAVY ANIMATION: Floating Background Orbs --- */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.6;
+            animation: floatOrb 10s infinite ease-in-out alternate;
+            z-index: 0;
+        }
+        .orb-1 { width: 300px; height: 300px; background: #0fa36e; top: -10%; left: -10%; animation-delay: 0s; }
+        .orb-2 { width: 400px; height: 400px; background: #0052a3; bottom: -20%; right: -10%; animation-delay: -3s; }
+        .orb-3 { width: 250px; height: 250px; background: #d4af37; top: 40%; left: 60%; opacity: 0.3; animation-delay: -6s; }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, -40px) scale(1.2); }
+        }
+
+        /* --- Glassmorphism Gateway Card --- */
         .gateway-container {
-            background: white;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             padding: 40px 30px;
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+            border-radius: 20px;
             text-align: center;
             width: 90%;
             max-width: 380px;
-            /* Gentle Floating Animation combined with initial Fade In */
-            animation: fadeIn 0.8s ease-out, floatCard 6s ease-in-out infinite;
+            z-index: 10;
+            
+            /* Staggered 3D Entrance & Breathing Glow */
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(10, 79, 166, 0.4);
+            animation: cardEntrance 1s cubic-bezier(0.25, 1, 0.5, 1) forwards, cardBreathe 4s infinite alternate;
+            opacity: 0;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes cardEntrance {
+            0% { opacity: 0; transform: rotateX(-15deg) translateY(60px) scale(0.9); }
+            100% { opacity: 1; transform: rotateX(0deg) translateY(0) scale(1); }
         }
 
-        @keyframes floatCard {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-            100% { transform: translateY(0px); }
+        @keyframes cardBreathe {
+            0% { box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(10, 79, 166, 0.2); }
+            100% { box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 60px rgba(10, 79, 166, 0.6); }
         }
 
         .logo-placeholder {
-            width: 75px;
-            height: 75px;
+            width: 80px;
+            height: 80px;
             background: linear-gradient(135deg, #003f87, #0a4fa6);
             border-radius: 50%;
             display: flex;
@@ -66,58 +91,66 @@
             justify-content: center;
             margin: 0 auto 15px;
             color: #d4af37;
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            /* Pulsing Gold Glow */
-            box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5);
-            animation: pulseGlow 2.5s infinite;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            box-shadow: 0 10px 25px rgba(0, 63, 135, 0.4);
+            /* Infinite Spin-Pulse */
+            animation: pulseGlow 2s infinite;
         }
 
         @keyframes pulseGlow {
-            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5); }
-            70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6); transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { box-shadow: 0 0 0 20px rgba(212, 175, 55, 0); transform: scale(1); }
         }
 
-        .logo-placeholder::before {
-            content: "SBI";
-        }
+        .logo-placeholder::before { content: "SBI"; }
 
         h1 {
             color: #002855;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             margin-bottom: 8px;
-            font-weight: 700;
+            font-weight: 800;
+            opacity: 0;
+            animation: slideUp 0.6s ease forwards 0.3s;
         }
 
-        /* Dynamic Wish Text Styling */
         #dynamic-wish {
             color: #0a4fa6;
-            font-size: 0.95rem;
-            font-weight: 600;
+            font-size: 1rem;
+            font-weight: 700;
             margin-bottom: 25px;
-            min-height: 24px; /* Prevents jumping when text changes */
-            transition: opacity 0.5s ease-in-out;
-            opacity: 1;
+            min-height: 24px;
+            transition: opacity 0.4s ease-in-out, transform 0.4s;
+            opacity: 0;
+            animation: slideUp 0.6s ease forwards 0.5s;
         }
 
         .btn-group {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 16px;
+            opacity: 0;
+            animation: slideUp 0.6s ease forwards 0.7s;
         }
 
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HEAVY ANIMATION: Button Shimmer Sweep --- */
         .nav-btn {
             background: white;
-            color: #003f87;
-            border: 2px solid #e0e5eb;
+            color: white;
+            border: none;
             padding: 16px;
-            border-radius: 10px;
-            font-size: 1rem;
+            border-radius: 12px;
+            font-size: 1.05rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 1.5, 0.5, 1);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -125,66 +158,78 @@
             text-decoration: none;
             position: relative;
             overflow: hidden;
+            z-index: 1;
+        }
+
+        /* The Shimmer Effect */
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-20deg);
+            animation: shimmerSweep 3s infinite;
+            z-index: -1;
+        }
+
+        @keyframes shimmerSweep {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
         }
 
         .nav-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
         }
 
         .nav-btn:active {
-            transform: scale(0.97);
+            transform: scale(0.95);
         }
 
         .btn-target {
-            background: linear-gradient(135deg, #003f87, #0052a3);
-            color: white;
-            border: none;
-            box-shadow: 0 4px 12px rgba(0, 63, 135, 0.2);
-        }
-
-        .btn-target:hover {
-            background: linear-gradient(135deg, #002855, #003f87);
+            background: linear-gradient(135deg, #003f87, #0066cc);
+            box-shadow: 0 6px 15px rgba(0, 63, 135, 0.3);
         }
 
         .btn-report {
-            background: linear-gradient(135deg, #0fa36e, #0c8459);
-            color: white;
-            border: none;
-            box-shadow: 0 4px 12px rgba(15, 163, 110, 0.2);
+            background: linear-gradient(135deg, #0fa36e, #10c787);
+            box-shadow: 0 6px 15px rgba(15, 163, 110, 0.3);
         }
 
-        .btn-report:hover {
-            background: linear-gradient(135deg, #0a8256, #086643);
-        }
-
-        .icon {
-            font-size: 1.3rem;
-        }
+        .icon { font-size: 1.4rem; }
         
         .footer-text {
             margin-top: 25px;
-            font-size: 0.75rem;
-            color: #aab4bf;
+            font-size: 0.8rem;
+            color: #8a9bb0;
+            font-weight: 600;
+            opacity: 0;
+            animation: slideUp 0.6s ease forwards 0.9s;
         }
     </style>
 </head>
 <body>
 
+    <!-- Floating Background Orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
     <div class="gateway-container">
         <div class="logo-placeholder"></div>
         <h1>Operations Gateway</h1>
         
-        <!-- The Dynamic Wish Text goes here -->
-        <div id="dynamic-wish">Welcome to your workspace!</div>
+        <div id="dynamic-wish">Loading workspace...</div>
 
         <div class="btn-group">
-            <!-- Button 1 links to the Target Portal (Ashutosh's Page) -->
+            <!-- Using your custom K1 link -->
             <a href="K1.html" class="nav-btn btn-target">
                 <span class="icon">🎯</span> Target Portal (Elipoma)
             </a>
 
-            <!-- Button 2 links to the Daily Report (Elipoma's Page) -->
+            <!-- Using your custom A1 link -->
             <a href="A1.html" class="nav-btn btn-report">
                 <span class="icon">📊</span> Daily Report (Ashutosh)
             </a>
@@ -193,39 +238,34 @@
         <div class="footer-text">Secure Branch Access &copy; 2024</div>
     </div>
 
-    <!-- JavaScript for the Random Wishes -->
     <script>
         const wishes = [
-            "Have a great day ahead! 🌟",
-            "Keep up the excellent work! 💼",
-            "Stay safe and stay productive! 🛡️",
-            "Let's achieve our targets today! 🎯",
-            "Welcome back to the workspace! 👋",
-            "Wishing you a successful day! 🚀",
-            "Your efforts make a difference! 💡"
+            "Have a fantastic day ahead! 🌟",
+            "Keep up the brilliant work! 💼",
+            "Stay safe and productive! 🛡️",
+            "Let's crush our targets today! 🎯",
+            "Welcome back to the dashboard! 👋",
+            "Wishing you massive success! 🚀",
+            "Your hard work is appreciated! 💡"
         ];
 
         const wishElement = document.getElementById('dynamic-wish');
         
-        // Function to change the wish with a smooth fade effect
         function changeWish() {
-            // Fade out
             wishElement.style.opacity = 0;
+            wishElement.style.transform = "translateY(10px)";
             
             setTimeout(() => {
-                // Pick a random wish from the list
                 const randomWish = wishes[Math.floor(Math.random() * wishes.length)];
                 wishElement.textContent = randomWish;
                 
-                // Fade back in
                 wishElement.style.opacity = 1;
-            }, 500); // Wait half a second before changing text to allow fade out
+                wishElement.style.transform = "translateY(0)";
+            }, 400); 
         }
 
-        // Change the wish every 4.5 seconds
-        setInterval(changeWish, 4500);
+        setInterval(changeWish, 4000);
 
-        // Run once immediately on load to pick the first random wish
         window.onload = () => {
             const initialWish = wishes[Math.floor(Math.random() * wishes.length)];
             wishElement.textContent = initialWish;
