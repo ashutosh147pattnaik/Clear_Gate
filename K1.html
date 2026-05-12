@@ -16,13 +16,13 @@
             --sbi-blue: #003f87;
             --sbi-light-blue: #0052a3;
             --sbi-gold: #d4af37;
-            --sbi-gray: rgba(245, 245, 245, 0.85);
+            --sbi-gray: #f4f6f9;
             --text-dark: #333333;
             --text-light: #666666;
             --success: #25D366;
             --success-dark: #1da851;
             --warning: #e74c3c;
-            --border: #e0e0e0;
+            --border: #e2e8f0;
         }
 
         body, html {
@@ -33,81 +33,30 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            perspective: 1000px;
-            
-            background: linear-gradient(-45deg, #001f40, #003f87, #0a4fa6, #001224);
-            background-size: 400% 400%;
-            animation: gradientBG 12s ease infinite;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Floating Background Orbs */
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.6;
-            animation: floatOrb 10s infinite ease-in-out alternate;
-            z-index: 0;
-            pointer-events: none;
-        }
-        .orb-1 { width: 300px; height: 300px; background: #0fa36e; top: -10%; left: -10%; animation-delay: 0s; }
-        .orb-2 { width: 400px; height: 400px; background: #0052a3; bottom: -20%; right: -10%; animation-delay: -3s; }
-        .orb-3 { width: 250px; height: 250px; background: #d4af37; top: 40%; left: 60%; opacity: 0.3; animation-delay: -6s; }
-
-        @keyframes floatOrb {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(40px, -40px) scale(1.2); }
+            background: #001f40; /* Solid mobile-friendly background */
+            color: var(--text-dark);
         }
 
         /* ===== LOGIN PAGE ===== */
         .login-container {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 20px;
-            padding: 35px 25px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 40px 25px;
             max-width: 320px;
             width: 90%;
             text-align: center;
-            z-index: 10;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(10, 79, 166, 0.4);
-            animation: cardEntrance 1s cubic-bezier(0.25, 1, 0.5, 1) forwards, cardBreathe 4s infinite alternate;
-        }
-
-        @keyframes cardEntrance {
-            0% { opacity: 0; transform: rotateX(-15deg) translateY(60px) scale(0.9); }
-            100% { opacity: 1; transform: rotateX(0deg) translateY(0) scale(1); }
-        }
-
-        @keyframes cardBreathe {
-            0% { box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(10, 79, 166, 0.2); }
-            100% { box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 60px rgba(10, 79, 166, 0.6); }
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
         .sbi-logo {
             width: 70px;
             height: 70px;
-            background: linear-gradient(135deg, var(--sbi-blue), var(--sbi-light-blue));
+            background: var(--sbi-blue);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 15px;
-            box-shadow: 0 10px 25px rgba(0, 63, 135, 0.4);
-            animation: pulseGlow 2s infinite;
-        }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6); transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { box-shadow: 0 0 0 20px rgba(212, 175, 55, 0); transform: scale(1); }
         }
 
         .sbi-logo::before {
@@ -118,58 +67,53 @@
             letter-spacing: 1px;
         }
 
-        .login-header h1 { color: var(--sbi-blue); font-size: 20px; margin-bottom: 4px; font-weight: 700; }
-        .login-header p { color: var(--text-light); font-size: 12px; margin-bottom: 25px; font-weight: 600; }
+        .login-header h1 { color: var(--sbi-blue); font-size: 1.4rem; margin-bottom: 4px; font-weight: 700; }
+        .login-header p { color: var(--text-light); font-size: 0.85rem; margin-bottom: 25px; font-weight: 600; }
 
         .login-btn {
             width: 100%; padding: 14px;
-            background: linear-gradient(135deg, var(--sbi-blue), var(--sbi-light-blue));
+            background: var(--sbi-light-blue);
             color: white; border: none; border-radius: 10px;
-            font-size: 15px; font-weight: bold; cursor: pointer;
-            transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(0, 63, 135, 0.3);
+            font-size: 1rem; font-weight: bold; cursor: pointer;
         }
-        .login-btn:active { transform: scale(0.95); }
-        .login-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 63, 135, 0.4); }
+        
+        .login-btn:active { background: var(--sbi-blue); }
 
         /* ===== DASHBOARD ===== */
         .dashboard {
             display: none;
             background: var(--sbi-gray);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
             width: 94%; height: 96%; max-width: 600px;
-            border-radius: 20px; flex-direction: column; z-index: 10;
+            border-radius: 16px; flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
 
         .dashboard.show {
             display: flex;
-            animation: cardEntrance 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
         .dashboard-header {
-            background: linear-gradient(135deg, var(--sbi-blue), var(--sbi-light-blue));
-            border-radius: 18px 18px 0 0;
-            color: white; padding: 12px 18px;
+            background: var(--sbi-blue);
+            color: white; padding: 16px;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); flex-shrink: 0;
+            flex-shrink: 0;
         }
-        .header-left h2 { font-size: 16px; margin-bottom: 2px; }
-        .header-left p { font-size: 11px; opacity: 0.9; margin: 0; font-weight: 500; }
+        .header-left h2 { font-size: 1.1rem; margin-bottom: 2px; }
+        .header-left p { font-size: 0.75rem; opacity: 0.9; margin: 0; font-weight: 500; }
 
         .logout-btn {
-            background: rgba(255, 255, 255, 0.2); color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3); padding: 6px 12px;
-            border-radius: 6px; font-size: 11px; font-weight: bold; transition: background 0.3s;
+            background: transparent; color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4); padding: 8px 12px;
+            border-radius: 8px; font-size: 0.75rem; font-weight: bold;
         }
-        .logout-btn:hover { background: rgba(255, 255, 255, 0.3); }
+        .logout-btn:active { background: rgba(255, 255, 255, 0.2); }
 
-        .dashboard-content { padding: 15px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .dashboard-content { padding: 16px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
         .date-display {
-            text-align: right; font-size: 13px; font-weight: 800;
-            color: var(--sbi-blue); margin-bottom: 8px; flex-shrink: 0;
+            text-align: right; font-size: 0.85rem; font-weight: 700;
+            color: var(--sbi-blue); margin-bottom: 12px; flex-shrink: 0;
             text-transform: uppercase; letter-spacing: 0.5px;
         }
 
@@ -178,69 +122,63 @@
             flex: 1; display: grid;
             grid-template-columns: repeat(2, 1fr);
             grid-template-rows: repeat(3, 1fr);
-            gap: 12px; margin-bottom: 12px;
+            gap: 12px; margin-bottom: 16px;
         }
 
         .counter-button {
-            background: rgba(255, 255, 255, 0.95);
-            border: 2px solid transparent; /* Prepared for target met border */
+            background: #ffffff;
+            border: 2px solid var(--border);
             border-radius: 12px; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            transition: all 0.3s cubic-bezier(0.25, 1.5, 0.5, 1);
-            padding: 8px 5px; cursor: pointer; position: relative;
+            padding: 10px 5px; cursor: pointer; position: relative;
         }
 
-        .counter-button:hover, .counter-button:active {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-            background: #ffffff;
+        /* Standard Mobile touch feedback */
+        .counter-button:active {
+            background: #f8fafc;
+            transform: scale(0.98);
+            border-color: #cbd5e1;
         }
 
-        .button-icon { font-size: 22px; margin-bottom: 2px; }
+        .button-icon { font-size: 1.5rem; margin-bottom: 4px; }
 
         .button-label {
-            color: var(--text-dark); font-size: 12px;
+            color: var(--text-dark); font-size: 0.85rem;
             font-weight: 700; margin-bottom: 2px; text-align: center;
-            transition: color 0.3s ease;
         }
 
         .target-label {
-            font-size: 9px; color: #aab4bf; font-weight: 700;
-            margin-bottom: 4px; letter-spacing: 0.5px;
-            transition: color 0.3s ease;
+            font-size: 0.65rem; color: #94a3b8; font-weight: 700;
+            margin-bottom: 6px; letter-spacing: 0.5px;
         }
 
         .button-counter {
             background: #eaf1f8; color: var(--sbi-blue);
-            font-size: 22px; font-weight: 800; padding: 2px 18px;
-            border-radius: 8px; transition: all 0.3s ease; margin-bottom: 6px;
+            font-size: 1.4rem; font-weight: 800; padding: 4px 20px;
+            border-radius: 8px; margin-bottom: 8px;
         }
 
         /* Progress Bar Styles */
         .pb-wrap {
-            width: 80%; height: 5px;
-            background: #e0e5eb; border-radius: 10px;
-            overflow: hidden; transition: background 0.3s ease;
+            width: 80%; height: 6px;
+            background: #e2e8f0; border-radius: 10px;
+            overflow: hidden;
         }
         
         .pb-fill {
             height: 100%; width: 0%;
-            background: linear-gradient(90deg, var(--sbi-light-blue), var(--sbi-blue));
+            background: var(--sbi-light-blue);
             border-radius: 10px;
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
         }
 
         /* ===== TARGET MET STATE ===== */
         .counter-button.target-met {
-            background: linear-gradient(135deg, var(--success), var(--success-dark));
-            box-shadow: 0 6px 15px rgba(37, 211, 102, 0.4);
-            border-color: transparent;
+            background: var(--success);
+            border-color: var(--success-dark);
         }
         
-        .counter-button.target-met:hover, .counter-button.target-met:active {
-            box-shadow: 0 12px 25px rgba(37, 211, 102, 0.5);
-            transform: translateY(-5px) scale(1.02);
+        .counter-button.target-met:active {
+            background: var(--success-dark);
         }
 
         .counter-button.target-met .button-label, 
@@ -248,43 +186,26 @@
         
         .counter-button.target-met .button-counter {
             background: rgba(255, 255, 255, 0.25); color: white;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .counter-button.target-met .pb-wrap { background: rgba(0, 0, 0, 0.2); }
         .counter-button.target-met .pb-fill { background: white; }
 
         /* Actions */
-        .action-buttons { display: flex; gap: 10px; flex-shrink: 0; padding-bottom: 5px; }
+        .action-buttons { display: flex; gap: 12px; flex-shrink: 0; padding-bottom: 5px; }
 
         .action-btn {
-            flex: 1; padding: 14px; font-size: 13px; font-weight: bold;
-            border: none; border-radius: 10px; color: white; position: relative;
-            overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; z-index: 1;
+            flex: 1; padding: 14px; font-size: 0.9rem; font-weight: bold;
+            border: none; border-radius: 10px; color: white; 
         }
+        .action-btn:active { opacity: 0.8; transform: scale(0.98); }
 
-        .action-btn::before {
-            content: ''; position: absolute; top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transform: skewX(-20deg); animation: shimmerSweep 3s infinite; z-index: -1;
-        }
-
-        @keyframes shimmerSweep { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-
-        .action-btn:active { transform: scale(0.95); }
-        .action-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
-
-        .submit-btn { background: linear-gradient(135deg, #25D366, #1da851); }
-        .reset-btn { background: linear-gradient(135deg, #e74c3c, #c0392b); flex: 0.4; }
+        .submit-btn { background: var(--success); }
+        .reset-btn { background: var(--warning); flex: 0.4; }
 
     </style>
 </head>
 <body>
-
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
 
     <div class="login-container" id="loginContainer">
         <div class="login-header">
@@ -308,7 +229,6 @@
             <div class="date-display" id="todayDate"></div>
 
             <div class="buttons-grid">
-                <!-- Button 1 -->
                 <div class="counter-button" id="btn-nps" onclick="increment('nps')">
                     <span class="button-icon">😊</span>
                     <span class="button-label">NPS</span>
@@ -317,7 +237,6 @@
                     <div class="pb-wrap"><div class="pb-fill" id="pb-nps"></div></div>
                 </div>
 
-                <!-- Button 2 -->
                 <div class="counter-button" id="btn-whatsapp" onclick="increment('whatsapp')">
                     <span class="button-icon">💬</span>
                     <span class="button-label">WhatsApp</span>
@@ -326,7 +245,6 @@
                     <div class="pb-wrap"><div class="pb-fill" id="pb-whatsapp"></div></div>
                 </div>
 
-                <!-- Button 3 -->
                 <div class="counter-button" id="btn-yonoRegistration" onclick="increment('yonoRegistration')">
                     <span class="button-icon">📝</span>
                     <span class="button-label">Yono Reg.</span>
@@ -335,7 +253,6 @@
                     <div class="pb-wrap"><div class="pb-fill" id="pb-yonoRegistration"></div></div>
                 </div>
 
-                <!-- Button 4 -->
                 <div class="counter-button" id="btn-contactCentre" onclick="increment('contactCentre')">
                     <span class="button-icon">☎️</span>
                     <span class="button-label">Contact Centre</span>
@@ -344,7 +261,6 @@
                     <div class="pb-wrap"><div class="pb-fill" id="pb-contactCentre"></div></div>
                 </div>
 
-                <!-- Button 5 -->
                 <div class="counter-button" id="btn-cbdc" onclick="increment('cbdc')">
                     <span class="button-icon">💳</span>
                     <span class="button-label">CBDC</span>
@@ -353,7 +269,6 @@
                     <div class="pb-wrap"><div class="pb-fill" id="pb-cbdc"></div></div>
                 </div>
 
-                <!-- Button 6 -->
                 <div class="counter-button" id="btn-channelMigration" onclick="increment('channelMigration')">
                     <span class="button-icon">🔄</span>
                     <span class="button-label">Migration</span>
@@ -438,10 +353,6 @@
             
             // Trigger UI update for this specific button
             updateUI(fieldName);
-            
-            // Animation Pop
-            counterElement.style.transform = "scale(1.2)";
-            setTimeout(() => { counterElement.style.transform = "scale(1)"; }, 150);
 
             saveData();
             if (navigator.vibrate) navigator.vibrate(50);
