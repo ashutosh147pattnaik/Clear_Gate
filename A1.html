@@ -23,7 +23,7 @@ body {
   margin: 0; 
   padding-bottom: 40px; 
   min-height: 100vh;
-  background: #001f40; /* Solid, clean background */
+  background: #001f40; 
   color: #333;
 }
 
@@ -78,6 +78,8 @@ header {
   border-top: 4px solid var(--p);
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 .card.met { border-top-color: var(--ok); background: #f4fdf8; }
 .card.met .count { color: var(--ok); }
@@ -94,14 +96,28 @@ header {
   color: var(--p); font-family: 'DM Mono', monospace; line-height: 1;
 }
 
-.pb-wrap { width: 100%; height: 6px; background: #e2e8f0; border-radius: 99px; margin: 8px 0 14px; overflow: hidden; }
-.pb-fill  { height: 100%; border-radius: 99px; background: var(--pl); }
+.pb-wrap { width: 100%; height: 6px; background: #e2e8f0; border-radius: 99px; margin: 8px 0 10px; overflow: hidden; }
+.pb-fill  { height: 100%; border-radius: 99px; background: var(--pl); transition: width 0.3s ease; }
+
+/* Last Input Display */
+.last-input {
+  font-size: 0.65rem;
+  color: var(--tm);
+  font-style: italic;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  margin-top: auto; 
+}
 
 /* BUTTONS */
 button {
   padding: 12px 10px; border: none; border-radius: var(--rs);
   font-weight: 700; cursor: pointer; font-size: 0.85rem; width: 100%;
   font-family: 'DM Sans', sans-serif;
+  transition: transform 0.1s;
 }
 button:active { opacity: 0.8; transform: scale(0.98); }
 
@@ -109,7 +125,9 @@ button:active { opacity: 0.8; transform: scale(0.98); }
 .btn-target-met { background: var(--ok) !important; color: #fff !important; }
 
 .btn-action { margin-top: 12px; padding: 14px; font-size: 0.95rem; color: #fff; }
-.btn-pdf { background: var(--ok); margin-top: 20px; }
+.btn-undo { background: #f59e0b; color: #fff; } /* Amber Undo Button */
+.btn-undo:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; transform: none; }
+.btn-pdf { background: var(--ok); margin-top: 12px; }
 .btn-wa  { background: #25D366; }
 .btn-reset {
   background: transparent; color: #ff6b6b; margin-top: 12px;
@@ -187,24 +205,31 @@ button:active { opacity: 0.8; transform: scale(0.98); }
         <h3>NPS</h3><span class="target-label">Target: 10</span>
         <div class="count" id="c-nps">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-nps"></div></div>
+        <div class="last-input" id="last-nps">No entries yet</div>
         <button id="btn-nps" class="btn-primary" onclick="addSimple('NPS')">Add</button>
       </div>
+      
       <div class="card" id="card-wa">
         <h3>WhatsApp</h3><span class="target-label">Target: 15</span>
         <div class="count" id="c-wa">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-wa"></div></div>
+        <div class="last-input" id="last-wa">No entries yet</div>
         <button id="btn-wa" class="btn-primary" onclick="openModal('WhatsApp')">Action</button>
       </div>
+      
       <div class="card" id="card-yono">
         <h3>Yono SBI</h3><span class="target-label">Target: 5</span>
         <div class="count" id="c-yono">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-yono"></div></div>
+        <div class="last-input" id="last-yono">No entries yet</div>
         <button id="btn-yono" class="btn-primary" onclick="openModal('Yono SBI')">Action</button>
       </div>
+      
       <div class="card" id="card-contact">
         <h3>Contact Centre</h3><span class="target-label">Target: 10</span>
         <div class="count" id="c-contact">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-contact"></div></div>
+        <div class="last-input" id="last-contact">No entries yet</div>
         <button id="btn-contact" class="btn-primary" onclick="openModal('Contact Centre')">Action</button>
       </div>
 
@@ -212,11 +237,15 @@ button:active { opacity: 0.8; transform: scale(0.98); }
         <h3>Channel Migration</h3><span class="target-label">Target: 10</span>
         <div class="count" id="c-cm">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-cm" style="background: #7c3aed;"></div></div>
+        <div class="last-input" id="last-cm">No entries yet</div>
         <button id="btn-cm" class="btn-cm" onclick="addSimple('Channel Migration')">Add</button>
       </div>
     </div>
 
     <div class="divider">Actions</div>
+    <!-- NEW UNDO BUTTON -->
+    <button id="btn-undo" class="btn-action btn-undo" onclick="undoLast()">⟲ Undo Last Entry</button>
+    
     <button class="btn-action btn-pdf"   onclick="generatePDF()">Download PDF &amp; Reset</button>
     <button class="btn-action btn-wa"    onclick="shareWA()">Share via WhatsApp</button>
     <button class="btn-reset"            onclick="resetApp()">Manual Reset</button>
@@ -269,7 +298,13 @@ let activeCat = '', selType = 'Account Number';
 const $ = id => document.getElementById(id);
 const els = {};
 MAP.forEach(({ key, id }) => {
-  els[key] = { count: $('c-'+id), pb: $('pb-'+id), btn: $('btn-'+id), card: $('card-'+id) };
+  els[key] = { 
+      count: $('c-'+id), 
+      pb: $('pb-'+id), 
+      btn: $('btn-'+id), 
+      card: $('card-'+id),
+      last: $('last-'+id) 
+  };
 });
 
 setInterval(() => $('live-clock').textContent = new Date().toLocaleTimeString(), 1000);
@@ -312,6 +347,25 @@ function saveEntry() {
   save(); closeModal();
 }
 
+// --- NEW UNDO FUNCTION ---
+function undoLast() {
+  if (state.logs.length === 0) return; // Prevent errors if log is empty
+  
+  // 1. Remove the most recent log
+  const lastLog = state.logs.pop(); 
+  
+  // 2. Identify the base category (e.g., matching "WhatsApp (Account)" to "WhatsApp")
+  const baseMap = MAP.find(m => lastLog.cat === m.key || lastLog.cat.startsWith(m.key + ' '));
+  
+  // 3. Subtract 1 from the correct counter safely
+  if (baseMap && state.counts[baseMap.key] > 0) {
+    state.counts[baseMap.key]--;
+  }
+  
+  // 4. Save and rebuild the UI
+  save(); 
+}
+
 function closeModal() { $('modal').classList.add('hidden'); }
 
 function save() {
@@ -320,6 +374,10 @@ function save() {
 }
 
 function refreshUI() {
+  // Disable Undo button if nothing to undo
+  $('btn-undo').disabled = state.logs.length === 0;
+  $('btn-undo').textContent = state.logs.length === 0 ? "⟲ Nothing to Undo" : "⟲ Undo Last Entry";
+
   MAP.forEach(({ key }) => {
     const count = state.counts[key];
     const e = els[key];
@@ -328,6 +386,18 @@ function refreshUI() {
     const met = count >= TARGETS[key];
     e.btn.classList.toggle('btn-target-met', met);
     e.card.classList.toggle('met', met);
+    
+    // Display the Last Input Data
+    const lastLog = [...state.logs].reverse().find(l => l.cat === key || l.cat.startsWith(key + ' '));
+    if (lastLog) {
+        if (lastLog.val === 'Incremented by 1') {
+            e.last.textContent = `Last: +1 at ${lastLog.time}`;
+        } else {
+            e.last.textContent = `Last: ${lastLog.val} (${lastLog.time})`;
+        }
+    } else {
+        e.last.textContent = 'No entries yet';
+    }
   });
 }
 
@@ -363,7 +433,7 @@ function generatePDF() {
   doc.autoTable({
     startY: afterSummary + 4,
     head: [['S.No', 'Details (Action Time)', 'Value / Action']],
-    body: state.logs.map(l => [l.id, `${l.cat} [${l.time}]`, l.val]),
+    body: state.logs.map((l, index) => [index + 1, `${l.cat} [${l.time}]`, l.val]), // Cleanly numbers remaining logs 1,2,3
     headStyles: { fillColor: [0, 51, 102] }, theme: 'grid'
   });
 
