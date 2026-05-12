@@ -16,246 +16,275 @@
             --sbi-blue: #003f87;
             --sbi-light-blue: #0052a3;
             --sbi-gold: #d4af37;
-            --sbi-gray: #f5f5f5;
+            --sbi-gray: rgba(245, 245, 245, 0.85);
             --text-dark: #333333;
             --text-light: #666666;
-            --success: #27ae60;
+            --success: #25D366;
+            --success-dark: #1da851;
             --warning: #e74c3c;
-            --whatsapp-green: #25D366;
             --border: #e0e0e0;
         }
 
-        /* Lock the body strictly to the viewport height */
         body, html {
             height: 100%;
             width: 100%;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--sbi-blue) 0%, var(--sbi-light-blue) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
+            perspective: 1000px;
+            
+            background: linear-gradient(-45deg, #001f40, #003f87, #0a4fa6, #001224);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Background Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.6;
+            animation: floatOrb 10s infinite ease-in-out alternate;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .orb-1 { width: 300px; height: 300px; background: #0fa36e; top: -10%; left: -10%; animation-delay: 0s; }
+        .orb-2 { width: 400px; height: 400px; background: #0052a3; bottom: -20%; right: -10%; animation-delay: -3s; }
+        .orb-3 { width: 250px; height: 250px; background: #d4af37; top: 40%; left: 60%; opacity: 0.3; animation-delay: -6s; }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, -40px) scale(1.2); }
         }
 
         /* ===== LOGIN PAGE ===== */
         .login-container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            padding: 35px 25px;
             max-width: 320px;
             width: 90%;
-            animation: slideIn 0.4s ease-out;
             text-align: center;
+            z-index: 10;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(10, 79, 166, 0.4);
+            animation: cardEntrance 1s cubic-bezier(0.25, 1, 0.5, 1) forwards, cardBreathe 4s infinite alternate;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes cardEntrance {
+            0% { opacity: 0; transform: rotateX(-15deg) translateY(60px) scale(0.9); }
+            100% { opacity: 1; transform: rotateX(0deg) translateY(0) scale(1); }
+        }
+
+        @keyframes cardBreathe {
+            0% { box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(10, 79, 166, 0.2); }
+            100% { box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 60px rgba(10, 79, 166, 0.6); }
         }
 
         .sbi-logo {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             background: linear-gradient(135deg, var(--sbi-blue), var(--sbi-light-blue));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 10px;
-            box-shadow: 0 4px 10px rgba(0, 63, 135, 0.3);
+            margin: 0 auto 15px;
+            box-shadow: 0 10px 25px rgba(0, 63, 135, 0.4);
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6); transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { box-shadow: 0 0 0 20px rgba(212, 175, 55, 0); transform: scale(1); }
         }
 
         .sbi-logo::before {
             content: "SBI";
             color: var(--sbi-gold);
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             letter-spacing: 1px;
         }
 
-        .login-header h1 {
-            color: var(--sbi-blue);
-            font-size: 18px;
-            margin-bottom: 2px;
-            font-weight: 600;
-        }
-
-        .login-header p {
-            color: var(--text-light);
-            font-size: 11px;
-            margin-bottom: 20px;
-        }
+        .login-header h1 { color: var(--sbi-blue); font-size: 20px; margin-bottom: 4px; font-weight: 700; }
+        .login-header p { color: var(--text-light); font-size: 12px; margin-bottom: 25px; font-weight: 600; }
 
         .login-btn {
-            width: 100%;
-            padding: 12px;
+            width: 100%; padding: 14px;
             background: linear-gradient(135deg, var(--sbi-blue), var(--sbi-light-blue));
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
+            color: white; border: none; border-radius: 10px;
+            font-size: 15px; font-weight: bold; cursor: pointer;
+            transition: all 0.3s ease; box-shadow: 0 6px 15px rgba(0, 63, 135, 0.3);
         }
-
-        .login-btn:active { transform: scale(0.96); }
+        .login-btn:active { transform: scale(0.95); }
+        .login-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 63, 135, 0.4); }
 
         /* ===== DASHBOARD ===== */
         .dashboard {
             display: none;
             background: var(--sbi-gray);
-            width: 100%;
-            height: 100%; /* Strictly 100% height */
-            max-width: 600px;
-            flex-direction: column;
-            animation: slideIn 0.3s ease-out;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            width: 94%; height: 96%; max-width: 600px;
+            border-radius: 20px; flex-direction: column; z-index: 10;
         }
 
         .dashboard.show {
             display: flex;
+            animation: cardEntrance 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
-        /* Ultra Compact Header */
         .dashboard-header {
             background: linear-gradient(135deg, var(--sbi-blue), var(--sbi-light-blue));
-            color: white;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            flex-shrink: 0; /* Prevents header from squishing */
+            border-radius: 18px 18px 0 0;
+            color: white; padding: 12px 18px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); flex-shrink: 0;
         }
-
-        .header-left h2 { font-size: 14px; margin-bottom: 0; }
-        .header-left p { font-size: 10px; opacity: 0.9; margin: 0; }
+        .header-left h2 { font-size: 16px; margin-bottom: 2px; }
+        .header-left p { font-size: 11px; opacity: 0.9; margin: 0; font-weight: 500; }
 
         .logout-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 600;
+            background: rgba(255, 255, 255, 0.2); color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3); padding: 6px 12px;
+            border-radius: 6px; font-size: 11px; font-weight: bold; transition: background 0.3s;
         }
+        .logout-btn:hover { background: rgba(255, 255, 255, 0.3); }
 
-        /* Dynamic Content Area */
-        .dashboard-content {
-            padding: 10px;
-            flex: 1; /* Takes remaining height */
-            display: flex;
-            flex-direction: column;
-            overflow: hidden; /* No scrolling inside */
-        }
+        .dashboard-content { padding: 15px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
         .date-display {
-            text-align: right;
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--sbi-blue);
-            margin-bottom: 8px;
-            flex-shrink: 0;
+            text-align: right; font-size: 13px; font-weight: 800;
+            color: var(--sbi-blue); margin-bottom: 8px; flex-shrink: 0;
+            text-transform: uppercase; letter-spacing: 0.5px;
         }
 
-        /* Grid scales exactly to remaining space */
+        /* GRID & BUTTONS */
         .buttons-grid {
-            flex: 1; /* Stretches to fill space */
-            display: grid;
+            flex: 1; display: grid;
             grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(3, 1fr); /* Forces 3 equal rows */
-            gap: 8px;
-            margin-bottom: 10px;
+            grid-template-rows: repeat(3, 1fr);
+            gap: 12px; margin-bottom: 12px;
         }
 
         .counter-button {
-            background: white;
-            border: none;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center; /* Centers content vertically */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: transform 0.1s;
-            padding: 5px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid transparent; /* Prepared for target met border */
+            border-radius: 12px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.25, 1.5, 0.5, 1);
+            padding: 8px 5px; cursor: pointer; position: relative;
         }
 
-        .counter-button:active {
-            transform: scale(0.95);
-            background: #f0f0f0;
+        .counter-button:hover, .counter-button:active {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+            background: #ffffff;
         }
 
-        .button-icon {
-            font-size: 20px;
-            margin-bottom: 2px;
-        }
+        .button-icon { font-size: 22px; margin-bottom: 2px; }
 
         .button-label {
-            color: var(--text-light);
-            font-size: 10px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            text-align: center;
+            color: var(--text-dark); font-size: 12px;
+            font-weight: 700; margin-bottom: 2px; text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .target-label {
+            font-size: 9px; color: #aab4bf; font-weight: 700;
+            margin-bottom: 4px; letter-spacing: 0.5px;
+            transition: color 0.3s ease;
         }
 
         .button-counter {
-            background: var(--sbi-gray);
-            color: var(--sbi-blue);
-            font-size: 18px;
-            font-weight: 700;
-            padding: 4px 15px;
-            border-radius: 6px;
+            background: #eaf1f8; color: var(--sbi-blue);
+            font-size: 22px; font-weight: 800; padding: 2px 18px;
+            border-radius: 8px; transition: all 0.3s ease; margin-bottom: 6px;
         }
 
-        /* Footer buttons inside the flow, no fixed positioning needed */
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-            flex-shrink: 0;
-            padding-bottom: 5px;
+        /* Progress Bar Styles */
+        .pb-wrap {
+            width: 80%; height: 5px;
+            background: #e0e5eb; border-radius: 10px;
+            overflow: hidden; transition: background 0.3s ease;
         }
+        
+        .pb-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, var(--sbi-light-blue), var(--sbi-blue));
+            border-radius: 10px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+        }
+
+        /* ===== TARGET MET STATE ===== */
+        .counter-button.target-met {
+            background: linear-gradient(135deg, var(--success), var(--success-dark));
+            box-shadow: 0 6px 15px rgba(37, 211, 102, 0.4);
+            border-color: transparent;
+        }
+        
+        .counter-button.target-met:hover, .counter-button.target-met:active {
+            box-shadow: 0 12px 25px rgba(37, 211, 102, 0.5);
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .counter-button.target-met .button-label, 
+        .counter-button.target-met .target-label { color: white; }
+        
+        .counter-button.target-met .button-counter {
+            background: rgba(255, 255, 255, 0.25); color: white;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .counter-button.target-met .pb-wrap { background: rgba(0, 0, 0, 0.2); }
+        .counter-button.target-met .pb-fill { background: white; }
+
+        /* Actions */
+        .action-buttons { display: flex; gap: 10px; flex-shrink: 0; padding-bottom: 5px; }
 
         .action-btn {
-            flex: 1;
-            padding: 12px;
-            font-size: 12px;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            color: white;
+            flex: 1; padding: 14px; font-size: 13px; font-weight: bold;
+            border: none; border-radius: 10px; color: white; position: relative;
+            overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; z-index: 1;
         }
 
-        .submit-btn { background: var(--whatsapp-green); }
-        .reset-btn { background: var(--warning); flex: 0.4; }
-
-        /* ===== NOTIFICATIONS ===== */
-        .notification {
-            position: fixed;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
-            animation: fadeInOut 2s ease-in-out forwards;
+        .action-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-20deg); animation: shimmerSweep 3s infinite; z-index: -1;
         }
 
-        @keyframes fadeInOut {
-            0% { opacity: 0; top: 5px; }
-            15% { opacity: 1; top: 15px; }
-            85% { opacity: 1; top: 15px; }
-            100% { opacity: 0; top: 5px; }
-        }
+        @keyframes shimmerSweep { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+
+        .action-btn:active { transform: scale(0.95); }
+        .action-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+
+        .submit-btn { background: linear-gradient(135deg, #25D366, #1da851); }
+        .reset-btn { background: linear-gradient(135deg, #e74c3c, #c0392b); flex: 0.4; }
+
     </style>
 </head>
 <body>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
 
     <div class="login-container" id="loginContainer">
         <div class="login-header">
@@ -263,8 +292,7 @@
             <h1>Daily Workbook</h1>
             <p>Field Operations Report</p>
         </div>
-        
-        <button class="login-btn" onclick="login()">Login</button>
+        <button class="login-btn" onclick="login()">Access Workspace</button>
     </div>
 
     <div class="dashboard" id="dashboard">
@@ -277,44 +305,61 @@
         </div>
 
         <div class="dashboard-content">
-            
             <div class="date-display" id="todayDate"></div>
 
             <div class="buttons-grid">
-                <div class="counter-button" onclick="increment('nps')">
+                <!-- Button 1 -->
+                <div class="counter-button" id="btn-nps" onclick="increment('nps')">
                     <span class="button-icon">😊</span>
                     <span class="button-label">NPS</span>
+                    <span class="target-label">Target: 30</span>
                     <div class="button-counter" id="nps">0</div>
+                    <div class="pb-wrap"><div class="pb-fill" id="pb-nps"></div></div>
                 </div>
 
-                <div class="counter-button" onclick="increment('whatsapp')">
+                <!-- Button 2 -->
+                <div class="counter-button" id="btn-whatsapp" onclick="increment('whatsapp')">
                     <span class="button-icon">💬</span>
                     <span class="button-label">WhatsApp</span>
+                    <span class="target-label">Target: 30</span>
                     <div class="button-counter" id="whatsapp">0</div>
+                    <div class="pb-wrap"><div class="pb-fill" id="pb-whatsapp"></div></div>
                 </div>
 
-                <div class="counter-button" onclick="increment('yonoRegistration')">
+                <!-- Button 3 -->
+                <div class="counter-button" id="btn-yonoRegistration" onclick="increment('yonoRegistration')">
                     <span class="button-icon">📝</span>
                     <span class="button-label">Yono Reg.</span>
+                    <span class="target-label">Target: 30</span>
                     <div class="button-counter" id="yonoRegistration">0</div>
+                    <div class="pb-wrap"><div class="pb-fill" id="pb-yonoRegistration"></div></div>
                 </div>
 
-                <div class="counter-button" onclick="increment('contactCentre')">
+                <!-- Button 4 -->
+                <div class="counter-button" id="btn-contactCentre" onclick="increment('contactCentre')">
                     <span class="button-icon">☎️</span>
                     <span class="button-label">Contact Centre</span>
+                    <span class="target-label">Target: 30</span>
                     <div class="button-counter" id="contactCentre">0</div>
+                    <div class="pb-wrap"><div class="pb-fill" id="pb-contactCentre"></div></div>
                 </div>
 
-                <div class="counter-button" onclick="increment('cbdc')">
+                <!-- Button 5 -->
+                <div class="counter-button" id="btn-cbdc" onclick="increment('cbdc')">
                     <span class="button-icon">💳</span>
                     <span class="button-label">CBDC</span>
+                    <span class="target-label">Target: 30</span>
                     <div class="button-counter" id="cbdc">0</div>
+                    <div class="pb-wrap"><div class="pb-fill" id="pb-cbdc"></div></div>
                 </div>
 
-                <div class="counter-button" onclick="increment('channelMigration')">
+                <!-- Button 6 -->
+                <div class="counter-button" id="btn-channelMigration" onclick="increment('channelMigration')">
                     <span class="button-icon">🔄</span>
                     <span class="button-label">Migration</span>
+                    <span class="target-label">Target: 30</span>
                     <div class="button-counter" id="channelMigration">0</div>
+                    <div class="pb-wrap"><div class="pb-fill" id="pb-channelMigration"></div></div>
                 </div>
             </div>
 
@@ -326,7 +371,14 @@
     </div>
 
     <script>
-        // Initialize App
+        // Redirect to gateway if the user refreshes the page
+        if (performance.getEntriesByType("navigation")[0]?.type === "reload") {
+            window.location.href = "index.html";
+        }
+
+        // Global Target
+        const GLOBAL_TARGET = 30;
+
         window.addEventListener('load', () => {
             updateCurrentDate();
             checkLoginStatus();
@@ -343,7 +395,6 @@
             document.getElementById('todayDate').textContent = "Date: " + formatDateDisplay(new Date());
         }
 
-        // LOGIN FUNCTIONALITY
         function login() {
             localStorage.setItem('loggedIn', 'true');
             showDashboard();
@@ -351,8 +402,8 @@
 
         function checkLoginStatus() {
             if (localStorage.getItem('loggedIn') === 'true') {
-                loadSavedData();
                 showDashboard();
+                loadSavedData();
             }
         }
 
@@ -361,14 +412,38 @@
             document.getElementById('dashboard').classList.add('show');
         }
 
-        // COUNTERS & DATA
-        function increment(fieldName) {
-            let current = parseInt(document.getElementById(fieldName).textContent) || 0;
-            current++;
-            document.getElementById(fieldName).textContent = current;
-            saveData();
+        // Function to update progress bars and colors
+        function updateUI(fieldName) {
+            let val = parseInt(document.getElementById(fieldName).textContent) || 0;
+            let btn = document.getElementById('btn-' + fieldName);
+            let pb = document.getElementById('pb-' + fieldName);
             
-            // Haptic feedback for mobile devices
+            // Calculate Progress Bar Width (max 100%)
+            let percent = Math.min((val / GLOBAL_TARGET) * 100, 100);
+            pb.style.width = percent + '%';
+            
+            // Toggle Target Met Colors
+            if (val >= GLOBAL_TARGET) {
+                btn.classList.add('target-met');
+            } else {
+                btn.classList.remove('target-met');
+            }
+        }
+
+        function increment(fieldName) {
+            let counterElement = document.getElementById(fieldName);
+            let current = parseInt(counterElement.textContent) || 0;
+            current++;
+            counterElement.textContent = current;
+            
+            // Trigger UI update for this specific button
+            updateUI(fieldName);
+            
+            // Animation Pop
+            counterElement.style.transform = "scale(1.2)";
+            setTimeout(() => { counterElement.style.transform = "scale(1)"; }, 150);
+
+            saveData();
             if (navigator.vibrate) navigator.vibrate(50);
         }
 
@@ -388,16 +463,16 @@
             const saved = localStorage.getItem('workbookData');
             if (saved) {
                 const data = JSON.parse(saved);
-                document.getElementById('nps').textContent = data.nps || 0;
-                document.getElementById('whatsapp').textContent = data.whatsapp || 0;
-                document.getElementById('yonoRegistration').textContent = data.yonoRegistration || 0;
-                document.getElementById('contactCentre').textContent = data.contactCentre || 0;
-                document.getElementById('cbdc').textContent = data.cbdc || 0;
-                document.getElementById('channelMigration').textContent = data.channelMigration || 0;
+                const fields = ['nps', 'whatsapp', 'yonoRegistration', 'contactCentre', 'cbdc', 'channelMigration'];
+                
+                fields.forEach(field => {
+                    document.getElementById(field).textContent = data[field] || 0;
+                    // Update the UI based on loaded data
+                    updateUI(field);
+                });
             }
         }
 
-        // WHATSAPP EXPORT (Hardcoded Format)
         function exportToWhatsApp() {
             const today = formatDateDisplay(new Date());
 
@@ -408,48 +483,28 @@
             const cbdc = document.getElementById('cbdc').textContent;
             const cm = document.getElementById('channelMigration').textContent;
 
-            // Generates format with hardcoded name, branch name, and branch code
-            const reportContent = `Date: ${today}
-Name: ELIPOMA NAG
-Branch name: SBI KORAPUT
-Branch code: 00121
-
-*Data Report:*
-NPS: ${nps}
-WhatsApp: ${whatsapp}
-Yono Registration: ${yono}
-Contact Centre: ${cc}
-CBDC: ${cbdc}
-Channel Migration: ${cm}`;
+            const reportContent = `Date: ${today}\nName: ELIPOMA NAG\nBranch name: SBI KORAPUT\nBranch code: 00121\n\n*Data Report:*\nNPS: ${nps}\nWhatsApp: ${whatsapp}\nYono Registration: ${yono}\nContact Centre: ${cc}\nCBDC: ${cbdc}\nChannel Migration: ${cm}`;
 
             const encodedMessage = encodeURIComponent(reportContent);
             window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
         }
 
         function resetData() {
-    if (confirm('Reset today\'s counts to zero?')) {
-        const fields = ['nps', 'whatsapp', 'yonoRegistration', 'contactCentre', 'cbdc', 'channelMigration'];
-        fields.forEach(field => document.getElementById(field).textContent = '0');
-        localStorage.removeItem('workbookData');
-        
-        // This immediately sends them back to the main gateway page
-        window.location.href = 'index.html'; 
-    }
-}
+            if (confirm('Reset today\'s counts to zero?')) {
+                const fields = ['nps', 'whatsapp', 'yonoRegistration', 'contactCentre', 'cbdc', 'channelMigration'];
+                fields.forEach(field => {
+                    document.getElementById(field).textContent = '0';
+                });
+                localStorage.removeItem('workbookData');
+                window.location.href = 'index.html'; 
+            }
+        }
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('loggedIn');
-                location.reload();
+                window.location.href = 'index.html'; 
             }
-        }
-
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            setTimeout(() => notification.remove(), 2000);
         }
     </script>
 </body>
