@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>SBI Bank Ops - Target Portal</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -14,10 +14,7 @@
   --ok: #0fa36e;
   --er: #e03434;
   --tm: #6b7b91;
-  --bd: rgba(255, 255, 255, 0.4); /* Updated for glass effect */
-  --r:  16px; --rs: 10px;
-  --sh: 0 10px 30px rgba(0,0,0,.25);
-  --shh:0 15px 40px rgba(0,0,0,.35);
+  --r:  12px; --rs: 8px;
 }
 *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
@@ -26,264 +23,148 @@ body {
   margin: 0; 
   padding-bottom: 40px; 
   min-height: 100vh;
-  overflow-x: hidden;
-  perspective: 1000px;
-  
-  /* Animated Premium Background */
-  background: linear-gradient(-45deg, #001f40, #003f87, #0a4fa6, #001224);
-  background-size: 400% 400%;
-  animation: gradientBG 12s ease infinite;
+  background: #001f40; /* Solid, clean background */
+  color: #333;
 }
 
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* Floating Background Orbs */
-.orb {
-    position: fixed; /* Fixed so they stay behind content while scrolling */
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.6;
-    animation: floatOrb 10s infinite ease-in-out alternate;
-    z-index: 0;
-    pointer-events: none;
-}
-.orb-1 { width: 300px; height: 300px; background: #0fa36e; top: -10%; left: -10%; animation-delay: 0s; }
-.orb-2 { width: 400px; height: 400px; background: #0052a3; bottom: -20%; right: -10%; animation-delay: -3s; }
-.orb-3 { width: 250px; height: 250px; background: #d4af37; top: 40%; left: 60%; opacity: 0.3; animation-delay: -6s; }
-
-@keyframes floatOrb {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(40px, -40px) scale(1.2); }
-}
-
-/* HEADER - Glassmorphism */
+/* HEADER */
 header {
-  background: rgba(0, 40, 85, 0.75);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  color: #fff; padding: 13px 20px;
+  background: #002855;
+  color: #fff; 
+  padding: 16px 20px;
   border-bottom: 3px solid var(--ac);
   display: flex; justify-content: space-between; align-items: center;
-  box-shadow: 0 4px 24px rgba(0,0,0,.4);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
   position: sticky; top: 0; z-index: 100;
 }
-.brand { font-weight: 700; font-size: .95rem; letter-spacing: .5px; display: flex; align-items: center; gap: 9px; }
+.brand { font-weight: 700; font-size: 1rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 9px; }
 .brand::before {
-  content: ''; width: 9px; height: 9px;
-  background: var(--ac); border-radius: 50%; box-shadow: 0 0 8px var(--ac);
+  content: ''; width: 10px; height: 10px;
+  background: var(--ac); border-radius: 50%;
 }
 #live-clock {
-  font-family: 'DM Mono', monospace; font-size: .82rem;
-  color: rgba(255,255,255,.9); letter-spacing: 1px;
-  background: rgba(255,255,255,.15); padding: 5px 11px;
-  border-radius: 20px; border: 1px solid rgba(255,255,255,.2);
+  font-family: 'DM Mono', monospace; font-size: 0.85rem;
+  color: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.1); padding: 6px 12px;
+  border-radius: 20px;
 }
 
 /* LAYOUT */
-#main-content { padding: 18px 14px; max-width: 500px; margin: auto; position: relative; z-index: 10; }
+#main-content { padding: 20px 16px; max-width: 500px; margin: auto; }
 .hidden { display: none !important; }
 
-/* LOGIN - Upgraded to Glass Card */
+/* LOGIN CARD */
 #login-page { 
   text-align: center; 
-  margin-top: 60px;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  margin-top: 40px;
+  background: #ffffff;
   padding: 40px 25px;
-  border-radius: 20px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(10, 79, 166, 0.4);
-  animation: cardEntrance 1s cubic-bezier(0.25, 1, 0.5, 1) forwards, cardBreathe 4s infinite alternate;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
+#login-page h2 { color: var(--p); font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
+#login-page p  { color: var(--tm); font-size: 0.9rem; margin-bottom: 28px; font-weight: 600;}
+#login-page .btn-primary { width: 100%; max-width: 200px; font-size: 1rem; padding: 14px; margin: 0 auto;}
 
-@keyframes cardEntrance {
-    0% { opacity: 0; transform: rotateX(-15deg) translateY(60px) scale(0.9); }
-    100% { opacity: 1; transform: rotateX(0deg) translateY(0) scale(1); }
-}
+.login-info-box { font-size: 0.8rem; color: rgba(255,255,255,0.7); text-align: right; margin-bottom: 12px; font-weight: 600; }
 
-@keyframes cardBreathe {
-    0% { box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(10, 79, 166, 0.2); }
-    100% { box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 60px rgba(10, 79, 166, 0.6); }
-}
-
-#login-page h2 { color: var(--p); font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -.3px; }
-#login-page p  { color: var(--tm); font-size: .85rem; margin-bottom: 28px; font-weight: 600;}
-#login-page .btn-primary { width: 150px; font-size: .95rem; padding: 13px; margin: 0 auto;}
-
-.login-info-box { font-size: .74rem; color: rgba(255,255,255,0.85); text-align: right; margin-bottom: 10px; font-weight: 600; }
-
-/* GRID + CARDS - Glassmorphism */
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+/* GRID + CARDS */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .card {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border-left: 1px solid rgba(255,255,255,0.4);
-  border-right: 1px solid rgba(255,255,255,0.4);
-  border-bottom: 1px solid rgba(255,255,255,0.4);
-  padding: 16px 12px 14px;
-  border-radius: var(--r); text-align: center;
-  border-top: 3px solid var(--p);
-  box-shadow: var(--sh);
-  transition: box-shadow .25s, transform .2s;
-  position: relative; overflow: hidden;
-  animation: fadeUp .45s ease both;
+  background: #ffffff;
+  padding: 16px 12px;
+  border-radius: var(--r); 
+  text-align: center;
+  border-top: 4px solid var(--p);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  position: relative;
 }
-.card:nth-child(1){animation-delay:.05s}
-.card:nth-child(2){animation-delay:.10s}
-.card:nth-child(3){animation-delay:.15s}
-.card:nth-child(4){animation-delay:.20s}
-.card:nth-child(5){animation-delay:.25s}
-.card::after {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--pl), var(--ac));
-  opacity: 0; transition: opacity .3s;
-}
-.card:hover { box-shadow: var(--shh); transform: translateY(-4px); }
-.card:hover::after { opacity: 1; }
-.card.met { border-top-color: var(--ok); background: rgba(255,255,255,0.96); }
+.card.met { border-top-color: var(--ok); background: #f4fdf8; }
 .card.met .count { color: var(--ok); }
-
-/* Channel Migration card spans full width */
 .card.full-width { grid-column: 1 / -1; }
 
 .card h3 {
-  margin: 0; font-size: .82rem; font-weight: 700; color: var(--p);
+  margin: 0; font-size: 0.85rem; font-weight: 700; color: var(--p);
   height: 34px; display: flex; align-items: center; justify-content: center;
-  letter-spacing: .3px; text-transform: uppercase;
+  text-transform: uppercase;
 }
-.target-label { font-size: .64rem; color: #7f8c9d; display: block; margin-top: 1px; font-weight: 600; letter-spacing: .5px; }
+.target-label { font-size: 0.7rem; color: #6b7b91; display: block; margin-top: 2px; font-weight: 600; }
 .count {
-  font-size: 2rem; font-weight: 700; margin: 8px 0 4px;
+  font-size: 2.2rem; font-weight: 700; margin: 8px 0;
   color: var(--p); font-family: 'DM Mono', monospace; line-height: 1;
 }
-.count.pop { animation: countPop .3s ease; }
 
-.pb-wrap { width: 100%; height: 4px; background: rgba(0,0,0,0.06); border-radius: 99px; margin: 6px 0 10px; overflow: hidden; }
-.pb-fill  { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--pl), var(--ac)); transition: width .5s cubic-bezier(.4,0,.2,1); }
+.pb-wrap { width: 100%; height: 6px; background: #e2e8f0; border-radius: 99px; margin: 8px 0 14px; overflow: hidden; }
+.pb-fill  { height: 100%; border-radius: 99px; background: var(--pl); }
 
-/* BUTTONS — base & Shimmer */
+/* BUTTONS */
 button {
-  padding: 9px 10px; border: none; border-radius: var(--rs);
-  font-weight: 600; cursor: pointer; font-size: .78rem; width: 100%;
-  transition: box-shadow .2s, transform .15s;
-  letter-spacing: .3px; font-family: 'DM Sans', sans-serif;
-  position: relative; overflow: hidden; z-index: 1;
+  padding: 12px 10px; border: none; border-radius: var(--rs);
+  font-weight: 700; cursor: pointer; font-size: 0.85rem; width: 100%;
+  font-family: 'DM Sans', sans-serif;
 }
-button:active { transform: scale(.95); }
+button:active { opacity: 0.8; transform: scale(0.98); }
 
-/* The Continuous Shimmer Effect for Buttons */
-.btn-primary::before, .btn-cm::before, .btn-pdf::before, .btn-wa::before {
-    content: ''; position: absolute; top: 0; left: -100%;
-    width: 50%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transform: skewX(-20deg); animation: shimmerSweep 3s infinite; z-index: -1;
-}
+.btn-primary { background: var(--pl); color: #fff; }
+.btn-target-met { background: var(--ok) !important; color: #fff !important; }
 
-@keyframes shimmerSweep { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--pl), var(--p));
-  color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,.20);
-}
-.btn-primary:hover { background: linear-gradient(135deg,#1060b8,var(--pm)); box-shadow: 0 6px 15px rgba(0,0,0,.30); }
-
-.btn-target-met {
-  background: linear-gradient(135deg,#0fa36e,#0c8459) !important;
-  color: #fff !important; box-shadow: 0 4px 12px rgba(15,163,110,.30) !important;
-}
-
-/* Shared action buttons */
-.btn-action {
-  margin-top: 10px; padding: 12px; font-size: .85rem; color: #fff;
-}
-.btn-pdf { background: linear-gradient(135deg,#0fa36e,#0c8459); box-shadow: 0 4px 12px rgba(15,163,110,.30); margin-top: 16px; }
-.btn-pdf:hover  { box-shadow: 0 6px 20px rgba(15,163,110,.40); transform: translateY(-2px);}
-.btn-wa  { background: linear-gradient(135deg,#25D366,#1aab52); box-shadow: 0 4px 12px rgba(37,211,102,.30); }
-.btn-wa:hover   { box-shadow: 0 6px 20px rgba(37,211,102,.40); transform: translateY(-2px);}
+.btn-action { margin-top: 12px; padding: 14px; font-size: 0.95rem; color: #fff; }
+.btn-pdf { background: var(--ok); margin-top: 20px; }
+.btn-wa  { background: #25D366; }
 .btn-reset {
-  background: rgba(255,255,255,0.1); color: #ff6b6b; margin-top: 10px;
-  font-size: .7rem; padding: 9px;
-  border: 1px solid rgba(255,107,107,.4); border-radius: var(--rs);
+  background: transparent; color: #ff6b6b; margin-top: 12px;
+  font-size: 0.8rem; padding: 10px;
+  border: 1px solid #ff6b6b; border-radius: var(--rs);
 }
-.btn-reset:hover { background: rgba(224,52,52,.2); border-color: #ff6b6b; color: white;}
+.btn-reset:active { background: #ff6b6b; color: white; }
 
-/* Channel Migration button accent */
-.btn-cm {
-  background: linear-gradient(135deg, #7c3aed, #5b21b6);
-  color: #fff; box-shadow: 0 4px 10px rgba(124,58,237,.30);
-}
-.btn-cm:hover { box-shadow: 0 6px 16px rgba(124,58,237,.45); }
-.btn-cm.btn-target-met {
-  background: linear-gradient(135deg,#0fa36e,#0c8459) !important;
-}
+.btn-cm { background: #7c3aed; color: #fff; }
+.btn-cm.btn-target-met { background: var(--ok) !important; }
 
-/* DIVIDER - Updated for dark background */
+/* DIVIDER */
 .divider {
   display: flex; align-items: center; gap: 10px;
-  margin: 18px 0 4px; color: rgba(255,255,255,0.85);
-  font-size: .75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  margin: 24px 0 8px; color: rgba(255,255,255,0.7);
+  font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
 }
-.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.25); }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.2); }
 
-/* MODAL - Glassmorphism */
+/* MODAL */
 .modal {
   position: fixed; inset: 0;
-  background: rgba(0, 15, 35, 0.8); backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.7);
   display: flex; justify-content: center; align-items: center;
   z-index: 2000; padding: 20px;
 }
 .modal-box {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.5);
-  padding: 26px 22px 20px;
-  border-radius: 20px; width: 100%; max-width: 320px;
-  box-shadow: 0 25px 60px rgba(0,0,0,.5);
-  animation: modalIn .35s cubic-bezier(.34,1.56,.64,1) both;
+  background: #ffffff;
+  padding: 24px 20px;
+  border-radius: 16px; width: 100%; max-width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
-.modal-box h4 { margin: 0 0 16px; font-size: 1.1rem; font-weight: 800; color: #002855; }
+.modal-box h4 { margin: 0 0 16px; font-size: 1.2rem; font-weight: 800; color: #002855; }
 
 /* TOGGLE */
-.toggle-wrap { display: flex; gap: 6px; margin-bottom: 16px; background: rgba(0,0,0,0.05); padding: 5px; border-radius: 10px; }
+.toggle-wrap { display: flex; gap: 6px; margin-bottom: 16px; background: #f1f5f9; padding: 6px; border-radius: 10px; }
 .toggle-btn {
   background: transparent; color: var(--tm); flex: 1; border: none;
-  padding: 8px; border-radius: 7px; font-size: .75rem; font-weight: 700;
-  transition: all .2s; box-shadow: none; width: auto;
+  padding: 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 700;
 }
-.toggle-btn.active { background: var(--p); color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,.15); }
+.toggle-btn.active { background: var(--p); color: #fff; }
 
 /* INPUT */
 #val-field {
-  width: 100%; padding: 13px 14px; margin-bottom: 16px;
-  border: 1.5px solid rgba(0,0,0,0.1); border-radius: var(--rs);
-  font-size: 1rem; font-family: 'DM Mono', monospace; color: #0d1b2e;
-  background: #f8fafc; outline: none; transition: all .3s;
+  width: 100%; padding: 14px; margin-bottom: 16px;
+  border: 2px solid #e2e8f0; border-radius: var(--rs);
+  font-size: 1.1rem; font-family: 'DM Mono', monospace; color: #002855;
+  background: #f8fafc; outline: none;
 }
-#val-field:focus { border-color: var(--pl); box-shadow: 0 0 0 4px rgba(10,79,166,.15); background: #fff; transform: translateY(-2px);}
+#val-field:focus { border-color: var(--pl); background: #fff; }
 
-.btn-cancel { background: none; color: var(--tm); border: none; box-shadow: none; margin-top: 8px; font-size: .8rem; padding: 6px; font-weight: 700;}
-.btn-cancel:hover { color: #e03434; background: rgba(224,52,52,.08); }
-
-/* ANIMATIONS */
-#dashboard { animation: dashboardIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) both; }
-@keyframes fadeUp   { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:none } }
-@keyframes dashboardIn { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: none; } }
-@keyframes countPop { 0%,100%{transform:scale(1)} 50%{transform:scale(1.25)} }
-@keyframes modalIn  { from { opacity:0; transform:scale(.85) translateY(20px) } to { opacity:1; transform:none } }
+.btn-cancel { background: none; color: var(--tm); border: none; margin-top: 8px; font-size: 0.85rem; padding: 10px; font-weight: 700;}
 </style>
 </head>
 <body>
-
-<!-- Floating Background Orbs -->
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-<div class="orb orb-3"></div>
 
 <header>
   <div class="brand">SBI BANK &nbsp;Jlqshf84</div>
@@ -295,7 +176,7 @@ button:active { transform: scale(.95); }
   <div id="login-page">
     <h2>Operations Portal</h2>
     <p>SBI Bank — Secure Branch Access</p>
-    <button class="btn-primary btn-action" style="width:150px" onclick="doLogin()">Login</button>
+    <button class="btn-primary" onclick="doLogin()">Login</button>
   </div>
 
   <div id="dashboard" class="hidden">
@@ -327,11 +208,10 @@ button:active { transform: scale(.95); }
         <button id="btn-contact" class="btn-primary" onclick="openModal('Contact Centre')">Action</button>
       </div>
 
-      <!-- ✅ NEW: Channel Migration card — full width, purple accent -->
       <div class="card full-width" id="card-cm">
         <h3>Channel Migration</h3><span class="target-label">Target: 10</span>
         <div class="count" id="c-cm">0</div>
-        <div class="pb-wrap"><div class="pb-fill" id="pb-cm" style="background: linear-gradient(90deg,#7c3aed,#a78bfa);"></div></div>
+        <div class="pb-wrap"><div class="pb-fill" id="pb-cm" style="background: #7c3aed;"></div></div>
         <button id="btn-cm" class="btn-cm" onclick="addSimple('Channel Migration')">Add</button>
       </div>
     </div>
@@ -360,13 +240,12 @@ button:active { transform: scale(.95); }
 <script>
 const { jsPDF } = window.jspdf;
 
-// ── CONFIG ──────────────────────────────────────────────
 const TARGETS = {
   NPS: 10,
   WhatsApp: 15,
   'Yono SBI': 5,
   'Contact Centre': 10,
-  'Channel Migration': 10   // ✅ NEW
+  'Channel Migration': 10
 };
 
 const MAP = [
@@ -374,41 +253,27 @@ const MAP = [
   { key:'WhatsApp',          id:'wa'      },
   { key:'Yono SBI',          id:'yono'    },
   { key:'Contact Centre',    id:'contact' },
-  { key:'Channel Migration', id:'cm'      }   // ✅ NEW
+  { key:'Channel Migration', id:'cm'      }
 ];
 
-// ── STATE ───────────────────────────────────────────────
 let state = JSON.parse(localStorage.getItem('sbi_v14')) || {
-  counts: {
-    NPS: 0,
-    WhatsApp: 0,
-    'Yono SBI': 0,
-    'Contact Centre': 0,
-    'Other Forms': 0,
-    'Channel Migration': 0   // ✅ NEW
-  },
+  counts: { NPS: 0, WhatsApp: 0, 'Yono SBI': 0, 'Contact Centre': 0, 'Other Forms': 0, 'Channel Migration': 0 },
   logs: [], loginTime: null,
   brName:'SBI KOMTALPETA', brCode:'17978', userName:'ASHUTOSH PATTNAIK'
 };
 
-// Ensure Channel Migration key exists in old saved states
-if (state.counts['Channel Migration'] === undefined) {
-  state.counts['Channel Migration'] = 0;
-}
+if (state.counts['Channel Migration'] === undefined) state.counts['Channel Migration'] = 0;
 
 let activeCat = '', selType = 'Account Number';
 
-// ── CACHE DOM ───────────────────────────────────────────
 const $ = id => document.getElementById(id);
 const els = {};
 MAP.forEach(({ key, id }) => {
   els[key] = { count: $('c-'+id), pb: $('pb-'+id), btn: $('btn-'+id), card: $('card-'+id) };
 });
 
-// ── CLOCK ───────────────────────────────────────────────
 setInterval(() => $('live-clock').textContent = new Date().toLocaleTimeString(), 1000);
 
-// ── AUTH ────────────────────────────────────────────────
 function doLogin() {
   if (!state.loginTime) state.loginTime = new Date().toLocaleTimeString();
   $('login-page').classList.add('hidden');
@@ -417,7 +282,6 @@ function doLogin() {
   save();
 }
 
-// ── DATA ────────────────────────────────────────────────
 function addSimple(cat) {
   state.counts[cat]++;
   state.logs.push({ id: state.logs.length+1, cat, val:'Incremented by 1', time: new Date().toLocaleTimeString() });
@@ -455,18 +319,11 @@ function save() {
   refreshUI();
 }
 
-// ── UI ──────────────────────────────────────────────────
 function refreshUI() {
   MAP.forEach(({ key }) => {
     const count = state.counts[key];
     const e = els[key];
-    const prev = parseInt(e.count.textContent) || 0;
     e.count.textContent = count;
-    if (count !== prev) {
-      e.count.classList.remove('pop');
-      void e.count.offsetWidth;
-      e.count.classList.add('pop');
-    }
     e.pb.style.width = Math.min(100, Math.round(count / TARGETS[key] * 100)) + '%';
     const met = count >= TARGETS[key];
     e.btn.classList.toggle('btn-target-met', met);
@@ -474,7 +331,6 @@ function refreshUI() {
   });
 }
 
-// ── PDF ─────────────────────────────────────────────────
 function generatePDF() {
   const doc = new jsPDF();
   const now = new Date();
@@ -486,7 +342,6 @@ function generatePDF() {
   doc.text(`Login Time: ${state.loginTime || 'N/A'}`, 14, 22);
   doc.text(`Date: ${dateStr}`, 14, 27);
 
-  // Summary table includes Channel Migration
   doc.autoTable({
     startY: 32,
     head: [['Category', 'Count', 'Target']],
@@ -495,13 +350,12 @@ function generatePDF() {
       ['WhatsApp',           state.counts['WhatsApp'],           TARGETS['WhatsApp']],
       ['Yono SBI',           state.counts['Yono SBI'],           TARGETS['Yono SBI']],
       ['Contact Centre',     state.counts['Contact Centre'],     TARGETS['Contact Centre']],
-      ['Channel Migration', state.counts['Channel Migration'], TARGETS['Channel Migration']],  
+      ['Channel Migration',  state.counts['Channel Migration'],  TARGETS['Channel Migration']],  
     ],
     headStyles: { fillColor: [0, 51, 102] },
     theme: 'grid'
   });
 
-  // Detailed log table
   const afterSummary = doc.lastAutoTable.finalY + 8;
   doc.setFontSize(12); doc.setTextColor(0, 51, 102);
   doc.text('Detailed Log', 14, afterSummary);
@@ -515,15 +369,13 @@ function generatePDF() {
 
   doc.save(`SB_${dateStr.replace(/\//g,'_')}.pdf`);
   
-  // 👇 THIS IS THE UPDATED LINE 👇
   setTimeout(() => { 
       localStorage.clear(); 
       alert('Report Saved. App will return to the main menu.'); 
-      window.location.href = 'index.html'; // Redirects to the gateway
+      window.location.href = 'index.html';
   }, 1500);
 }
 
-// ── SHARE ────────────────────────────────────────────────
 function shareWA() {
   const c = state.counts;
   const msg =
@@ -534,7 +386,7 @@ function shareWA() {
     `NPS: ${c.NPS}\nWhatsApp: ${c.WhatsApp}\n` +
     `Yono SBI Registration: ${c['Yono SBI']}\n` +
     `Contact Centre: ${c['Contact Centre']}\n` +
-    `Channel Migration: ${c['Channel Migration']}\n` +   // ✅ NEW
+    `Channel Migration: ${c['Channel Migration']}\n` +
     `Other Forms: ${15 + (c['Other Forms'] || 0)}`;
   window.open('https://wa.me/?text=' + encodeURIComponent(msg));
 }
@@ -542,12 +394,11 @@ function shareWA() {
 function resetApp() { 
   if (confirm('Manual Override: Wipe all data?')) { 
     localStorage.clear(); 
-    // This immediately sends them back to the main gateway page
     window.location.href = 'index.html'; 
   } 
 }
 
-window.onload = () => { if (state.loginTime) doLogin(); };
+window.onload = () => { if (state.loginTime) doLogin(); else refreshUI(); };
 </script>
 </body>
 </html>
