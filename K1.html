@@ -13,26 +13,36 @@
         }
 
         :root {
-            /* Theme Colors & Gradients */
-            --sbi-blue: #003f87;
-            --sbi-light-blue: #0a4fa6;
-            --sbi-gold: #d4af37;
-            --text-dark: #2d3748;
-            --text-light: #718096;
+            /* "Freedom of Life" Multi-Color Theme */
+            --bg-freedom: linear-gradient(135deg, #ff9a9e 0%, #fecfef 25%, #a1c4fd 75%, #c2e9fb 100%);
             
-            /* Optimized Static Gradients */
-            --grad-bg: linear-gradient(135deg, #001224 0%, #002855 50%, #003f87 100%);
-            --grad-card: linear-gradient(145deg, #ffffff, #f4f7fb);
-            --grad-primary: linear-gradient(135deg, #0052a3, #0a4fa6);
-            --grad-success: linear-gradient(135deg, #1da851, #158c40);
-            --grad-warning: linear-gradient(135deg, #e53e3e, #c53030);
+            /* Glassmorphism Variables */
+            --glass-panel: rgba(255, 255, 255, 0.75);
+            --glass-card: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            
+            /* Vibrant UI Gradients */
+            --grad-header: linear-gradient(135deg, #6e45e2 0%, #88d3ce 100%); /* Deep Purple to Fresh Cyan */
+            --grad-logo: linear-gradient(135deg, #fa709a 0%, #fee140 100%); /* Sunrise Gold/Pink */
+            --grad-pb: linear-gradient(90deg, #fa709a 0%, #fee140 50%, #4facfe 100%); /* Multi-color Energy */
+            
+            /* Action Button Gradients */
+            --grad-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); /* Vibrant Life Green */
+            --grad-warning: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%); /* Energetic Red/Orange */
+            --grad-action: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); /* Sky/Ocean Blue */
+
+            /* Typography */
+            --text-dark: #2d3748;
+            --text-light: #4a5568;
+            --sbi-blue: #2c3e50; /* Softer dark tone to fit the airy theme */
         }
 
         body, html {
             min-height: 100vh;
             width: 100%;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--grad-bg);
+            background: var(--bg-freedom);
+            background-attachment: fixed; /* Keeps gradient beautiful during scroll */
             color: var(--text-dark);
             /* Setup for perfect centering that allows native scrolling */
             display: grid;
@@ -43,45 +53,49 @@
 
         /* ===== LOGIN PAGE ===== */
         .login-container {
-            background: var(--grad-card);
-            border-radius: 20px;
+            background: var(--glass-panel);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
             padding: 40px 25px;
             max-width: 320px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
             margin: auto;
         }
 
         .sbi-logo {
             width: 75px;
             height: 75px;
-            background: var(--grad-primary);
+            background: var(--grad-logo);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 15px;
-            box-shadow: 0 8px 20px rgba(10, 79, 166, 0.3);
+            box-shadow: 0 8px 20px rgba(250, 112, 154, 0.3);
         }
 
         .sbi-logo::before {
             content: "SBI";
-            color: var(--sbi-gold);
+            color: white;
             font-size: 24px;
             font-weight: 800;
             letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .login-header h1 { color: var(--sbi-blue); font-size: 1.5rem; margin-bottom: 4px; font-weight: 800; }
-        .login-header p { color: var(--text-light); font-size: 0.9rem; margin-bottom: 25px; font-weight: 600; }
+        .login-header h1 { color: var(--sbi-blue); font-size: 1.6rem; margin-bottom: 4px; font-weight: 800; }
+        .login-header p { color: var(--text-light); font-size: 0.95rem; margin-bottom: 25px; font-weight: 600; }
 
         .login-btn {
             width: 100%; padding: 15px;
-            background: var(--grad-primary);
+            background: var(--grad-action);
             color: white; border: none; border-radius: 12px;
             font-size: 1.05rem; font-weight: 700; cursor: pointer;
-            box-shadow: 0 6px 15px rgba(10, 79, 166, 0.25);
+            box-shadow: 0 6px 15px rgba(79, 172, 254, 0.3);
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
@@ -90,47 +104,51 @@
         /* ===== DASHBOARD ===== */
         .dashboard {
             display: none;
-            background: #f8fafc;
+            background: var(--glass-panel);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
             width: 94%; 
             max-width: 600px;
-            border-radius: 20px; 
+            border-radius: 24px; 
             flex-direction: column;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             overflow: hidden;
-            margin: auto; /* Keeps it centered vertically if viewport is taller than content */
+            margin: auto;
         }
 
         .dashboard.show { display: flex; }
 
         .dashboard-header {
-            background: var(--grad-primary);
-            color: white; padding: 18px 20px;
+            background: var(--grad-header);
+            color: white; padding: 20px 24px;
             display: flex; justify-content: space-between; align-items: center;
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             z-index: 10;
         }
         
-        .header-left h2 { font-size: 1.2rem; margin-bottom: 2px; font-weight: 700; }
-        .header-left p { font-size: 0.8rem; opacity: 0.9; margin: 0; font-weight: 500; }
+        .header-left h2 { font-size: 1.3rem; margin-bottom: 2px; font-weight: 800; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .header-left p { font-size: 0.85rem; opacity: 0.95; margin: 0; font-weight: 500; }
 
         .logout-btn {
-            background: rgba(255, 255, 255, 0.15); color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.2); color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4); padding: 8px 14px;
             border-radius: 8px; font-size: 0.8rem; font-weight: 700;
+            backdrop-filter: blur(5px);
         }
-        .logout-btn:active { background: rgba(255, 255, 255, 0.25); }
+        .logout-btn:active { background: rgba(255, 255, 255, 0.3); }
 
         /* CONTENT AREA - Natural Height */
         .dashboard-content { 
-            padding: 16px; 
+            padding: 20px 16px; 
             display: flex; 
             flex-direction: column; 
         }
 
         .date-display {
-            text-align: right; font-size: 0.85rem; font-weight: 800;
-            color: var(--sbi-blue); margin-bottom: 12px; flex-shrink: 0;
+            text-align: right; font-size: 0.9rem; font-weight: 800;
+            color: var(--sbi-blue); margin-bottom: 16px; flex-shrink: 0;
             text-transform: uppercase; letter-spacing: 0.5px;
         }
 
@@ -139,50 +157,50 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             grid-auto-rows: minmax(130px, auto); 
-            gap: 14px; margin-bottom: 20px;
+            gap: 14px; margin-bottom: 24px;
         }
 
         .counter-button {
-            background: var(--grad-card);
-            border: 1px solid #e2e8f0;
-            border-radius: 14px; display: flex; flex-direction: column;
+            background: var(--glass-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            padding: 12px 6px; cursor: pointer; position: relative;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            padding: 16px 8px; cursor: pointer; position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             transition: transform 0.15s ease, background 0.3s ease;
         }
 
         .counter-button:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        .button-icon { font-size: 1.6rem; margin-bottom: 4px; }
+        .button-icon { font-size: 1.8rem; margin-bottom: 6px; }
 
         .button-label {
-            color: var(--text-dark); font-size: 0.9rem;
+            color: var(--text-dark); font-size: 0.95rem;
             font-weight: 800; margin-bottom: 2px; text-align: center;
         }
 
         .target-label {
-            font-size: 0.7rem; color: #a0aec0; font-weight: 700;
-            margin-bottom: 8px; letter-spacing: 0.5px;
+            font-size: 0.75rem; color: var(--text-light); font-weight: 700;
+            margin-bottom: 10px; letter-spacing: 0.5px;
         }
 
         .button-counter {
-            background: #ebf4ff; color: var(--sbi-light-blue);
-            font-size: 1.5rem; font-weight: 800; padding: 4px 22px;
-            border-radius: 10px; margin-bottom: 10px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            background: rgba(255, 255, 255, 0.8); color: var(--sbi-blue);
+            font-size: 1.6rem; font-weight: 800; padding: 4px 24px;
+            border-radius: 12px; margin-bottom: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         /* Progress Bar Styles */
         .pb-wrap {
-            width: 80%; height: 6px;
-            background: #e2e8f0; border-radius: 10px;
+            width: 80%; height: 8px;
+            background: rgba(0,0,0,0.06); border-radius: 10px;
             overflow: hidden;
         }
         
         .pb-fill {
             height: 100%; width: 0%;
-            background: var(--grad-primary);
+            background: var(--grad-pb);
             border-radius: 10px;
             transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -191,7 +209,7 @@
         .counter-button.target-met {
             background: var(--grad-success);
             border-color: transparent;
-            box-shadow: 0 6px 15px rgba(29, 168, 81, 0.3);
+            box-shadow: 0 8px 20px rgba(56, 239, 125, 0.3);
         }
 
         .counter-button.target-met .button-label, 
@@ -199,23 +217,23 @@
         
         .counter-button.target-met .button-counter {
             background: rgba(255, 255, 255, 0.25); color: white;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: none;
         }
 
-        .counter-button.target-met .pb-wrap { background: rgba(0, 0, 0, 0.2); }
+        .counter-button.target-met .pb-wrap { background: rgba(0, 0, 0, 0.15); }
         .counter-button.target-met .pb-fill { background: #ffffff; }
 
         /* Actions */
         .action-buttons { 
-            display: flex; gap: 12px; flex-shrink: 0; padding-bottom: 5px; 
+            display: flex; gap: 14px; flex-shrink: 0; padding-bottom: 5px; 
             margin-top: auto; 
         }
 
         .action-btn {
-            flex: 1; padding: 15px; font-size: 0.95rem; font-weight: 800;
-            border: none; border-radius: 12px; color: white; 
+            flex: 1; padding: 16px; font-size: 1rem; font-weight: 800;
+            border: none; border-radius: 14px; color: white; 
             transition: transform 0.2s ease;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
         }
         .action-btn:active { transform: scale(0.96); }
 
@@ -238,8 +256,8 @@
     <div class="dashboard" id="dashboard">
         <div class="dashboard-header">
             <div class="header-left">
-                <h2>📊 Workbook</h2>
-                <p>Tap to count activities</p>
+                <h2>✨ Daily Canvas</h2>
+                <p>Track your goals freely</p>
             </div>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
@@ -367,7 +385,7 @@
             
             updateUI(fieldName);
             saveData();
-            if (navigator.vibrate) navigator.vibrate(50); 
+            if (navigator.vibrate) navigator.vibrate(40); 
         }
 
         function saveData() {
