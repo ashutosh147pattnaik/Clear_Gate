@@ -404,16 +404,16 @@ function generatePDF() {
   doc.text(`Login Time: ${state.loginTime || 'N/A'}`, 14, 22);
   doc.text(`Date: ${dateStr}`, 14, 27);
 
-  // ✅ Summary table includes Channel Migration
+  // Summary table includes Channel Migration
   doc.autoTable({
     startY: 32,
     head: [['Category', 'Count', 'Target']],
     body: [
-      ['NPS',               state.counts['NPS'],               TARGETS['NPS']],
-      ['WhatsApp',          state.counts['WhatsApp'],          TARGETS['WhatsApp']],
-      ['Yono SBI',          state.counts['Yono SBI'],          TARGETS['Yono SBI']],
-      ['Contact Centre',    state.counts['Contact Centre'],    TARGETS['Contact Centre']],
-      ['Channel Migration', state.counts['Channel Migration'], TARGETS['Channel Migration']],  // ✅ NEW
+      ['NPS',                state.counts['NPS'],                TARGETS['NPS']],
+      ['WhatsApp',           state.counts['WhatsApp'],           TARGETS['WhatsApp']],
+      ['Yono SBI',           state.counts['Yono SBI'],           TARGETS['Yono SBI']],
+      ['Contact Centre',     state.counts['Contact Centre'],     TARGETS['Contact Centre']],
+      ['Channel Migration', state.counts['Channel Migration'], TARGETS['Channel Migration']],  
     ],
     headStyles: { fillColor: [0, 51, 102] },
     theme: 'grid'
@@ -432,7 +432,13 @@ function generatePDF() {
   });
 
   doc.save(`SB_${dateStr.replace(/\//g,'_')}.pdf`);
-  setTimeout(() => { localStorage.clear(); alert('Report Saved. App will reset.'); location.reload(); }, 1500);
+  
+  // 👇 THIS IS THE UPDATED LINE 👇
+  setTimeout(() => { 
+      localStorage.clear(); 
+      alert('Report Saved. App will return to the main menu.'); 
+      window.location.href = 'index.html'; // Redirects to the gateway
+  }, 1500);
 }
 
 // ── SHARE ────────────────────────────────────────────────
@@ -447,11 +453,17 @@ function shareWA() {
     `Yono SBI Registration: ${c['Yono SBI']}\n` +
     `Contact Centre: ${c['Contact Centre']}\n` +
     `Channel Migration: ${c['Channel Migration']}\n` +   // ✅ NEW
-    `Other Forms: ${25 + (c['Other Forms'] || 0)}`;
+    `Other Forms: ${15 + (c['Other Forms'] || 0)}`;
   window.open('https://wa.me/?text=' + encodeURIComponent(msg));
 }
 
-function resetApp() { if (confirm('Manual Override: Wipe all data?')) { localStorage.clear(); location.reload(); } }
+function resetApp() { 
+  if (confirm('Manual Override: Wipe all data?')) { 
+    localStorage.clear(); 
+    // This immediately sends them back to the main gateway page
+    window.location.href = 'index.html'; 
+  } 
+}
 
 window.onload = () => { if (state.loginTime) doLogin(); };
 </script>
