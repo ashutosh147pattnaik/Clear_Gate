@@ -29,15 +29,16 @@
         }
 
         body, html {
-            min-height: 100%;
+            min-height: 100vh;
             width: 100%;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             background: var(--grad-bg);
             color: var(--text-dark);
-            padding: 15px 0; /* Ensures content doesn't hit the absolute edges if body scrolls */
+            /* Setup for perfect centering that allows native scrolling */
+            display: grid;
+            place-items: center;
+            padding: 20px 0;
+            overflow-y: auto; 
         }
 
         /* ===== LOGIN PAGE ===== */
@@ -49,6 +50,7 @@
             width: 90%;
             text-align: center;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            margin: auto;
         }
 
         .sbi-logo {
@@ -90,12 +92,12 @@
             display: none;
             background: #f8fafc;
             width: 94%; 
-            max-height: 94vh; /* Constrains the popup to viewport height so it triggers internal scrolling */
             max-width: 600px;
             border-radius: 20px; 
             flex-direction: column;
             box-shadow: 0 15px 40px rgba(0,0,0,0.4);
             overflow: hidden;
+            margin: auto; /* Keeps it centered vertically if viewport is taller than content */
         }
 
         .dashboard.show { display: flex; }
@@ -119,14 +121,11 @@
         }
         .logout-btn:active { background: rgba(255, 255, 255, 0.25); }
 
-        /* SCROLLABLE CONTENT AREA */
+        /* CONTENT AREA - Natural Height */
         .dashboard-content { 
             padding: 16px; 
-            flex: 1; 
             display: flex; 
             flex-direction: column; 
-            overflow-y: auto; /* Enables vertical scrolling */
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         }
 
         .date-display {
@@ -139,8 +138,7 @@
         .buttons-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            /* minmax ensures buttons don't shrink too much, forcing scroll on tiny screens */
-            grid-template-rows: repeat(3, minmax(130px, auto)); 
+            grid-auto-rows: minmax(130px, auto); 
             gap: 14px; margin-bottom: 20px;
         }
 
@@ -210,7 +208,7 @@
         /* Actions */
         .action-buttons { 
             display: flex; gap: 12px; flex-shrink: 0; padding-bottom: 5px; 
-            margin-top: auto; /* Pushes the actions to the bottom if there is extra space */
+            margin-top: auto; 
         }
 
         .action-btn {
@@ -307,7 +305,6 @@
     </div>
 
     <script>
-        // Redirect to gateway if the user refreshes the page
         if (performance.getEntriesByType("navigation")[0]?.type === "reload") {
             window.location.href = "index.html";
         }
@@ -370,7 +367,7 @@
             
             updateUI(fieldName);
             saveData();
-            if (navigator.vibrate) navigator.vibrate(50); // Haptic feedback optimized for mobile
+            if (navigator.vibrate) navigator.vibrate(50); 
         }
 
         function saveData() {
