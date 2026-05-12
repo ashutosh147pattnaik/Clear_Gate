@@ -13,29 +13,26 @@
         }
 
         :root {
-            /* "Freedom of Life" Multi-Color Theme */
-            --bg-freedom: linear-gradient(135deg, #ff9a9e 0%, #fecfef 25%, #a1c4fd 75%, #c2e9fb 100%);
+            /* Default Fallback Theme */
+            --bg-freedom: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            --grad-header: linear-gradient(135deg, #6e45e2 0%, #88d3ce 100%);
+            --grad-logo: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --grad-action: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --sbi-blue: #2c3e50;
             
             /* Glassmorphism Variables */
             --glass-panel: rgba(255, 255, 255, 0.75);
             --glass-card: rgba(255, 255, 255, 0.65);
             --glass-border: rgba(255, 255, 255, 0.8);
             
-            /* Vibrant UI Gradients */
-            --grad-header: linear-gradient(135deg, #6e45e2 0%, #88d3ce 100%);
-            --grad-logo: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            --grad-pb: linear-gradient(90deg, #fa709a 0%, #fee140 50%, #4facfe 100%); 
-            
-            /* Action Button & Milestone Gradients */
+            /* Persistent Feedback Gradients */
             --grad-mid: linear-gradient(135deg, #f6d365 0%, #fda085 100%); /* Warm Midway Sunrise */
             --grad-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); /* Final Target Green */
             --grad-warning: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%); 
-            --grad-action: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
 
             /* Typography */
             --text-dark: #2d3748;
             --text-light: #4a5568;
-            --sbi-blue: #2c3e50; 
         }
 
         body, html {
@@ -49,6 +46,7 @@
             place-items: center;
             padding: 20px 0;
             overflow-y: auto; 
+            transition: background 1s ease;
         }
 
         /* ===== LOGIN PAGE ===== */
@@ -75,7 +73,7 @@
             align-items: center;
             justify-content: center;
             margin: 0 auto 15px;
-            box-shadow: 0 8px 20px rgba(250, 112, 154, 0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
 
         .sbi-logo::before {
@@ -95,7 +93,7 @@
             background: var(--grad-action);
             color: white; border: none; border-radius: 12px;
             font-size: 1.05rem; font-weight: 700; cursor: pointer;
-            box-shadow: 0 6px 15px rgba(79, 172, 254, 0.3);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
@@ -201,7 +199,7 @@
         
         .pb-fill {
             height: 100%; width: 0%;
-            background: var(--grad-pb);
+            background: var(--grad-logo); 
             border-radius: 10px;
             transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
         }
@@ -259,15 +257,64 @@
         .submit-btn { background: var(--grad-success); }
         .reset-btn { background: var(--grad-warning); flex: 0.4; }
 
+        /* ===== CUSTOM TOAST NOTIFICATION ===== */
+        .toast-notification {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass-panel);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: var(--sbi-blue);
+            padding: 16px 24px;
+            border-radius: 50px;
+            font-weight: 800;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 9999;
+            text-align: center;
+            width: max-content;
+            max-width: 90%;
+            font-size: 0.95rem;
+        }
+
+        .toast-notification.show {
+            bottom: 40px;
+        }
+
     </style>
+
+    <!-- Theme Engine Script -->
+    <script>
+        const dailyThemes = {
+            0: { '--bg-freedom': 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)', '--grad-header': 'linear-gradient(135deg, #ff0844 0%, #ffb199 100%)', '--grad-logo': 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)', '--grad-action': 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)', '--sbi-blue': '#c0392b' },
+            1: { '--bg-freedom': 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)', '--grad-header': 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', '--grad-logo': 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', '--grad-action': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', '--sbi-blue': '#1a365d' },
+            2: { '--bg-freedom': 'linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)', '--grad-header': 'linear-gradient(135deg, #0ba360 0%, #3cba92 100%)', '--grad-logo': 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)', '--grad-action': 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', '--sbi-blue': '#1e5128' },
+            3: { '--bg-freedom': 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)', '--grad-header': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', '--grad-logo': 'linear-gradient(135deg, #b224ef 0%, #7579ff 100%)', '--grad-action': 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)', '--sbi-blue': '#4a235a' },
+            4: { '--bg-freedom': 'linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)', '--grad-header': 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)', '--grad-logo': 'linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%)', '--grad-action': 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', '--sbi-blue': '#9c640c' },
+            5: { '--bg-freedom': 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 25%, #a1c4fd 75%, #c2e9fb 100%)', '--grad-header': 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', '--grad-logo': 'linear-gradient(135deg, #ff0844 0%, #ffb199 100%)', '--grad-action': 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', '--sbi-blue': '#78281f' },
+            6: { '--bg-freedom': 'linear-gradient(135deg, #cfd9df 0%, #e2ebf0 100%)', '--grad-header': 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)', '--grad-logo': 'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)', '--grad-action': 'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)', '--sbi-blue': '#0e6251' }
+        };
+
+        const today = new Date().getDay();
+        const root = document.documentElement;
+        for (const [key, value] of Object.entries(dailyThemes[today])) {
+            root.style.setProperty(key, value);
+        }
+    </script>
 </head>
 <body>
+
+    <!-- Notification Toast -->
+    <div id="toastNotification" class="toast-notification"></div>
 
     <div class="login-container" id="loginContainer">
         <div class="login-header">
             <div class="sbi-logo"></div>
             <h1>Daily Workbook</h1>
-            <p>Field Operations Report</p>
+            <p id="themeIndicator">Field Operations Report</p>
         </div>
         <button class="login-btn" onclick="login()">Access Workspace</button>
     </div>
@@ -348,11 +395,26 @@
 
         const GLOBAL_TARGET = 30;
         const MID_TARGET = Math.floor(GLOBAL_TARGET / 2); // 15
+        const dayNames = ["Sunday Calm", "Monday Focus", "Tuesday Growth", "Wednesday Flow", "Thursday Spark", "Friday Energy", "Saturday Chill"];
 
         window.addEventListener('load', () => {
             updateCurrentDate();
             checkLoginStatus();
+            document.getElementById('themeIndicator').textContent = dayNames[new Date().getDay()] + " Workspace";
+            
+            // Start checking for 6:15 PM every 30 seconds
+            setInterval(checkTimeForNotification, 30000);
         });
+
+        // Universal Custom Toast Function
+        function showToast(message, duration = 4000) {
+            const toast = document.getElementById('toastNotification');
+            toast.innerHTML = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
 
         function formatDateDisplay(date) {
             const day = String(date.getDate()).padStart(2, '0');
@@ -368,6 +430,44 @@
         function login() {
             localStorage.setItem('loggedIn', 'true');
             showDashboard();
+            
+            // Smart Welcome Greeting based on the time of day
+            const currentHour = new Date().getHours();
+            let greeting = "Good Evening";
+            
+            if (currentHour < 12) {
+                greeting = "Good Morning";
+            } else if (currentHour < 17) {
+                greeting = "Good Afternoon";
+            }
+            
+            // Show the requested welcome message!
+            showToast(`👋 Hi! Eli, ${greeting}. Have a great day!`);
+        }
+
+        // 6:15 PM Clock Alert Function
+        function checkTimeForNotification() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const todayStr = formatDateDisplay(now);
+            
+            // 18 = 6 PM, 15 = 15 minutes
+            if (hours === 18 && minutes === 15) {
+                const lastNotified = localStorage.getItem('lastNotified615PM');
+                
+                // Only alert once per day
+                if (lastNotified !== todayStr) {
+                    showToast("⏰ Reminder: It's 6:15 PM! Don't forget to send your daily report.", 8000);
+                    
+                    // Trigger mobile vibration if device supports it (vibrate 3 times)
+                    if (navigator.vibrate) {
+                        navigator.vibrate([200, 100, 200, 100, 200]);
+                    }
+                    
+                    localStorage.setItem('lastNotified615PM', todayStr);
+                }
+            }
         }
 
         function checkLoginStatus() {
@@ -390,7 +490,6 @@
             let percent = Math.min((val / GLOBAL_TARGET) * 100, 100);
             pb.style.width = percent + '%';
             
-            // Handle State Colors (Met, Midpoint, Default)
             if (val >= GLOBAL_TARGET) {
                 btn.classList.add('target-met');
                 btn.classList.remove('target-mid');
