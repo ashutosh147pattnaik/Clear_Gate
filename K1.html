@@ -13,106 +13,112 @@
         }
 
         :root {
+            /* Theme Colors & Gradients */
             --sbi-blue: #003f87;
-            --sbi-light-blue: #0052a3;
+            --sbi-light-blue: #0a4fa6;
             --sbi-gold: #d4af37;
-            --sbi-gray: #f4f6f9;
-            --text-dark: #333333;
-            --text-light: #666666;
-            --success: #25D366;
-            --success-dark: #1da851;
-            --warning: #e74c3c;
-            --border: #e2e8f0;
+            --text-dark: #2d3748;
+            --text-light: #718096;
+            
+            /* Optimized Static Gradients */
+            --grad-bg: linear-gradient(135deg, #001224 0%, #002855 50%, #003f87 100%);
+            --grad-card: linear-gradient(145deg, #ffffff, #f4f7fb);
+            --grad-primary: linear-gradient(135deg, #0052a3, #0a4fa6);
+            --grad-success: linear-gradient(135deg, #1da851, #158c40);
+            --grad-warning: linear-gradient(135deg, #e53e3e, #c53030);
         }
 
         body, html {
             height: 100%;
             width: 100%;
             overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #001f40; /* Solid mobile-friendly background */
+            background: var(--grad-bg);
             color: var(--text-dark);
         }
 
         /* ===== LOGIN PAGE ===== */
         .login-container {
-            background: #ffffff;
-            border-radius: 16px;
+            background: var(--grad-card);
+            border-radius: 20px;
             padding: 40px 25px;
             max-width: 320px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
         }
 
         .sbi-logo {
-            width: 70px;
-            height: 70px;
-            background: var(--sbi-blue);
+            width: 75px;
+            height: 75px;
+            background: var(--grad-primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 15px;
+            box-shadow: 0 8px 20px rgba(10, 79, 166, 0.3);
         }
 
         .sbi-logo::before {
             content: "SBI";
             color: var(--sbi-gold);
-            font-size: 22px;
-            font-weight: bold;
+            font-size: 24px;
+            font-weight: 800;
             letter-spacing: 1px;
         }
 
-        .login-header h1 { color: var(--sbi-blue); font-size: 1.4rem; margin-bottom: 4px; font-weight: 700; }
-        .login-header p { color: var(--text-light); font-size: 0.85rem; margin-bottom: 25px; font-weight: 600; }
+        .login-header h1 { color: var(--sbi-blue); font-size: 1.5rem; margin-bottom: 4px; font-weight: 800; }
+        .login-header p { color: var(--text-light); font-size: 0.9rem; margin-bottom: 25px; font-weight: 600; }
 
         .login-btn {
-            width: 100%; padding: 14px;
-            background: var(--sbi-light-blue);
-            color: white; border: none; border-radius: 10px;
-            font-size: 1rem; font-weight: bold; cursor: pointer;
+            width: 100%; padding: 15px;
+            background: var(--grad-primary);
+            color: white; border: none; border-radius: 12px;
+            font-size: 1.05rem; font-weight: 700; cursor: pointer;
+            box-shadow: 0 6px 15px rgba(10, 79, 166, 0.25);
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .login-btn:active { background: var(--sbi-blue); }
+        .login-btn:active { transform: scale(0.96); }
 
         /* ===== DASHBOARD ===== */
         .dashboard {
             display: none;
-            background: var(--sbi-gray);
+            background: #f8fafc;
             width: 94%; height: 96%; max-width: 600px;
-            border-radius: 16px; flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-radius: 20px; flex-direction: column;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
             overflow: hidden;
         }
 
-        .dashboard.show {
-            display: flex;
-        }
+        .dashboard.show { display: flex; }
 
         .dashboard-header {
-            background: var(--sbi-blue);
-            color: white; padding: 16px;
+            background: var(--grad-primary);
+            color: white; padding: 18px 20px;
             display: flex; justify-content: space-between; align-items: center;
             flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-        .header-left h2 { font-size: 1.1rem; margin-bottom: 2px; }
-        .header-left p { font-size: 0.75rem; opacity: 0.9; margin: 0; font-weight: 500; }
+        
+        .header-left h2 { font-size: 1.2rem; margin-bottom: 2px; font-weight: 700; }
+        .header-left p { font-size: 0.8rem; opacity: 0.9; margin: 0; font-weight: 500; }
 
         .logout-btn {
-            background: transparent; color: white;
-            border: 1px solid rgba(255, 255, 255, 0.4); padding: 8px 12px;
-            border-radius: 8px; font-size: 0.75rem; font-weight: bold;
+            background: rgba(255, 255, 255, 0.15); color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 14px;
+            border-radius: 8px; font-size: 0.8rem; font-weight: 700;
         }
-        .logout-btn:active { background: rgba(255, 255, 255, 0.2); }
+        .logout-btn:active { background: rgba(255, 255, 255, 0.25); }
 
         .dashboard-content { padding: 16px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
         .date-display {
-            text-align: right; font-size: 0.85rem; font-weight: 700;
+            text-align: right; font-size: 0.85rem; font-weight: 800;
             color: var(--sbi-blue); margin-bottom: 12px; flex-shrink: 0;
             text-transform: uppercase; letter-spacing: 0.5px;
         }
@@ -122,40 +128,38 @@
             flex: 1; display: grid;
             grid-template-columns: repeat(2, 1fr);
             grid-template-rows: repeat(3, 1fr);
-            gap: 12px; margin-bottom: 16px;
+            gap: 14px; margin-bottom: 16px;
         }
 
         .counter-button {
-            background: #ffffff;
-            border: 2px solid var(--border);
-            border-radius: 12px; display: flex; flex-direction: column;
+            background: var(--grad-card);
+            border: 1px solid #e2e8f0;
+            border-radius: 14px; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            padding: 10px 5px; cursor: pointer; position: relative;
+            padding: 12px 6px; cursor: pointer; position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            transition: transform 0.15s ease, background 0.3s ease;
         }
 
-        /* Standard Mobile touch feedback */
-        .counter-button:active {
-            background: #f8fafc;
-            transform: scale(0.98);
-            border-color: #cbd5e1;
-        }
+        .counter-button:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        .button-icon { font-size: 1.5rem; margin-bottom: 4px; }
+        .button-icon { font-size: 1.6rem; margin-bottom: 4px; }
 
         .button-label {
-            color: var(--text-dark); font-size: 0.85rem;
-            font-weight: 700; margin-bottom: 2px; text-align: center;
+            color: var(--text-dark); font-size: 0.9rem;
+            font-weight: 800; margin-bottom: 2px; text-align: center;
         }
 
         .target-label {
-            font-size: 0.65rem; color: #94a3b8; font-weight: 700;
-            margin-bottom: 6px; letter-spacing: 0.5px;
+            font-size: 0.7rem; color: #a0aec0; font-weight: 700;
+            margin-bottom: 8px; letter-spacing: 0.5px;
         }
 
         .button-counter {
-            background: #eaf1f8; color: var(--sbi-blue);
-            font-size: 1.4rem; font-weight: 800; padding: 4px 20px;
-            border-radius: 8px; margin-bottom: 8px;
+            background: #ebf4ff; color: var(--sbi-light-blue);
+            font-size: 1.5rem; font-weight: 800; padding: 4px 22px;
+            border-radius: 10px; margin-bottom: 10px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
         /* Progress Bar Styles */
@@ -167,18 +171,16 @@
         
         .pb-fill {
             height: 100%; width: 0%;
-            background: var(--sbi-light-blue);
+            background: var(--grad-primary);
             border-radius: 10px;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* ===== TARGET MET STATE ===== */
         .counter-button.target-met {
-            background: var(--success);
-            border-color: var(--success-dark);
-        }
-        
-        .counter-button.target-met:active {
-            background: var(--success-dark);
+            background: var(--grad-success);
+            border-color: transparent;
+            box-shadow: 0 6px 15px rgba(29, 168, 81, 0.3);
         }
 
         .counter-button.target-met .button-label, 
@@ -186,22 +188,25 @@
         
         .counter-button.target-met .button-counter {
             background: rgba(255, 255, 255, 0.25); color: white;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .counter-button.target-met .pb-wrap { background: rgba(0, 0, 0, 0.2); }
-        .counter-button.target-met .pb-fill { background: white; }
+        .counter-button.target-met .pb-fill { background: #ffffff; }
 
         /* Actions */
         .action-buttons { display: flex; gap: 12px; flex-shrink: 0; padding-bottom: 5px; }
 
         .action-btn {
-            flex: 1; padding: 14px; font-size: 0.9rem; font-weight: bold;
-            border: none; border-radius: 10px; color: white; 
+            flex: 1; padding: 15px; font-size: 0.95rem; font-weight: 800;
+            border: none; border-radius: 12px; color: white; 
+            transition: transform 0.2s ease;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
-        .action-btn:active { opacity: 0.8; transform: scale(0.98); }
+        .action-btn:active { transform: scale(0.96); }
 
-        .submit-btn { background: var(--success); }
-        .reset-btn { background: var(--warning); flex: 0.4; }
+        .submit-btn { background: var(--grad-success); }
+        .reset-btn { background: var(--grad-warning); flex: 0.4; }
 
     </style>
 </head>
@@ -291,7 +296,6 @@
             window.location.href = "index.html";
         }
 
-        // Global Target
         const GLOBAL_TARGET = 30;
 
         window.addEventListener('load', () => {
@@ -327,17 +331,14 @@
             document.getElementById('dashboard').classList.add('show');
         }
 
-        // Function to update progress bars and colors
         function updateUI(fieldName) {
             let val = parseInt(document.getElementById(fieldName).textContent) || 0;
             let btn = document.getElementById('btn-' + fieldName);
             let pb = document.getElementById('pb-' + fieldName);
             
-            // Calculate Progress Bar Width (max 100%)
             let percent = Math.min((val / GLOBAL_TARGET) * 100, 100);
             pb.style.width = percent + '%';
             
-            // Toggle Target Met Colors
             if (val >= GLOBAL_TARGET) {
                 btn.classList.add('target-met');
             } else {
@@ -351,11 +352,9 @@
             current++;
             counterElement.textContent = current;
             
-            // Trigger UI update for this specific button
             updateUI(fieldName);
-
             saveData();
-            if (navigator.vibrate) navigator.vibrate(50);
+            if (navigator.vibrate) navigator.vibrate(50); // Haptic feedback optimized for mobile
         }
 
         function saveData() {
@@ -378,7 +377,6 @@
                 
                 fields.forEach(field => {
                     document.getElementById(field).textContent = data[field] || 0;
-                    // Update the UI based on loaded data
                     updateUI(field);
                 });
             }
@@ -386,15 +384,16 @@
 
         function exportToWhatsApp() {
             const today = formatDateDisplay(new Date());
+            const data = {
+                nps: document.getElementById('nps').textContent,
+                whatsapp: document.getElementById('whatsapp').textContent,
+                yono: document.getElementById('yonoRegistration').textContent,
+                cc: document.getElementById('contactCentre').textContent,
+                cbdc: document.getElementById('cbdc').textContent,
+                cm: document.getElementById('channelMigration').textContent
+            };
 
-            const nps = document.getElementById('nps').textContent;
-            const whatsapp = document.getElementById('whatsapp').textContent;
-            const yono = document.getElementById('yonoRegistration').textContent;
-            const cc = document.getElementById('contactCentre').textContent;
-            const cbdc = document.getElementById('cbdc').textContent;
-            const cm = document.getElementById('channelMigration').textContent;
-
-            const reportContent = `Date: ${today}\nName: ELIPOMA NAG\nBranch name: SBI KORAPUT\nBranch code: 00121\n\n*Data Report:*\nNPS: ${nps}\nWhatsApp: ${whatsapp}\nYono Registration: ${yono}\nContact Centre: ${cc}\nCBDC: ${cbdc}\nChannel Migration: ${cm}`;
+            const reportContent = `Date: ${today}\nName: ELIPOMA NAG\nBranch name: SBI KORAPUT\nBranch code: 00121\n\n*Data Report:*\nNPS: ${data.nps}\nWhatsApp: ${data.whatsapp}\nYono Registration: ${data.yono}\nContact Centre: ${data.cc}\nCBDC: ${data.cbdc}\nChannel Migration: ${data.cm}`;
 
             const encodedMessage = encodeURIComponent(reportContent);
             window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
@@ -405,9 +404,9 @@
                 const fields = ['nps', 'whatsapp', 'yonoRegistration', 'contactCentre', 'cbdc', 'channelMigration'];
                 fields.forEach(field => {
                     document.getElementById(field).textContent = '0';
+                    updateUI(field);
                 });
                 localStorage.removeItem('workbookData');
-                window.location.href = 'index.html'; 
             }
         }
 
