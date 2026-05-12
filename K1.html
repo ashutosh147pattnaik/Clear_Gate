@@ -22,19 +22,20 @@
             --glass-border: rgba(255, 255, 255, 0.8);
             
             /* Vibrant UI Gradients */
-            --grad-header: linear-gradient(135deg, #6e45e2 0%, #88d3ce 100%); /* Deep Purple to Fresh Cyan */
-            --grad-logo: linear-gradient(135deg, #fa709a 0%, #fee140 100%); /* Sunrise Gold/Pink */
-            --grad-pb: linear-gradient(90deg, #fa709a 0%, #fee140 50%, #4facfe 100%); /* Multi-color Energy */
+            --grad-header: linear-gradient(135deg, #6e45e2 0%, #88d3ce 100%);
+            --grad-logo: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --grad-pb: linear-gradient(90deg, #fa709a 0%, #fee140 50%, #4facfe 100%); 
             
-            /* Action Button Gradients */
-            --grad-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); /* Vibrant Life Green */
-            --grad-warning: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%); /* Energetic Red/Orange */
-            --grad-action: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); /* Sky/Ocean Blue */
+            /* Action Button & Milestone Gradients */
+            --grad-mid: linear-gradient(135deg, #f6d365 0%, #fda085 100%); /* Warm Midway Sunrise */
+            --grad-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); /* Final Target Green */
+            --grad-warning: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%); 
+            --grad-action: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
 
             /* Typography */
             --text-dark: #2d3748;
             --text-light: #4a5568;
-            --sbi-blue: #2c3e50; /* Softer dark tone to fit the airy theme */
+            --sbi-blue: #2c3e50; 
         }
 
         body, html {
@@ -42,9 +43,8 @@
             width: 100%;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg-freedom);
-            background-attachment: fixed; /* Keeps gradient beautiful during scroll */
+            background-attachment: fixed; 
             color: var(--text-dark);
-            /* Setup for perfect centering that allows native scrolling */
             display: grid;
             place-items: center;
             padding: 20px 0;
@@ -139,7 +139,6 @@
         }
         .logout-btn:active { background: rgba(255, 255, 255, 0.3); }
 
-        /* CONTENT AREA - Natural Height */
         .dashboard-content { 
             padding: 20px 16px; 
             display: flex; 
@@ -167,7 +166,7 @@
             align-items: center; justify-content: center;
             padding: 16px 8px; cursor: pointer; position: relative;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: transform 0.15s ease, background 0.3s ease;
+            transition: transform 0.15s ease, background 0.4s ease, box-shadow 0.4s ease;
         }
 
         .counter-button:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -189,6 +188,7 @@
             font-size: 1.6rem; font-weight: 800; padding: 4px 24px;
             border-radius: 12px; margin-bottom: 12px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: background 0.4s ease, color 0.4s ease;
         }
 
         /* Progress Bar Styles */
@@ -196,14 +196,33 @@
             width: 80%; height: 8px;
             background: rgba(0,0,0,0.06); border-radius: 10px;
             overflow: hidden;
+            transition: background 0.4s ease;
         }
         
         .pb-fill {
             height: 100%; width: 0%;
             background: var(--grad-pb);
             border-radius: 10px;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
         }
+
+        /* ===== HALFWAY MET STATE (MIDPOINT) ===== */
+        .counter-button.target-mid {
+            background: var(--grad-mid);
+            border-color: transparent;
+            box-shadow: 0 8px 20px rgba(253, 160, 133, 0.4);
+        }
+
+        .counter-button.target-mid .button-label, 
+        .counter-button.target-mid .target-label { color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        
+        .counter-button.target-mid .button-counter {
+            background: rgba(255, 255, 255, 0.3); color: white;
+            box-shadow: none;
+        }
+
+        .counter-button.target-mid .pb-wrap { background: rgba(0, 0, 0, 0.15); }
+        .counter-button.target-mid .pb-fill { background: #ffffff; }
 
         /* ===== TARGET MET STATE ===== */
         .counter-button.target-met {
@@ -213,7 +232,7 @@
         }
 
         .counter-button.target-met .button-label, 
-        .counter-button.target-met .target-label { color: white; }
+        .counter-button.target-met .target-label { color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         
         .counter-button.target-met .button-counter {
             background: rgba(255, 255, 255, 0.25); color: white;
@@ -328,6 +347,7 @@
         }
 
         const GLOBAL_TARGET = 30;
+        const MID_TARGET = Math.floor(GLOBAL_TARGET / 2); // 15
 
         window.addEventListener('load', () => {
             updateCurrentDate();
@@ -370,10 +390,15 @@
             let percent = Math.min((val / GLOBAL_TARGET) * 100, 100);
             pb.style.width = percent + '%';
             
+            // Handle State Colors (Met, Midpoint, Default)
             if (val >= GLOBAL_TARGET) {
                 btn.classList.add('target-met');
-            } else {
+                btn.classList.remove('target-mid');
+            } else if (val >= MID_TARGET) {
+                btn.classList.add('target-mid');
                 btn.classList.remove('target-met');
+            } else {
+                btn.classList.remove('target-met', 'target-mid');
             }
         }
 
