@@ -427,13 +427,15 @@ Channel Migration: ${cm}`;
         }
 
         function resetData() {
-            if (confirm('Reset today\'s counts to zero?')) {
-                const fields = ['nps', 'whatsapp', 'yonoRegistration', 'contactCentre', 'cbdc', 'channelMigration'];
-                fields.forEach(field => document.getElementById(field).textContent = '0');
-                localStorage.removeItem('workbookData');
-                showNotification('Counters reset to 0');
-            }
-        }
+    if (confirm('Reset today\'s counts to zero?')) {
+        const fields = ['nps', 'whatsapp', 'yonoRegistration', 'contactCentre', 'cbdc', 'channelMigration'];
+        fields.forEach(field => document.getElementById(field).textContent = '0');
+        localStorage.removeItem('workbookData');
+        
+        // This immediately sends them back to the main gateway page
+        window.location.href = 'index.html'; 
+    }
+}
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
