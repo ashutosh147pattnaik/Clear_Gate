@@ -413,6 +413,14 @@
                     <div class="button-counter" id="channelMigration">0</div>
                     <div class="pb-wrap"><div class="pb-fill" id="pb-channelMigration"></div></div>
                 </div>
+
+                <div class="counter-button" id="btn-yonoReregistration" onclick="increment('yonoReregistration')">
+                    <span class="button-icon">🔐</span>
+                    <span class="button-label">Yono Re-Reg</span>
+                    <span class="target-label">Target: 30</span>
+                    <div class="button-counter" id="yonoReregistration">0</div>
+                    <div class="pb-wrap"><div class="pb-fill" id="pb-yonoReregistration"></div></div>
+                </div>
             </div>
 
             <div class="action-buttons">
@@ -613,7 +621,8 @@
                 yonoRegistration: document.getElementById('yonoRegistration').textContent,
                 contactCentre: document.getElementById('contactCentre').textContent,
                 cbdc: document.getElementById('cbdc').textContent,
-                channelMigration: document.getElementById('channelMigration').textContent
+                channelMigration: document.getElementById('channelMigration').textContent,
+                yonoReregistration: document.getElementById('yonoReregistration').textContent
             };
             localStorage.setItem('workbookData', JSON.stringify(data));
         }
@@ -622,7 +631,7 @@
             const saved = localStorage.getItem('workbookData');
             if (saved) {
                 const data = JSON.parse(saved);
-                const fields = ['nps', 'whatsapp', 'yonoRegistration', 'contactCentre', 'cbdc', 'channelMigration'];
+                const fields = ['nps', 'whatsapp', 'yonoRegistration', 'contactCentre', 'cbdc', 'channelMigration', 'yonoReregistration'];
                 
                 fields.forEach(field => {
                     document.getElementById(field).textContent = data[field] || 0;
@@ -637,12 +646,13 @@
                 nps: document.getElementById('nps').textContent,
                 whatsapp: document.getElementById('whatsapp').textContent,
                 yono: document.getElementById('yonoRegistration').textContent,
+                yonoRereg: document.getElementById('yonoReregistration').textContent,
                 cc: document.getElementById('contactCentre').textContent,
                 cbdc: document.getElementById('cbdc').textContent,
                 cm: document.getElementById('channelMigration').textContent
             };
 
-            const reportContent = `Date: ${today}\nName: ELIPOMA NAG\nBranch name: SBI KORAPUT\nBranch code: 00121\n\n*Data Report:*\nNPS: ${data.nps}\nWhatsApp: ${data.whatsapp}\nYono Registration: ${data.yono}\nContact Centre: ${data.cc}\nCBDC: ${data.cbdc}\nChannel Migration: ${data.cm}`;
+            const reportContent = `Date: ${today}\nName: ELIPOMA NAG\nBranch name: SBI KORAPUT\nBranch code: 00121\n\n*Data Report:*\nNPS: ${data.nps}\nWhatsApp: ${data.whatsapp}\nYono Registration: ${data.yono}\nYono Re-Registration: ${data.yonoRereg}\nContact Centre: ${data.cc}\nCBDC: ${data.cbdc}\nChannel Migration: ${data.cm}`;
 
             const encodedMessage = encodeURIComponent(reportContent);
             window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
@@ -650,7 +660,7 @@
 
         function resetData() {
             if (confirm('Reset today\'s counts to zero?')) {
-                const fields = ['nps', 'whatsapp', 'yonoRegistration', 'contactCentre', 'cbdc', 'channelMigration'];
+                const fields = ['nps', 'whatsapp', 'yonoRegistration', 'contactCentre', 'cbdc', 'channelMigration', 'yonoReregistration'];
                 fields.forEach(field => {
                     document.getElementById(field).textContent = '0';
                     updateUI(field);
