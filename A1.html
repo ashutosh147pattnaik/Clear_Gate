@@ -96,42 +96,42 @@ header {
   color: var(--p); font-family: 'DM Mono', monospace; line-height: 1;
 }
 
-.pb-wrap { width: 100%; height: 6px; background: #e2e8f0; border-radius: 99px; margin: 8px 0 16px; overflow: hidden; }
+.pb-wrap { width: 100%; height: 6px; background: #e2e8f0; border-radius: 99px; margin: 8px 0 10px; overflow: hidden; }
 .pb-fill  { height: 100%; border-radius: 99px; background: var(--pl); transition: width 0.3s ease; }
 
-/* BUTTONS */
+/* BUTTONS - MINIMIZED */
 button {
-  padding: 12px 10px; border: none; border-radius: var(--rs);
-  font-weight: 700; cursor: pointer; font-size: 0.85rem; width: 100%;
+  padding: 8px 8px; border: none; border-radius: var(--rs);
+  font-weight: 700; cursor: pointer; font-size: 0.75rem; width: 100%;
   font-family: 'DM Sans', sans-serif;
   transition: transform 0.1s;
 }
 button:active { opacity: 0.8; transform: scale(0.98); }
 
-.btn-primary { background: var(--pl); color: #fff; margin-top: auto; }
+.btn-primary { background: var(--pl); color: #fff; margin-top: auto; padding: 10px 8px; }
 .btn-target-met { background: var(--ok) !important; color: #fff !important; }
 
-.btn-action { margin-top: 12px; padding: 14px; font-size: 0.95rem; color: #fff; }
+.btn-action { margin-top: 10px; padding: 10px; font-size: 0.8rem; color: #fff; }
 .btn-undo { background: #f59e0b; color: #fff; }
 .btn-undo:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; transform: none; }
 .btn-report { background: #0284c7; } /* Sky Blue for In-Page Report */
 .btn-pdf { background: var(--ok); }
 .btn-wa  { background: #25D366; }
 .btn-reset {
-  background: transparent; color: #ff6b6b; margin-top: 12px;
-  font-size: 0.8rem; padding: 10px;
+  background: transparent; color: #ff6b6b; margin-top: 10px;
+  font-size: 0.75rem; padding: 8px;
   border: 1px solid #ff6b6b; border-radius: var(--rs);
 }
 .btn-reset:active { background: #ff6b6b; color: white; }
 
-.btn-cm { background: #7c3aed; color: #fff; margin-top: auto; }
+.btn-cm { background: #7c3aed; color: #fff; margin-top: auto; padding: 10px 8px; }
 .btn-cm.btn-target-met { background: var(--ok) !important; }
 
 /* DIVIDER */
 .divider {
   display: flex; align-items: center; gap: 10px;
-  margin: 24px 0 8px; color: rgba(255,255,255,0.7);
-  font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+  margin: 20px 0 8px; color: rgba(255,255,255,0.7);
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
 }
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.2); }
 
@@ -154,19 +154,19 @@ button:active { opacity: 0.8; transform: scale(0.98); }
 .toggle-wrap { display: flex; gap: 6px; margin-bottom: 16px; background: #f1f5f9; padding: 6px; border-radius: 10px; }
 .toggle-btn {
   background: transparent; color: var(--tm); flex: 1; border: none;
-  padding: 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 700;
+  padding: 8px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;
 }
 .toggle-btn.active { background: var(--p); color: #fff; }
 
 /* INPUT */
 #val-field {
-  width: 100%; padding: 14px; margin-bottom: 16px;
+  width: 100%; padding: 12px; margin-bottom: 16px;
   border: 2px solid #e2e8f0; border-radius: var(--rs);
   font-size: 1.1rem; font-family: 'DM Mono', monospace; color: #002855;
   background: #f8fafc; outline: none;
 }
 #val-field:focus { border-color: var(--pl); background: #fff; }
-.btn-cancel { background: none; color: var(--tm); border: none; margin-top: 8px; font-size: 0.85rem; padding: 10px; font-weight: 700;}
+.btn-cancel { background: none; color: var(--tm); border: none; margin-top: 8px; font-size: 0.8rem; padding: 8px; font-weight: 700;}
 
 /* REPORT PAGE TABLES */
 .report-card { background: white; padding: 20px; border-radius: 12px; margin-top: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
@@ -176,6 +176,11 @@ button:active { opacity: 0.8; transform: scale(0.98); }
 .report-table th { background: #002855; color: white; font-weight: 600; }
 .report-table tr:nth-child(even) { background-color: #f8fafc; }
 .table-responsive { overflow-x: auto; }
+
+/* COMPACT ACTION BUTTONS SECTION */
+.actions-compact { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.actions-compact .btn-action { margin: 0; }
+.actions-compact .btn-reset { margin: 0; }
 </style>
 </head>
 <body>
@@ -236,12 +241,14 @@ button:active { opacity: 0.8; transform: scale(0.98); }
     </div>
 
     <div class="divider">Actions</div>
-    <button id="btn-undo" class="btn-action btn-undo" onclick="undoLast()">⟲ Undo Last Entry</button>
-    <!-- NEW REPORT BUTTON -->
-    <button class="btn-action btn-report" onclick="showReport()">📊 View Report In-Page</button>
     
-    <button class="btn-action btn-pdf" onclick="generatePDF()">Download PDF &amp; Reset</button>
-    <button class="btn-action btn-wa" onclick="shareWA()">Share via WhatsApp</button>
+    <div class="actions-compact">
+      <button id="btn-undo" class="btn-action btn-undo" onclick="undoLast()">⟲ Undo</button>
+      <button class="btn-action btn-report" onclick="showReport()">📊 Report</button>
+      <button class="btn-action btn-pdf" onclick="generatePDF()">⬇️ PDF</button>
+      <button class="btn-action btn-wa" onclick="shareWA()">📱 WhatsApp</button>
+    </div>
+    
     <button class="btn-reset" onclick="resetApp()">Manual Reset</button>
   </div>
 
@@ -379,7 +386,7 @@ function save() {
 
 function refreshUI() {
   $('btn-undo').disabled = state.logs.length === 0;
-  $('btn-undo').textContent = state.logs.length === 0 ? "⟲ Nothing to Undo" : "⟲ Undo Last Entry";
+  $('btn-undo').textContent = state.logs.length === 0 ? "⟲ Nothing" : "⟲ Undo";
 
   MAP.forEach(({ key }) => {
     const count = state.counts[key];
@@ -392,7 +399,7 @@ function refreshUI() {
   });
 }
 
-/* NEW IN-PAGE REPORT FUNCTIONS */
+/* IN-PAGE REPORT FUNCTIONS */
 function showReport() {
   $('dashboard').classList.add('hidden');
   $('report-page').classList.remove('hidden');
@@ -414,7 +421,7 @@ function showReport() {
     });
   }
   $('logs-table').innerHTML = logsHTML;
-  window.scrollTo(0,0); // Scroll to top
+  window.scrollTo(0,0);
 }
 
 function hideReport() {
