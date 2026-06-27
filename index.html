@@ -4,179 +4,199 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SBI Operations Gateway</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'DM Sans', 'Segoe UI', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         :root {
-            /* "Freedom of Life" Multi-Color Theme */
-            --bg-freedom: linear-gradient(135deg, #ff9a9e 0%, #fecfef 25%, #a1c4fd 75%, #c2e9fb 100%);
-            
-            /* Glassmorphism Variables */
-            --glass-panel: rgba(255, 255, 255, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.8);
-            
-            /* Vibrant UI Gradients */
-            --grad-logo: linear-gradient(135deg, #fa709a 0%, #fee140 100%); /* Sunrise */
-            --grad-action: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); /* Ocean Blue */
-            --grad-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); /* Life Green */
+            --bg-page:    #f5f5f3;
+            --bg-card:    #ffffff;
+            --bg-btn:     #f0efed;
+            --bg-accent:  #eff6ff;
+            --bg-success: #f0fdf4;
 
-            /* Typography */
-            --text-dark: #2d3748;
-            --text-light: #4a5568;
-            --sbi-blue: #2c3e50; 
+            --border:         rgba(0, 0, 0, 0.10);
+            --border-strong:  rgba(0, 0, 0, 0.15);
+
+            --text-primary:   #1a1a18;
+            --text-secondary: #5f5e5a;
+            --text-muted:     #9a9994;
+
+            --fill-accent:  #2563eb;
+            --on-accent:    #ffffff;
+
+            --radius: 8px;
         }
 
         body, html {
             height: 100%;
             width: 100%;
+            font-family: 'DM Sans', 'Segoe UI', sans-serif;
+            background: var(--bg-page);
             display: grid;
             place-items: center;
-            background: var(--bg-freedom);
-            background-attachment: fixed;
-            color: var(--text-dark);
+            color: var(--text-primary);
         }
 
-        /* --- Glassmorphism Gateway Card --- */
+        /* --- Card --- */
         .gateway-container {
-            background: var(--glass-panel);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 40px 25px;
-            text-align: center;
+            background: var(--bg-card);
+            border: 0.5px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
             width: 90%;
-            max-width: 380px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
         }
 
-        .logo-placeholder {
-            width: 75px;
-            height: 75px;
-            background: var(--grad-logo);
-            border-radius: 50%;
+        /* --- Logo --- */
+        .logo-mark {
+            width: 56px;
+            height: 56px;
+            background: var(--fill-accent);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 15px;
-            box-shadow: 0 8px 20px rgba(250, 112, 154, 0.3);
+            margin: 0 auto 1.25rem;
         }
 
-        .logo-placeholder::before { 
-            content: "SBI"; 
-            color: white;
-            font-size: 24px;
-            font-weight: 800;
+        .logo-mark span {
+            color: var(--on-accent);
+            font-size: 14px;
+            font-weight: 600;
             letter-spacing: 1px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         h1 {
-            color: var(--sbi-blue);
-            font-size: 1.6rem;
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--text-primary);
             margin-bottom: 4px;
-            font-weight: 800;
         }
 
         #dynamic-wish {
-            color: var(--text-light);
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 25px;
-            min-height: 24px;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            min-height: 20px;
+            margin-bottom: 1.75rem;
         }
 
+        .divider {
+            border: none;
+            border-top: 0.5px solid var(--border);
+            margin: 0 0 1.25rem;
+        }
+
+        /* --- Buttons --- */
         .btn-group {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 10px;
         }
 
-        /* --- Vibrant Gradient Buttons --- */
         .nav-btn {
-            color: white;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 1.05rem;
-            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 14px;
+            border-radius: var(--radius);
+            border: 0.5px solid var(--border-strong);
+            background: var(--bg-btn);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-weight: 500;
             text-decoration: none;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+
+        .nav-btn:hover {
+            background: #e8e7e4;
+            border-color: rgba(0,0,0,0.2);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.985);
+        }
+
+        .btn-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 15px;
+            flex-shrink: 0;
         }
 
-        .btn-target {
-            background: var(--grad-action);
-            box-shadow: 0 6px 15px rgba(79, 172, 254, 0.3);
+        .btn-target .btn-icon { background: var(--bg-accent); }
+        .btn-report .btn-icon { background: var(--bg-success); }
+
+        .btn-label {
+            flex: 1;
+            text-align: left;
         }
 
-        .btn-report {
-            background: var(--grad-success);
-            box-shadow: 0 6px 15px rgba(56, 239, 125, 0.3);
+        .btn-arrow {
+            color: var(--text-muted);
+            font-size: 1rem;
         }
 
-        /* Smooth touch feedback */
-        .nav-btn:active {
-            transform: scale(0.96);
-        }
-
-        .icon { font-size: 1.3rem; }
-        
+        /* --- Footer --- */
         .footer-text {
-            margin-top: 25px;
-            font-size: 0.8rem;
-            color: var(--text-light);
-            font-weight: 600;
-            opacity: 0.8;
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
 
     <div class="gateway-container">
-        <div class="logo-placeholder"></div>
-        <h1>Operations Gateway</h1>
-        
-        <div id="dynamic-wish">Loading workspace...</div>
+        <div class="logo-mark"><span>SBI</span></div>
+        <h1>Operations gateway</h1>
+        <p id="dynamic-wish">Loading workspace...</p>
+
+        <hr class="divider">
 
         <div class="btn-group">
             <a href="K1.html" class="nav-btn btn-target">
-                <span class="icon">🎯</span> Target Portal (Elipoma)
+                <div class="btn-icon">🎯</div>
+                <span class="btn-label">Target portal (Elipoma)</span>
+                <span class="btn-arrow">›</span>
             </a>
-
             <a href="A1.html" class="nav-btn btn-report">
-                <span class="icon">📊</span> Daily Report (Ashutosh)
+                <div class="btn-icon">📊</div>
+                <span class="btn-label">Daily report (Ashutosh)</span>
+                <span class="btn-arrow">›</span>
             </a>
         </div>
-        
-        <div class="footer-text">Secure Branch Access &copy; 2026</div>
+
+        <p class="footer-text">Secure branch access &copy; 2026</p>
     </div>
 
     <script>
         const wishes = [
-            "Have a fantastic day ahead! 🌟",
-            "Keep up the brilliant work! 💼",
-            "Stay safe and productive! 🛡️",
-            "Let's crush our targets today! 🎯",
-            "Welcome back to the dashboard! 👋",
-            "Wishing you massive success! 🚀",
-            "Your hard work is appreciated! 💡"
+            "Have a fantastic day ahead",
+            "Keep up the brilliant work",
+            "Stay safe and productive",
+            "Let's crush our targets today",
+            "Welcome back to the dashboard",
+            "Wishing you massive success",
+            "Your hard work is appreciated"
         ];
 
-        // Pick a single random wish on page load
         window.onload = () => {
-            const initialWish = wishes[Math.floor(Math.random() * wishes.length)];
-            document.getElementById('dynamic-wish').textContent = initialWish;
+            document.getElementById('dynamic-wish').textContent =
+                wishes[Math.floor(Math.random() * wishes.length)];
         };
     </script>
 
