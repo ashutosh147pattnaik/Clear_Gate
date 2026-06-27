@@ -4,677 +4,555 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SBI Daily Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
+        *, *::before, *::after {
+            margin: 0; padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
 
         :root {
-            /* These are updated continuously via JavaScript based on the time of day */
-            --text-dark: rgba(45, 55, 72, 1);
-            --text-light: rgba(74, 85, 104, 1);
-            --glass-panel: rgba(255, 255, 255, 0.75);
-            --glass-card: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.8);
-            --counter-bg: rgba(255, 255, 255, 0.8);
-            --counter-text: var(--sbi-blue);
-            --pb-wrap: rgba(0, 0, 0, 0.06);
-            --dark-factor: 0; /* 0 = Light, 1 = Full Dark */
+            --bg-deep:    #0b0f1a;
+            --bg-card:    #141927;
+            --bg-card-2:  #1a2035;
+            --border:     rgba(255,255,255,0.08);
+            --border-s:   rgba(255,255,255,0.14);
 
-            /* Static Theme Elements */
-            --grad-logo: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            --grad-action: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --grad-mid: linear-gradient(135deg, #f6d365 0%, #fda085 100%); 
-            --grad-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
-            --grad-warning: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%); 
+            --text-primary:   #f0f2f8;
+            --text-secondary: #8b95b0;
+            --text-muted:     #4a5270;
+
+            --accent:   #6366f1;
+            --accent-2: #818cf8;
+
+            --mid-fill:  linear-gradient(135deg, #f59e0b, #f97316);
+            --met-fill:  linear-gradient(135deg, #10b981, #34d399);
+
+            --radius: 14px;
         }
 
         body, html {
             min-height: 100vh;
             width: 100%;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: var(--bg-freedom);
-            background-attachment: fixed; 
-            color: var(--text-dark);
+            font-family: 'DM Sans', system-ui, sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
             display: grid;
-            place-items: center;
-            padding: 20px 0;
-            overflow-y: auto; 
-            position: relative;
+            place-items: start center;
+            padding: 0 0 48px;
+            overflow-y: auto;
         }
 
-        /* Smooth Progressive Dark Background Overlay */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-            opacity: var(--dark-factor);
-            z-index: -1;
-            transition: opacity 1s linear;
+        /* ── HEADER ── */
+        header {
+            width: 100%;
+            background: #0f1422;
+            border-bottom: 0.5px solid var(--border);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        /* ===== PROGRESSIVE THEME INDICATOR ===== */
-        .theme-level-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--glass-panel);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 8px 16px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            z-index: 1000;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        .brand {
             display: flex;
             align-items: center;
-            gap: 6px;
-            transition: background 1s, border 1s, color 1s;
+            gap: 10px;
         }
 
-        /* ===== LOGIN PAGE ===== */
-        .login-container {
-            background: var(--glass-panel);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 40px 25px;
-            max-width: 320px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-            margin: auto;
-            transition: background 1s, border 1s;
-        }
-
-        .sbi-logo {
-            width: 75px;
-            height: 75px;
-            background: var(--grad-logo);
-            border-radius: 50%;
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: var(--accent);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-
-        .sbi-logo::before {
-            content: "SBI";
-            color: white;
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .login-header h1 { color: var(--sbi-blue); font-size: 1.6rem; margin-bottom: 4px; font-weight: 800; transition: color 1s; }
-        .login-header p { color: var(--text-light); font-size: 0.95rem; margin-bottom: 25px; font-weight: 600; transition: color 1s; }
-
-        .login-btn {
-            width: 100%; padding: 15px;
-            background: var(--grad-action);
-            color: white; border: none; border-radius: 12px;
-            font-size: 1.05rem; font-weight: 700; cursor: pointer;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .login-btn:active { transform: scale(0.96); }
-
-        /* ===== DASHBOARD ===== */
-        .dashboard {
-            display: none;
-            background: var(--glass-panel);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            width: 94%; 
-            max-width: 600px;
-            border-radius: 24px; 
-            flex-direction: column;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            overflow: hidden;
-            margin: auto;
-            transition: background 1s, border 1s;
-        }
-
-        .dashboard.show { display: flex; }
-
-        .dashboard-header {
-            position: relative;
-            background: var(--grad-header);
-            color: white; padding: 20px 24px;
-            display: flex; justify-content: space-between; align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 0.5px;
             flex-shrink: 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            z-index: 10;
         }
 
-        /* Progressive Dark Mode Header Overlay */
-        .dashboard-header::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            opacity: var(--dark-factor);
-            z-index: -1;
-            transition: opacity 1s linear;
+        .brand-text { display: flex; flex-direction: column; }
+        .brand-name { font-size: 14px; font-weight: 500; color: var(--text-primary); line-height: 1.2; }
+        .brand-sub  { font-size: 11px; color: var(--text-muted); line-height: 1.2; }
+
+        .header-right { display: flex; align-items: center; gap: 10px; }
+
+        #live-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: 'DM Mono', monospace;
         }
-        
-        .header-left h2 { font-size: 1.3rem; margin-bottom: 2px; font-weight: 800; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .header-left p { font-size: 0.85rem; opacity: 0.95; margin: 0; font-weight: 500; }
 
         .logout-btn {
-            background: rgba(255, 255, 255, 0.2); color: white;
-            border: 1px solid rgba(255, 255, 255, 0.4); padding: 8px 14px;
-            border-radius: 8px; font-size: 0.8rem; font-weight: 700;
-            backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.06);
+            color: var(--text-secondary);
+            border: 0.5px solid var(--border-s);
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
             cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.15s;
         }
-        .logout-btn:active { background: rgba(255, 255, 255, 0.3); }
+        .logout-btn:hover { background: rgba(255,255,255,0.10); }
 
-        .dashboard-content { 
-            padding: 20px 16px; 
-            display: flex; 
-            flex-direction: column; 
-        }
-
-        .date-display {
-            text-align: right; font-size: 0.9rem; font-weight: 800;
-            color: var(--sbi-blue); margin-bottom: 16px; flex-shrink: 0;
-            text-transform: uppercase; letter-spacing: 0.5px;
-            transition: color 1s;
+        /* ── MAIN CONTENT ── */
+        #main-content {
+            width: 94%;
+            max-width: 540px;
+            margin: 0 auto;
+            padding-top: 20px;
         }
 
-        /* GRID & BUTTONS */
-        .buttons-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-auto-rows: minmax(130px, auto); 
-            gap: 14px; margin-bottom: 24px;
+        /* ── LOGIN ── */
+        #login-page {
+            background: var(--bg-card);
+            border: 0.5px solid var(--border-s);
+            border-radius: 20px;
+            padding: 44px 28px;
+            text-align: center;
+            margin-top: 40px;
         }
 
-        .counter-button {
-            background: var(--glass-card);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            padding: 16px 8px; cursor: pointer; position: relative;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: transform 0.15s ease, background 1s ease, box-shadow 0.4s ease, border 1s ease;
+        .logo-mark {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 1px;
         }
 
-        .counter-button:active { transform: scale(0.96); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-
-        .button-icon { font-size: 1.8rem; margin-bottom: 6px; }
-
-        .button-label {
-            color: var(--text-dark); font-size: 0.95rem;
-            font-weight: 800; margin-bottom: 2px; text-align: center;
-            transition: color 1s;
+        #login-page h1 {
+            font-size: 1.35rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 6px;
         }
 
-        .target-label {
-            font-size: 0.75rem; color: var(--text-light); font-weight: 700;
-            margin-bottom: 10px; letter-spacing: 0.5px;
-            transition: color 1s;
+        #login-page p {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 28px;
         }
 
-        .button-counter {
-            background: var(--counter-bg); color: var(--counter-text);
-            font-size: 1.6rem; font-weight: 800; padding: 4px 24px;
-            border-radius: 12px; margin-bottom: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: background 1s ease, color 1s ease;
-        }
-
-        /* Progress Bar Styles */
-        .pb-wrap {
-            width: 80%; height: 8px;
-            background: var(--pb-wrap); border-radius: 10px;
-            overflow: hidden;
-            transition: background 1s ease;
-        }
-        
-        .pb-fill {
-            height: 100%; width: 0%;
-            background: var(--grad-logo); 
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
             border-radius: 10px;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: opacity 0.15s;
+        }
+        .login-btn:hover { opacity: 0.88; }
+        .login-btn:active { opacity: 0.75; transform: scale(0.98); }
+
+        .hidden { display: none !important; }
+
+        /* ── DASHBOARD ── */
+        #dashboard {}
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
         }
 
-        /* ===== HALFWAY MET STATE (MIDPOINT) ===== */
-        .counter-button.target-mid {
-            background: var(--grad-mid);
-            border-color: transparent;
-            box-shadow: 0 8px 20px rgba(253, 160, 133, 0.4);
+        /* ── COUNTER GRID ── */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
         }
 
-        .counter-button.target-mid .button-label, 
-        .counter-button.target-mid .target-label { color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        
-        .counter-button.target-mid .button-counter {
-            background: rgba(255, 255, 255, 0.3); color: white;
-            box-shadow: none;
+        .counter-btn {
+            background: var(--bg-card);
+            border: 0.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 12px 14px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            transition: border-color 0.15s, background 0.15s, transform 0.1s;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
-        .counter-button.target-mid .pb-wrap { background: rgba(0, 0, 0, 0.15); }
-        .counter-button.target-mid .pb-fill { background: #ffffff; }
+        .counter-btn:active { transform: scale(0.96); }
+        .counter-btn:hover  { border-color: var(--border-s); background: var(--bg-card-2); }
 
-        /* ===== TARGET MET STATE ===== */
-        .counter-button.target-met {
-            background: var(--grad-success);
-            border-color: transparent;
-            box-shadow: 0 8px 20px rgba(56, 239, 125, 0.3);
+        .cb-icon  { font-size: 1.5rem; margin-bottom: 4px; }
+        .cb-name  { font-size: 12px; font-weight: 500; color: var(--text-secondary); text-align: center; line-height: 1.3; }
+        .cb-target { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+
+        .cb-count {
+            font-size: 1.9rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-family: 'DM Mono', monospace;
+            line-height: 1;
+            margin-bottom: 8px;
         }
 
-        .counter-button.target-met .button-label, 
-        .counter-button.target-met .target-label { color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        
-        .counter-button.target-met .button-counter {
-            background: rgba(255, 255, 255, 0.25); color: white;
-            box-shadow: none;
+        .pb-wrap {
+            width: 80%;
+            height: 3px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .pb-fill {
+            height: 100%;
+            border-radius: 99px;
+            background: var(--accent-2);
+            width: 0%;
+            transition: width 0.3s ease;
         }
 
-        .counter-button.target-met .pb-wrap { background: rgba(0, 0, 0, 0.15); }
-        .counter-button.target-met .pb-fill { background: #ffffff; }
-
-        /* Actions */
-        .action-buttons { 
-            display: flex; gap: 14px; flex-shrink: 0; padding-bottom: 5px; 
-            margin-top: auto; 
+        /* MID state */
+        .counter-btn.mid {
+            background: #1c1608;
+            border-color: rgba(245,158,11,0.25);
         }
+        .counter-btn.mid .cb-count { color: #fbbf24; }
+        .counter-btn.mid .pb-fill  { background: #f59e0b; }
+        .counter-btn.mid .cb-name  { color: #fcd34d; }
 
-        .action-btn {
-            flex: 1; padding: 16px; font-size: 1rem; font-weight: 800;
-            border: none; border-radius: 14px; color: white; cursor: pointer;
-            transition: transform 0.2s ease;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        /* MET state */
+        .counter-btn.met {
+            background: #0a1f14;
+            border-color: rgba(16,185,129,0.25);
         }
-        .action-btn:active { transform: scale(0.96); }
+        .counter-btn.met .cb-count { color: #34d399; }
+        .counter-btn.met .pb-fill  { background: #10b981; }
+        .counter-btn.met .cb-name  { color: #6ee7b7; }
 
-        .submit-btn { background: var(--grad-success); }
-        .reset-btn { background: var(--grad-warning); flex: 0.4; }
+        .full-width { grid-column: 1 / -1; }
 
-        /* ===== CUSTOM TOAST NOTIFICATION ===== */
-        .toast-notification {
+        /* ── ACTION STRIP ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0 12px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+
+        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .act-btn {
+            padding: 13px 10px;
+            border-radius: 10px;
+            border: 0.5px solid var(--border-s);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: background 0.15s;
+        }
+        .act-btn:hover  { background: var(--bg-card-2); }
+        .act-btn:active { transform: scale(0.98); }
+
+        .act-btn.send  { background: #10251b; border-color: rgba(16,185,129,0.3); color: #34d399; }
+        .act-btn.reset { background: #1f1010; border-color: rgba(239,68,68,0.25); color: #f87171; }
+
+        .act-btn .ab-icon { font-size: 16px; }
+
+        /* ── TOAST ── */
+        #toast {
             position: fixed;
-            bottom: -100px;
+            bottom: -80px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--glass-panel);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            color: var(--sbi-blue);
-            padding: 16px 24px;
+            background: var(--bg-card-2);
+            border: 0.5px solid var(--border-s);
+            color: var(--text-primary);
+            padding: 13px 22px;
             border-radius: 50px;
-            font-weight: 800;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 1s, color 1s, border 1s;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
             z-index: 9999;
-            text-align: center;
-            width: max-content;
-            max-width: 90%;
-            font-size: 0.95rem;
+            transition: bottom 0.4s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
-
-        .toast-notification.show {
-            bottom: 40px;
-        }
-
+        #toast.show { bottom: 36px; }
     </style>
 </head>
 <body>
 
-    <!-- Progressive Level Indicator -->
-    <div class="theme-level-indicator">
-        <span id="themeIcon">☀️</span> <span id="themePercent">0%</span>
-    </div>
-
-    <!-- Notification Toast -->
-    <div id="toastNotification" class="toast-notification"></div>
-
-    <div class="login-container" id="loginContainer">
-        <div class="login-header">
-            <div class="sbi-logo"></div>
-            <h1>Daily Workbook</h1>
-            <p id="themeIndicator">Field Operations Report</p>
-        </div>
-        <button class="login-btn" onclick="login()">Access Workspace</button>
-    </div>
-
-    <div class="dashboard" id="dashboard">
-        <div class="dashboard-header">
-            <div class="header-left">
-                <h2>✨ Daily Report</h2>
-                <p>Koraput Branch</p>
-            </div>
-            <button class="logout-btn" onclick="logout()">Logout</button>
-        </div>
-
-        <div class="dashboard-content">
-            <div class="date-display" id="todayDate"></div>
-
-            <div class="buttons-grid">
-                <div class="counter-button" id="btn-nps" onclick="increment('nps')">
-                    <span class="button-icon">😊</span>
-                    <span class="button-label">NPS</span>
-                    <span class="target-label">Target: 30</span>
-                    <div class="button-counter" id="nps">0</div>
-                    <div class="pb-wrap"><div class="pb-fill" id="pb-nps"></div></div>
-                </div>
-
-                <div class="counter-button" id="btn-whatsapp" onclick="increment('whatsapp')">
-                    <span class="button-icon">💬</span>
-                    <span class="button-label">WhatsApp</span>
-                    <span class="target-label">Target: 30</span>
-                    <div class="button-counter" id="whatsapp">0</div>
-                    <div class="pb-wrap"><div class="pb-fill" id="pb-whatsapp"></div></div>
-                </div>
-
-                <div class="counter-button" id="btn-yonoRegistration" onclick="increment('yonoRegistration')">
-                    <span class="button-icon">📝</span>
-                    <span class="button-label">Yono Reg.</span>
-                    <span class="target-label">Target: 30</span>
-                    <div class="button-counter" id="yonoRegistration">0</div>
-                    <div class="pb-wrap"><div class="pb-fill" id="pb-yonoRegistration"></div></div>
-                </div>
-
-                <div class="counter-button" id="btn-contactCentre" onclick="increment('contactCentre')">
-                    <span class="button-icon">☎️</span>
-                    <span class="button-label">Contact Centre</span>
-                    <span class="target-label">Target: 30</span>
-                    <div class="button-counter" id="contactCentre">0</div>
-                    <div class="pb-wrap"><div class="pb-fill" id="pb-contactCentre"></div></div>
-                </div>
-
-                <div class="counter-button" id="btn-cbdc" onclick="increment('cbdc')">
-                    <span class="button-icon">💳</span>
-                    <span class="button-label">CBDC</span>
-                    <span class="target-label">Target: 30</span>
-                    <div class="button-counter" id="cbdc">0</div>
-                    <div class="pb-wrap"><div class="pb-fill" id="pb-cbdc"></div></div>
-                </div>
-
-                <div class="counter-button" id="btn-channelMigration" onclick="increment('channelMigration')">
-                    <span class="button-icon">🔄</span>
-                    <span class="button-label">Migration</span>
-                    <span class="target-label">Target: 30</span>
-                    <div class="button-counter" id="channelMigration">0</div>
-                    <div class="pb-wrap"><div class="pb-fill" id="pb-channelMigration"></div></div>
-                </div>
-
-                <div class="counter-button" id="btn-yonoReregistration" onclick="increment('yonoReregistration')">
-                    <span class="button-icon">🔐</span>
-                    <span class="button-label">Yono Re-Reg</span>
-                    <span class="target-label">Target: 30</span>
-                    <div class="button-counter" id="yonoReregistration">0</div>
-                    <div class="pb-wrap"><div class="pb-fill" id="pb-yonoReregistration"></div></div>
-                </div>
-            </div>
-
-            <div class="action-buttons">
-                <button class="action-btn submit-btn" onclick="exportToWhatsApp()">📱 Send Report</button>
-                <button class="action-btn reset-btn" onclick="resetData()">🔄 Reset</button>
-            </div>
+<!-- HEADER (shown after login) -->
+<header id="app-header" class="hidden">
+    <div class="brand">
+        <div class="brand-icon">SBI</div>
+        <div class="brand-text">
+            <span class="brand-name">Daily report</span>
+            <span class="brand-sub">Koraput branch</span>
         </div>
     </div>
+    <div class="header-right">
+        <span id="live-date"></span>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+</header>
 
-    <!-- Theme Engine & Progressive Logic -->
-    <script>
-        // Define base themes with explicit Base SBI Blue RGB arrays for accurate interpolation
-        const dailyThemes = {
-            0: { bg: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)', hdr: 'linear-gradient(135deg, #ff0844 0%, #ffb199 100%)', baseRGB: [192, 57, 43, 1] },   // #c0392b
-            1: { bg: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)', hdr: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', baseRGB: [26, 54, 93, 1] },    // #1a365d
-            2: { bg: 'linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)', hdr: 'linear-gradient(135deg, #0ba360 0%, #3cba92 100%)', baseRGB: [30, 81, 40, 1] },    // #1e5128
-            3: { bg: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)', hdr: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', baseRGB: [74, 35, 90, 1] },    // #4a235a
-            4: { bg: 'linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)', hdr: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)', baseRGB: [156, 100, 12, 1] },  // #9c640c
-            5: { bg: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 25%, #a1c4fd 75%, #c2e9fb 100%)', hdr: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', baseRGB: [120, 40, 31, 1] }, // #78281f
-            6: { bg: 'linear-gradient(135deg, #cfd9df 0%, #e2ebf0 100%)', hdr: 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)', baseRGB: [14, 98, 81, 1] }     // #0e6251
-        };
+<div id="main-content">
 
-        const todayDay = new Date().getDay();
-        const activeTheme = dailyThemes[todayDay];
-        
-        // Apply Base Backgrounds once on load
-        document.documentElement.style.setProperty('--bg-freedom', activeTheme.bg);
-        document.documentElement.style.setProperty('--grad-header', activeTheme.hdr);
+    <!-- LOGIN -->
+    <div id="login-page">
+        <div class="logo-mark">SBI</div>
+        <h1>Daily workbook</h1>
+        <p>Field operations report</p>
+        <button class="login-btn" onclick="login()">Access workspace</button>
+    </div>
 
-        // Color Interpolation Logic (Linear Blending)
-        function lerp(start, end, factor) { return start + (end - start) * factor; }
-        function lerpRGBA(rgba1, rgba2, factor) {
-            const r = Math.round(lerp(rgba1[0], rgba2[0], factor));
-            const g = Math.round(lerp(rgba1[1], rgba2[1], factor));
-            const b = Math.round(lerp(rgba1[2], rgba2[2], factor));
-            const a = lerp(rgba1[3], rgba2[3], factor).toFixed(3);
-            return `rgba(${r}, ${g}, ${b}, ${a})`;
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="hidden">
+        <p class="section-label">Today's targets</p>
+
+        <div class="grid">
+            <div class="counter-btn" id="btn-nps" onclick="increment('nps')">
+                <span class="cb-icon">😊</span>
+                <span class="cb-name">NPS</span>
+                <span class="cb-target">Target: 30</span>
+                <div class="cb-count" id="nps">0</div>
+                <div class="pb-wrap"><div class="pb-fill" id="pb-nps"></div></div>
+            </div>
+
+            <div class="counter-btn" id="btn-whatsapp" onclick="increment('whatsapp')">
+                <span class="cb-icon">💬</span>
+                <span class="cb-name">WhatsApp</span>
+                <span class="cb-target">Target: 30</span>
+                <div class="cb-count" id="whatsapp">0</div>
+                <div class="pb-wrap"><div class="pb-fill" id="pb-whatsapp"></div></div>
+            </div>
+
+            <div class="counter-btn" id="btn-yonoRegistration" onclick="increment('yonoRegistration')">
+                <span class="cb-icon">📝</span>
+                <span class="cb-name">Yono Reg.</span>
+                <span class="cb-target">Target: 30</span>
+                <div class="cb-count" id="yonoRegistration">0</div>
+                <div class="pb-wrap"><div class="pb-fill" id="pb-yonoRegistration"></div></div>
+            </div>
+
+            <div class="counter-btn" id="btn-contactCentre" onclick="increment('contactCentre')">
+                <span class="cb-icon">☎️</span>
+                <span class="cb-name">Contact centre</span>
+                <span class="cb-target">Target: 30</span>
+                <div class="cb-count" id="contactCentre">0</div>
+                <div class="pb-wrap"><div class="pb-fill" id="pb-contactCentre"></div></div>
+            </div>
+
+            <div class="counter-btn" id="btn-cbdc" onclick="increment('cbdc')">
+                <span class="cb-icon">💳</span>
+                <span class="cb-name">CBDC</span>
+                <span class="cb-target">Target: 30</span>
+                <div class="cb-count" id="cbdc">0</div>
+                <div class="pb-wrap"><div class="pb-fill" id="pb-cbdc"></div></div>
+            </div>
+
+            <div class="counter-btn" id="btn-channelMigration" onclick="increment('channelMigration')">
+                <span class="cb-icon">🔄</span>
+                <span class="cb-name">Migration</span>
+                <span class="cb-target">Target: 30</span>
+                <div class="cb-count" id="channelMigration">0</div>
+                <div class="pb-wrap"><div class="pb-fill" id="pb-channelMigration"></div></div>
+            </div>
+
+            <div class="counter-btn" id="btn-yonoReregistration" onclick="increment('yonoReregistration')">
+                <span class="cb-icon">🔐</span>
+                <span class="cb-name">Yono Re-Reg</span>
+                <span class="cb-target">Target: 30</span>
+                <div class="cb-count" id="yonoReregistration">0</div>
+                <div class="pb-wrap"><div class="pb-fill" id="pb-yonoReregistration"></div></div>
+            </div>
+
+            <div class="counter-btn" id="btn-rekyc" onclick="increment('rekyc')">
+                <span class="cb-icon">🪪</span>
+                <span class="cb-name">Re-KYC</span>
+                <span class="cb-target">Target: 20</span>
+                <div class="cb-count" id="rekyc">0</div>
+                <div class="pb-wrap"><div class="pb-fill" id="pb-rekyc"></div></div>
+            </div>
+        </div>
+
+        <div class="divider">Actions</div>
+
+        <div class="actions">
+            <button class="act-btn send"  onclick="exportToWhatsApp()">
+                <span class="ab-icon">📱</span> Send report
+            </button>
+            <button class="act-btn reset" onclick="resetData()">
+                <span class="ab-icon">↺</span> Reset
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+    const TARGETS = {
+        nps: 30, whatsapp: 30, yonoRegistration: 30,
+        contactCentre: 30, cbdc: 30, channelMigration: 30,
+        yonoReregistration: 30, rekyc: 20
+    };
+
+    const FIELDS = Object.keys(TARGETS);
+
+    function fmt(date) {
+        const d = String(date.getDate()).padStart(2,'0');
+        const m = String(date.getMonth()+1).padStart(2,'0');
+        const y = date.getFullYear();
+        return `${d}/${m}/${y}`;
+    }
+
+    function setDate() {
+        const el = document.getElementById('live-date');
+        if (el) el.textContent = fmt(new Date());
+    }
+
+    function showToast(msg, dur = 3500) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), dur);
+    }
+
+    function login() {
+        localStorage.setItem('sbi_a1_loggedIn', 'true');
+        showDashboard();
+        const h = new Date().getHours();
+        const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+        showToast(`${greet}, Pummy! Have a great day.`);
+    }
+
+    function showDashboard() {
+        document.getElementById('login-page').classList.add('hidden');
+        document.getElementById('app-header').classList.remove('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        setDate();
+        loadSavedData();
+    }
+
+    function logout() {
+        if (confirm('Log out?')) {
+            localStorage.removeItem('sbi_a1_loggedIn');
+            window.location.href = 'index.html';
         }
+    }
 
-        // Base Target Colors (Light vs Dark)
-        const lightColors = {
-            textDark: [45, 55, 72, 1], textLight: [74, 85, 104, 1],
-            glassPanel: [255, 255, 255, 0.75], glassCard: [255, 255, 255, 0.65],
-            glassBorder: [255, 255, 255, 0.8], counterBg: [255, 255, 255, 0.8], pbWrap: [0, 0, 0, 0.06]
-        };
-        const darkColors = {
-            textDark: [248, 250, 252, 1], textLight: [203, 213, 225, 1],
-            glassPanel: [15, 23, 42, 0.85], glassCard: [30, 41, 59, 0.75],
-            glassBorder: [255, 255, 255, 0.1], counterBg: [0, 0, 0, 0.4], pbWrap: [255, 255, 255, 0.1]
-        };
+    function updateUI(field) {
+        const val = parseInt(document.getElementById(field).textContent) || 0;
+        const target = TARGETS[field];
+        const mid = Math.floor(target / 2);
+        const pct = Math.min(Math.round((val / target) * 100), 100);
 
-        function applyProgressiveTheme() {
-            const now = new Date();
-            const hour = now.getHours();
-            const minutes = now.getMinutes();
-            
-            // Calculate exact decimal time (e.g., 6:30 -> 6.5)
-            const exactTime = hour + (minutes / 60);
-            let factor = 0;
+        document.getElementById('pb-' + field).style.width = pct + '%';
 
-            if (exactTime >= 18 || exactTime < 6) {
-                factor = 1; // 100% Dark (6 PM to 6 AM)
-            } else {
-                // Progressive transition from 6.0 (6 AM) to 18.0 (6 PM)
-                factor = (exactTime - 6) / 12; 
-            }
+        const btn = document.getElementById('btn-' + field);
+        btn.classList.remove('mid', 'met');
+        if (val >= target)     btn.classList.add('met');
+        else if (val >= mid)   btn.classList.add('mid');
+    }
 
-            // Ensure limits are respected
-            factor = Math.max(0, Math.min(1, factor));
+    function increment(field) {
+        const el = document.getElementById(field);
+        el.textContent = (parseInt(el.textContent) || 0) + 1;
+        updateUI(field);
+        saveData();
+        if (navigator.vibrate) navigator.vibrate(40);
+    }
 
-            // Apply Background Opacity and Colors dynamically
-            const root = document.documentElement;
-            root.style.setProperty('--dark-factor', factor);
-            root.style.setProperty('--text-dark', lerpRGBA(lightColors.textDark, darkColors.textDark, factor));
-            root.style.setProperty('--text-light', lerpRGBA(lightColors.textLight, darkColors.textLight, factor));
-            root.style.setProperty('--glass-panel', lerpRGBA(lightColors.glassPanel, darkColors.glassPanel, factor));
-            root.style.setProperty('--glass-card', lerpRGBA(lightColors.glassCard, darkColors.glassCard, factor));
-            root.style.setProperty('--glass-border', lerpRGBA(lightColors.glassBorder, darkColors.glassBorder, factor));
-            root.style.setProperty('--counter-bg', lerpRGBA(lightColors.counterBg, darkColors.counterBg, factor));
-            root.style.setProperty('--pb-wrap', lerpRGBA(lightColors.pbWrap, darkColors.pbWrap, factor));
+    function saveData() {
+        const data = {};
+        FIELDS.forEach(f => { data[f] = document.getElementById(f).textContent; });
+        localStorage.setItem('sbi_a1_data', JSON.stringify(data));
+    }
 
-            // Dynamic Brand Blue shifting to Neon Blue
-            const darkBlue = [56, 189, 248, 1]; // #38bdf8
-            root.style.setProperty('--sbi-blue', lerpRGBA(activeTheme.baseRGB, darkBlue, factor));
-            root.style.setProperty('--counter-text', lerpRGBA(activeTheme.baseRGB, [255, 255, 255, 1], factor));
-
-            // Update Progressive UI Indicator
-            const percent = Math.round(factor * 100);
-            document.getElementById('themePercent').textContent = percent + '%';
-            
-            let icon = '☀️';
-            if (percent > 0 && percent <= 33) icon = '🌤️';
-            else if (percent > 33 && percent <= 66) icon = '⛅';
-            else if (percent > 66 && percent < 100) icon = '🌥️';
-            else if (percent === 100) icon = '🌙';
-            
-            document.getElementById('themeIcon').textContent = icon;
-        }
-
-        // ==========================
-        // APP LOGIC
-        // ==========================
-        if (performance.getEntriesByType("navigation")[0]?.type === "reload") {
-            window.location.href = "index.html";
-        }
-
-        const GLOBAL_TARGET = 30;
-        const MID_TARGET = Math.floor(GLOBAL_TARGET / 2); 
-        const dayNames = ["Sunday Calm", "Monday Focus", "Tuesday Growth", "Wednesday Flow", "Thursday Spark", "Friday Energy", "Saturday Chill"];
-
-        window.addEventListener('load', () => {
-            updateCurrentDate();
-            checkLoginStatus();
-            applyProgressiveTheme(); 
-            document.getElementById('themeIndicator').textContent = dayNames[todayDay] + " Workspace";
-            
-            // Check time continuously every 60 seconds to smoothly shift the theme!
-            setInterval(applyProgressiveTheme, 60000);
+    function loadSavedData() {
+        const saved = localStorage.getItem('sbi_a1_data');
+        if (!saved) return;
+        const data = JSON.parse(saved);
+        FIELDS.forEach(f => {
+            const el = document.getElementById(f);
+            if (el) { el.textContent = data[f] || 0; updateUI(f); }
         });
+    }
 
-        function showToast(message, duration = 4000) {
-            const toast = document.getElementById('toastNotification');
-            toast.innerHTML = message;
-            toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, duration);
+    function exportToWhatsApp() {
+        const today = fmt(new Date());
+        const d = {};
+        FIELDS.forEach(f => { d[f] = document.getElementById(f).textContent; });
+
+        const msg =
+            `Date: ${today}\n` +
+            `Name: ELIPOMA NAG\n` +
+            `Branch name: SBI KORAPUT\n` +
+            `Branch code: 00121\n\n` +
+            `*Data Report:*\n` +
+            `NPS: ${d.nps}\n` +
+            `WhatsApp: ${d.whatsapp}\n` +
+            `Yono Registration: ${d.yonoRegistration}\n` +
+            `Yono Re-Registration: ${d.yonoReregistration}\n` +
+            `Contact Centre: ${d.contactCentre}\n` +
+            `CBDC: ${d.cbdc}\n` +
+            `Channel Migration: ${d.channelMigration}\n` +
+            `Re-KYC: ${d.rekyc}`;
+
+        window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    }
+
+    function resetData() {
+        if (confirm("Reset today's counts to zero?")) {
+            FIELDS.forEach(f => {
+                document.getElementById(f).textContent = '0';
+                updateUI(f);
+            });
+            localStorage.removeItem('sbi_a1_data');
         }
+    }
 
-        function formatDateDisplay(date) {
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            return `${day}/${month}/${year}`;
-        }
-
-        function updateCurrentDate() {
-            document.getElementById('todayDate').textContent = "Date: " + formatDateDisplay(new Date());
-        }
-
-        function login() {
-            localStorage.setItem('loggedIn', 'true');
-            showDashboard();
-            
-            const currentHour = new Date().getHours();
-            let greeting = "Good Evening";
-            if (currentHour < 12) greeting = "Good Morning";
-            else if (currentHour < 17) greeting = "Good Afternoon";
-            
-            showToast(`👋 Hi! Pummy, ${greeting}. Have a great day!`);
-        }
-
-        function checkLoginStatus() {
-            if (localStorage.getItem('loggedIn') === 'true') {
-                showDashboard();
-                loadSavedData();
-            }
-        }
-
-        function showDashboard() {
-            document.getElementById('loginContainer').style.display = 'none';
-            document.getElementById('dashboard').classList.add('show');
-        }
-
-        function updateUI(fieldName) {
-            let val = parseInt(document.getElementById(fieldName).textContent) || 0;
-            let btn = document.getElementById('btn-' + fieldName);
-            let pb = document.getElementById('pb-' + fieldName);
-            
-            let percent = Math.min((val / GLOBAL_TARGET) * 100, 100);
-            pb.style.width = percent + '%';
-            
-            if (val >= GLOBAL_TARGET) {
-                btn.classList.add('target-met');
-                btn.classList.remove('target-mid');
-            } else if (val >= MID_TARGET) {
-                btn.classList.add('target-mid');
-                btn.classList.remove('target-met');
-            } else {
-                btn.classList.remove('target-met', 'target-mid');
-            }
-        }
-
-        function increment(fieldName) {
-            let counterElement = document.getElementById(fieldName);
-            let current = parseInt(counterElement.textContent) || 0;
-            current++;
-            counterElement.textContent = current;
-            
-            updateUI(fieldName);
-            saveData();
-            
-            if (navigator.vibrate) navigator.vibrate(40); 
-        }
-
-        function saveData() {
-            const data = {
-                nps: document.getElementById('nps').textContent,
-                whatsapp: document.getElementById('whatsapp').textContent,
-                yonoRegistration: document.getElementById('yonoRegistration').textContent,
-                contactCentre: document.getElementById('contactCentre').textContent,
-                cbdc: document.getElementById('cbdc').textContent,
-                channelMigration: document.getElementById('channelMigration').textContent,
-                yonoReregistration: document.getElementById('yonoReregistration').textContent
-            };
-            localStorage.setItem('workbookData', JSON.stringify(data));
-        }
-
-        function loadSavedData() {
-            const saved = localStorage.getItem('workbookData');
-            if (saved) {
-                const data = JSON.parse(saved);
-                const fields = ['nps', 'whatsapp', 'yonoRegistration', 'contactCentre', 'cbdc', 'channelMigration', 'yonoReregistration'];
-                
-                fields.forEach(field => {
-                    document.getElementById(field).textContent = data[field] || 0;
-                    updateUI(field);
-                });
-            }
-        }
-
-        function exportToWhatsApp() {
-            const today = formatDateDisplay(new Date());
-            const data = {
-                nps: document.getElementById('nps').textContent,
-                whatsapp: document.getElementById('whatsapp').textContent,
-                yono: document.getElementById('yonoRegistration').textContent,
-                yonoRereg: document.getElementById('yonoReregistration').textContent,
-                cc: document.getElementById('contactCentre').textContent,
-                cbdc: document.getElementById('cbdc').textContent,
-                cm: document.getElementById('channelMigration').textContent
-            };
-
-            const reportContent = `Date: ${today}\nName: ELIPOMA NAG\nBranch name: SBI KORAPUT\nBranch code: 00121\n\n*Data Report:*\nNPS: ${data.nps}\nWhatsApp: ${data.whatsapp}\nYono Registration: ${data.yono}\nYono Re-Registration: ${data.yonoRereg}\nContact Centre: ${data.cc}\nCBDC: ${data.cbdc}\nChannel Migration: ${data.cm}`;
-
-            const encodedMessage = encodeURIComponent(reportContent);
-            window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
-        }
-
-        function resetData() {
-            if (confirm('Reset today\'s counts to zero?')) {
-                const fields = ['nps', 'whatsapp', 'yonoRegistration', 'contactCentre', 'cbdc', 'channelMigration', 'yonoReregistration'];
-                fields.forEach(field => {
-                    document.getElementById(field).textContent = '0';
-                    updateUI(field);
-                });
-                localStorage.removeItem('workbookData');
-            }
-        }
-
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('loggedIn');
-                window.location.href = 'index.html'; 
-            }
-        }
-    </script>
+    window.onload = () => {
+        if (localStorage.getItem('sbi_a1_loggedIn') === 'true') showDashboard();
+    };
+</script>
 </body>
 </html>
