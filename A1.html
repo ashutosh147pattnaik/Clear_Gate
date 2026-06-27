@@ -1,201 +1,404 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>SBI Bank Ops - Target Portal</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --p:  #002855; --pm: #003d80; --pl: #0a4fa6;
-  --ac: #f0b400;
-  --ok: #0fa36e;
-  --er: #e03434;
-  --tm: #6b7b91;
-  --r:  12px; --rs: 8px;
+  --bg-page:   #f5f5f3;
+  --bg-card:   #ffffff;
+  --bg-btn:    #f0efed;
+  --bg-btn-h:  #e8e7e4;
+  --bg-header: #ffffff;
+
+  --border:        rgba(0,0,0,0.10);
+  --border-strong: rgba(0,0,0,0.15);
+
+  --text-primary:   #1a1a18;
+  --text-secondary: #5f5e5a;
+  --text-muted:     #9a9994;
+
+  --accent:      #2563eb;
+  --accent-bg:   #eff6ff;
+  --accent-text: #1d4ed8;
+
+  --success:      #16a34a;
+  --success-bg:   #f0fdf4;
+  --success-text: #15803d;
+
+  --warning-bg:   #fffbeb;
+  --warning-text: #b45309;
+  --warning-bdr:  rgba(217,119,6,0.25);
+
+  --pro-bg:   #f5f3ff;
+  --pro-fill: #7c3aed;
+
+  --danger-text: #dc2626;
+  --danger-bdr:  rgba(220,38,38,0.3);
+
+  --header-bdr: rgba(0,0,0,0.10);
+  --divider:    rgba(0,0,0,0.08);
+  --clock-bg:   #f0efed;
+
+  --r: 8px;
 }
+
+[data-theme="dark"] {
+  --bg-page:   #141412;
+  --bg-card:   #1e1e1c;
+  --bg-btn:    #2a2a28;
+  --bg-btn-h:  #333330;
+  --bg-header: #1e1e1c;
+
+  --border:        rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.13);
+
+  --text-primary:   #f0efe8;
+  --text-secondary: #a8a7a2;
+  --text-muted:     #6b6a66;
+
+  --accent:      #3b82f6;
+  --accent-bg:   #1e2d4a;
+  --accent-text: #93c5fd;
+
+  --success:      #22c55e;
+  --success-bg:   #14291e;
+  --success-text: #86efac;
+
+  --warning-bg:   #2a2010;
+  --warning-text: #fcd34d;
+  --warning-bdr:  rgba(252,211,77,0.2);
+
+  --pro-bg:   #1f1535;
+  --pro-fill: #a78bfa;
+
+  --danger-text: #f87171;
+  --danger-bdr:  rgba(248,113,113,0.3);
+
+  --header-bdr: rgba(255,255,255,0.08);
+  --divider:    rgba(255,255,255,0.07);
+  --clock-bg:   #2a2a28;
+}
+
 *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
   font-family: 'DM Sans', sans-serif;
-  margin: 0; 
-  padding-bottom: 40px; 
+  margin: 0;
+  padding-bottom: 40px;
   min-height: 100vh;
-  background: #001f40; 
-  color: #333;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  transition: background 0.2s, color 0.2s;
 }
 
 /* HEADER */
 header {
-  background: #002855;
-  color: #fff; 
-  padding: 16px 20px;
-  border-bottom: 3px solid var(--ac);
-  display: flex; justify-content: space-between; align-items: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-  position: sticky; top: 0; z-index: 100;
+  background: var(--bg-header);
+  border-bottom: 0.5px solid var(--header-bdr);
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
-.brand { font-weight: 700; font-size: 1rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 9px; }
-.brand::before {
-  content: ''; width: 10px; height: 10px;
-  background: var(--ac); border-radius: 50%;
+
+.brand {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+.brand-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.header-right { display: flex; align-items: center; gap: 10px; }
+
 #live-clock {
-  font-family: 'DM Mono', monospace; font-size: 0.85rem;
-  color: rgba(255,255,255,0.9);
-  background: rgba(255,255,255,0.1); padding: 6px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--clock-bg);
+  padding: 5px 10px;
   border-radius: 20px;
 }
 
+/* THEME TOGGLE */
+.theme-toggle {
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--bg-btn);
+  border: 0.5px solid var(--border-strong);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.2s;
+  padding: 0;
+}
+.theme-toggle::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  top: 2px;
+  left: 2px;
+  transition: left 0.2s, background 0.2s;
+}
+[data-theme="dark"] .theme-toggle::after {
+  left: 18px;
+  background: var(--accent);
+}
+
 /* LAYOUT */
-#main-content { padding: 20px 16px; max-width: 500px; margin: auto; }
+#main-content { padding: 16px; max-width: 500px; margin: auto; }
 .hidden { display: none !important; }
 
-/* LOGIN CARD */
-#login-page { 
-  text-align: center; 
+/* LOGIN */
+#login-page {
+  text-align: center;
   margin-top: 40px;
-  background: #ffffff;
-  padding: 40px 25px;
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  padding: 40px 24px;
   border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
-#login-page h2 { color: var(--p); font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
-#login-page p  { color: var(--tm); font-size: 0.9rem; margin-bottom: 28px; font-weight: 600;}
-#login-page .btn-primary { width: 100%; max-width: 200px; font-size: 1rem; padding: 14px; margin: 0 auto;}
+#login-page h2 { color: var(--text-primary); font-size: 1.4rem; font-weight: 500; margin-bottom: 6px; }
+#login-page p  { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 28px; }
+#login-page .btn-primary { width: 100%; max-width: 180px; margin: 0 auto; }
 
-.login-info-box { font-size: 0.8rem; color: rgba(255,255,255,0.7); text-align: right; margin-bottom: 12px; font-weight: 600; }
+.login-info-box { font-size: 12px; color: var(--text-muted); text-align: right; margin-bottom: 12px; }
 
 /* GRID + CARDS */
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
 .card {
-  background: #ffffff;
-  padding: 16px 12px;
-  border-radius: var(--r); 
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  padding: 14px 12px;
+  border-radius: 12px;
   text-align: center;
-  border-top: 4px solid var(--p);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  position: relative;
   display: flex;
   flex-direction: column;
+  transition: background 0.2s, border-color 0.2s;
 }
-.card.met { border-top-color: var(--ok); background: #f4fdf8; }
-.card.met .count { color: var(--ok); }
+.card.met {
+  background: var(--success-bg);
+  border-color: rgba(22,163,74,0.2);
+}
+[data-theme="dark"] .card.met { border-color: rgba(34,197,94,0.15); }
 .card.full-width { grid-column: 1 / -1; }
 
 .card h3 {
-  margin: 0; font-size: 0.85rem; font-weight: 700; color: var(--p);
-  height: 34px; display: flex; align-items: center; justify-content: center;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
   text-transform: uppercase;
+  letter-spacing: 0.4px;
+  height: auto;
+  margin-bottom: 2px;
 }
-.target-label { font-size: 0.7rem; color: #6b7b91; display: block; margin-top: 2px; font-weight: 600; }
+.target-label { font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 8px; }
+
 .count {
-  font-size: 2.2rem; font-weight: 700; margin: 8px 0;
-  color: var(--p); font-family: 'DM Mono', monospace; line-height: 1;
+  font-size: 2rem;
+  font-weight: 500;
+  margin: 0 0 8px;
+  color: var(--text-primary);
+  font-family: 'DM Mono', monospace;
+  line-height: 1;
 }
+.card.met .count { color: var(--success); }
 
-.pb-wrap { width: 100%; height: 6px; background: #e2e8f0; border-radius: 99px; margin: 8px 0 10px; overflow: hidden; }
-.pb-fill  { height: 100%; border-radius: 99px; background: var(--pl); transition: width 0.3s ease; }
+.pb-wrap { width: 100%; height: 4px; background: var(--border); border-radius: 99px; margin-bottom: 10px; overflow: hidden; }
+.pb-fill  { height: 100%; border-radius: 99px; background: var(--accent); transition: width 0.3s ease; }
+.card.met .pb-fill { background: var(--success); }
 
-/* BUTTONS - MINIMIZED */
+/* BUTTONS */
 button {
-  padding: 8px 8px; border: none; border-radius: var(--rs);
-  font-weight: 700; cursor: pointer; font-size: 0.75rem; width: 100%;
+  padding: 9px 10px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--r);
+  background: var(--bg-btn);
+  color: var(--text-primary);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 13px;
+  width: 100%;
   font-family: 'DM Sans', sans-serif;
-  transition: transform 0.1s;
+  transition: background 0.12s, transform 0.1s;
 }
-button:active { opacity: 0.8; transform: scale(0.98); }
+button:active { transform: scale(0.98); }
+button:hover  { background: var(--bg-btn-h); }
 
-.btn-primary { background: var(--pl); color: #fff; margin-top: auto; padding: 10px 8px; }
-.btn-target-met { background: var(--ok) !important; color: #fff !important; }
-
-.btn-action { margin-top: 10px; padding: 10px; font-size: 0.8rem; color: #fff; }
-.btn-undo { background: #f59e0b; color: #fff; }
-.btn-undo:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; transform: none; }
-.btn-report { background: #0284c7; } /* Sky Blue for In-Page Report */
-.btn-pdf { background: var(--ok); }
-.btn-wa  { background: #25D366; }
-.btn-reset {
-  background: transparent; color: #ff6b6b; margin-top: 10px;
-  font-size: 0.75rem; padding: 8px;
-  border: 1px solid #ff6b6b; border-radius: var(--rs);
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: transparent;
+  margin-top: auto;
+  padding: 10px;
+  display: block;
 }
-.btn-reset:active { background: #ff6b6b; color: white; }
+.btn-primary:hover { opacity: 0.9; background: var(--accent); }
 
-.btn-cm { background: #7c3aed; color: #fff; margin-top: auto; padding: 10px 8px; }
-.btn-cm.btn-target-met { background: var(--ok) !important; }
+.btn-target-met {
+  background: var(--success-bg) !important;
+  border-color: rgba(22,163,74,0.25) !important;
+  color: var(--success-text) !important;
+}
+
+.btn-cm {
+  background: var(--pro-bg);
+  border-color: rgba(124,58,237,0.2);
+  color: var(--pro-fill);
+  margin-top: auto;
+  padding: 10px;
+}
+.btn-cm:hover { opacity: 0.9; }
+.btn-cm.btn-target-met { background: var(--success-bg) !important; border-color: rgba(22,163,74,0.25) !important; color: var(--success-text) !important; }
 
 /* DIVIDER */
 .divider {
-  display: flex; align-items: center; gap: 10px;
-  margin: 20px 0 8px; color: rgba(255,255,255,0.7);
-  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 10px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
-.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.2); }
+.divider::before, .divider::after { content: ''; flex: 1; height: 0.5px; background: var(--divider); }
 
 /* MODAL */
 .modal {
   position: fixed; inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0,0,0,0.5);
   display: flex; justify-content: center; align-items: center;
   z-index: 2000; padding: 20px;
 }
 .modal-box {
-  background: #ffffff;
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
   padding: 24px 20px;
-  border-radius: 16px; width: 100%; max-width: 320px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 320px;
 }
-.modal-box h4 { margin: 0 0 16px; font-size: 1.2rem; font-weight: 800; color: #002855; }
+.modal-box h4 { margin: 0 0 16px; font-size: 1.1rem; font-weight: 500; color: var(--text-primary); }
 
 /* TOGGLE */
-.toggle-wrap { display: flex; gap: 6px; margin-bottom: 16px; background: #f1f5f9; padding: 6px; border-radius: 10px; }
+.toggle-wrap { display: flex; gap: 6px; margin-bottom: 16px; background: var(--bg-btn); padding: 5px; border-radius: 10px; }
 .toggle-btn {
-  background: transparent; color: var(--tm); flex: 1; border: none;
-  padding: 8px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;
+  background: transparent;
+  color: var(--text-muted);
+  flex: 1;
+  border: none;
+  padding: 8px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
 }
-.toggle-btn.active { background: var(--p); color: #fff; }
+.toggle-btn.active { background: var(--bg-card); color: var(--text-primary); border: 0.5px solid var(--border); }
+.toggle-btn:hover { background: var(--bg-btn-h); }
 
 /* INPUT */
 #val-field {
-  width: 100%; padding: 12px; margin-bottom: 16px;
-  border: 2px solid #e2e8f0; border-radius: var(--rs);
-  font-size: 1.1rem; font-family: 'DM Mono', monospace; color: #002855;
-  background: #f8fafc; outline: none;
+  width: 100%; padding: 11px 12px; margin-bottom: 14px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--r);
+  font-size: 1rem;
+  font-family: 'DM Mono', monospace;
+  color: var(--text-primary);
+  background: var(--bg-page);
+  outline: none;
 }
-#val-field:focus { border-color: var(--pl); background: #fff; }
-.btn-cancel { background: none; color: var(--tm); border: none; margin-top: 8px; font-size: 0.8rem; padding: 8px; font-weight: 700;}
+#val-field:focus { border-color: var(--accent); }
 
-/* REPORT PAGE TABLES */
-.report-card { background: white; padding: 20px; border-radius: 12px; margin-top: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-.report-card h3 { margin-top: 0; color: #002855; font-size: 1.2rem; }
-.report-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 24px; }
-.report-table th, .report-table td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; color: #333; }
-.report-table th { background: #002855; color: white; font-weight: 600; }
-.report-table tr:nth-child(even) { background-color: #f8fafc; }
-.table-responsive { overflow-x: auto; }
+.btn-cancel {
+  background: none;
+  color: var(--text-muted);
+  border: none;
+  margin-top: 6px;
+  font-size: 13px;
+  padding: 8px;
+  font-weight: 500;
+  width: 100%;
+}
+.btn-cancel:hover { background: var(--bg-btn); }
 
-/* COMPACT ACTION BUTTONS SECTION */
+/* ACTION BUTTONS */
 .actions-compact { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.actions-compact .btn-action { margin: 0; }
-.actions-compact .btn-reset { margin: 0; }
+.btn-action { padding: 10px; font-size: 13px; font-weight: 500; margin: 0; }
+
+.btn-undo   { background: var(--warning-bg); border-color: var(--warning-bdr); color: var(--warning-text); }
+.btn-report { background: var(--accent-bg);  border-color: rgba(37,99,235,0.2); color: var(--accent-text); }
+.btn-pdf    { background: var(--success-bg); border-color: rgba(22,163,74,0.2); color: var(--success-text); }
+.btn-wa     { background: var(--success-bg); border-color: rgba(22,163,74,0.2); color: var(--success-text); }
+
+.btn-undo:hover, .btn-report:hover, .btn-pdf:hover, .btn-wa:hover { opacity: 0.85; }
+.btn-undo:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.btn-reset {
+  background: none;
+  color: var(--danger-text);
+  border: 0.5px solid var(--danger-bdr);
+  margin-top: 10px;
+  padding: 9px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.btn-reset:hover { opacity: 0.8; background: none; }
+
+/* REPORT PAGE */
+.report-card {
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 14px;
+}
+.report-card h3 { margin-top: 0; margin-bottom: 14px; color: var(--text-primary); font-size: 1rem; font-weight: 500; }
+.report-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
+.report-table th, .report-table td { padding: 9px 10px; border-bottom: 0.5px solid var(--border); text-align: left; color: var(--text-primary); }
+.report-table th { background: var(--bg-btn); color: var(--text-secondary); font-weight: 500; font-size: 12px; }
+.report-table tr:last-child td { border-bottom: none; }
+.table-responsive { overflow-x: auto; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="brand">SBI BANK &nbsp;Jlqshf84</div>
-  <div id="live-clock">00:00:00</div>
+  <div class="brand"><div class="brand-dot"></div> SBI Bank &nbsp;Jlqshf84</div>
+  <div class="header-right">
+    <div id="live-clock">00:00:00</div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode"></button>
+  </div>
 </header>
 
 <div id="main-content">
 
   <!-- LOGIN PAGE -->
   <div id="login-page">
-    <h2>Operations Portal</h2>
-    <p>SBI Bank — Secure Branch Access</p>
+    <h2>Operations portal</h2>
+    <p>SBI Bank — secure branch access</p>
     <button class="btn-primary" onclick="doLogin()">Login</button>
   </div>
 
@@ -210,23 +413,23 @@ button:active { opacity: 0.8; transform: scale(0.98); }
         <div class="pb-wrap"><div class="pb-fill" id="pb-nps"></div></div>
         <button id="btn-nps" class="btn-primary" onclick="addSimple('NPS')">Add</button>
       </div>
-      
+
       <div class="card" id="card-wa">
         <h3>WhatsApp</h3><span class="target-label">Target: 15</span>
         <div class="count" id="c-wa">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-wa"></div></div>
         <button id="btn-wa" class="btn-primary" onclick="openModal('WhatsApp')">Action</button>
       </div>
-      
+
       <div class="card" id="card-yono">
         <h3>Yono SBI</h3><span class="target-label">Target: 5</span>
         <div class="count" id="c-yono">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-yono"></div></div>
         <button id="btn-yono" class="btn-primary" onclick="openModal('Yono SBI')">Action</button>
       </div>
-      
+
       <div class="card" id="card-contact">
-        <h3>Contact Centre</h3><span class="target-label">Target: 10</span>
+        <h3>Contact centre</h3><span class="target-label">Target: 10</span>
         <div class="count" id="c-contact">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-contact"></div></div>
         <button id="btn-contact" class="btn-primary" onclick="openModal('Contact Centre')">Action</button>
@@ -235,38 +438,32 @@ button:active { opacity: 0.8; transform: scale(0.98); }
       <div class="card full-width" id="card-cm">
         <h3>Re-KYC</h3><span class="target-label">Target: 10</span>
         <div class="count" id="c-cm">0</div>
-        <div class="pb-wrap"><div class="pb-fill" id="pb-cm" style="background: #7c3aed;"></div></div>
+        <div class="pb-wrap"><div class="pb-fill" id="pb-cm" style="background: var(--pro-fill);"></div></div>
         <button id="btn-cm" class="btn-cm" onclick="addSimple('Re-KYC')">Add</button>
       </div>
     </div>
 
     <div class="divider">Actions</div>
-    
+
     <div class="actions-compact">
-      <button id="btn-undo" class="btn-action btn-undo" onclick="undoLast()">⟲ Undo</button>
-      <button class="btn-action btn-report" onclick="showReport()">📊 Report</button>
-      <button class="btn-action btn-pdf" onclick="generatePDF()">⬇️ PDF</button>
-      <button class="btn-action btn-wa" onclick="shareWA()">📱 WhatsApp</button>
+      <button id="btn-undo" class="btn-action btn-undo" onclick="undoLast()">↩ Undo</button>
+      <button class="btn-action btn-report" onclick="showReport()">Report</button>
+      <button class="btn-action btn-pdf" onclick="generatePDF()">Download PDF</button>
+      <button class="btn-action btn-wa" onclick="shareWA()">WhatsApp</button>
     </div>
-    
-    <button class="btn-reset" onclick="resetApp()">Manual Reset</button>
+
+    <button class="btn-reset" onclick="resetApp()">Manual reset</button>
   </div>
 
-  <!-- NEW REPORT PAGE -->
+  <!-- REPORT PAGE -->
   <div id="report-page" class="hidden">
-    <button class="btn-action btn-undo" onclick="hideReport()">⟵ Back to Dashboard</button>
-    
+    <button class="btn-action btn-undo" onclick="hideReport()" style="margin-bottom:4px;">← Back to dashboard</button>
     <div class="report-card">
       <h3>Summary</h3>
-      <table class="report-table" id="summary-table">
-        <!-- Populated by JS -->
-      </table>
-      
-      <h3>Detailed Logs</h3>
+      <table class="report-table" id="summary-table"></table>
+      <h3>Detailed logs</h3>
       <div class="table-responsive">
-        <table class="report-table" id="logs-table">
-          <!-- Populated by JS -->
-        </table>
+        <table class="report-table" id="logs-table"></table>
       </div>
     </div>
   </div>
@@ -276,12 +473,12 @@ button:active { opacity: 0.8; transform: scale(0.98); }
 <!-- INPUT MODAL -->
 <div id="modal" class="modal hidden">
   <div class="modal-box">
-    <h4 id="modal-title">Entry Details</h4>
+    <h4 id="modal-title">Entry details</h4>
     <div class="toggle-wrap">
       <button id="t-acc" class="toggle-btn active" onclick="setType('Account Number')">Account</button>
       <button id="t-mob" class="toggle-btn"        onclick="setType('Mobile Number')">Mobile</button>
     </div>
-    <input type="number" id="val-field" placeholder="Enter Digits">
+    <input type="number" id="val-field" placeholder="Enter digits">
     <button class="btn-primary" onclick="saveEntry()">Save</button>
     <button class="btn-cancel"  onclick="closeModal()">Cancel</button>
   </div>
@@ -291,27 +488,22 @@ button:active { opacity: 0.8; transform: scale(0.98); }
 const { jsPDF } = window.jspdf;
 
 const TARGETS = {
-  NPS: 10,
-  WhatsApp: 15,
-  'Yono SBI': 5,
-  'Contact Centre': 10,
-  'Re-KYC': 10
+  NPS: 10, WhatsApp: 15, 'Yono SBI': 5, 'Contact Centre': 10, 'Re-KYC': 10
 };
 
 const MAP = [
-  { key:'NPS',               id:'nps'     },
-  { key:'WhatsApp',          id:'wa'      },
-  { key:'Yono SBI',          id:'yono'    },
-  { key:'Contact Centre',    id:'contact' },
-  { key:'Re-KYC', id:'cm'      }
+  { key:'NPS',            id:'nps'     },
+  { key:'WhatsApp',       id:'wa'      },
+  { key:'Yono SBI',       id:'yono'    },
+  { key:'Contact Centre', id:'contact' },
+  { key:'Re-KYC',         id:'cm'      }
 ];
 
 let state = JSON.parse(localStorage.getItem('sbi_v14')) || {
-  counts: { NPS: 0, WhatsApp: 0, 'Yono SBI': 0, 'Contact Centre': 0, 'Other Forms': 0, 'Re-KYC': 0 },
+  counts: { NPS:0, WhatsApp:0, 'Yono SBI':0, 'Contact Centre':0, 'Other Forms':0, 'Re-KYC':0 },
   logs: [], loginTime: null,
   brName:'SBI KOMTALPETA', brCode:'17978', userName:'ASHUTOSH PATTNAIK'
 };
-
 if (state.counts['Re-KYC'] === undefined) state.counts['Re-KYC'] = 0;
 
 let activeCat = '', selType = 'Account Number';
@@ -319,15 +511,17 @@ let activeCat = '', selType = 'Account Number';
 const $ = id => document.getElementById(id);
 const els = {};
 MAP.forEach(({ key, id }) => {
-  els[key] = { 
-      count: $('c-'+id), 
-      pb: $('pb-'+id), 
-      btn: $('btn-'+id), 
-      card: $('card-'+id)
-  };
+  els[key] = { count: $('c-'+id), pb: $('pb-'+id), btn: $('btn-'+id), card: $('card-'+id) };
 });
 
 setInterval(() => $('live-clock').textContent = new Date().toLocaleTimeString(), 1000);
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('sbi_theme', next);
+}
 
 function doLogin() {
   if (!state.loginTime) state.loginTime = new Date().toLocaleTimeString();
@@ -345,7 +539,7 @@ function addSimple(cat) {
 
 function openModal(cat) {
   activeCat = cat;
-  $('modal-title').textContent = cat + ' Entry';
+  $('modal-title').textContent = cat + ' entry';
   $('val-field').value = '';
   setType('Account Number');
   $('modal').classList.remove('hidden');
@@ -356,7 +550,7 @@ function setType(type) {
   selType = type;
   $('t-acc').classList.toggle('active', type === 'Account Number');
   $('t-mob').classList.toggle('active', type === 'Mobile Number');
-  $('val-field').placeholder = 'Enter ' + type;
+  $('val-field').placeholder = 'Enter ' + type.toLowerCase();
 }
 
 function saveEntry() {
@@ -369,12 +563,10 @@ function saveEntry() {
 
 function undoLast() {
   if (state.logs.length === 0) return;
-  const lastLog = state.logs.pop(); 
+  const lastLog = state.logs.pop();
   const baseMap = MAP.find(m => lastLog.cat === m.key || lastLog.cat.startsWith(m.key + ' '));
-  if (baseMap && state.counts[baseMap.key] > 0) {
-    state.counts[baseMap.key]--;
-  }
-  save(); 
+  if (baseMap && state.counts[baseMap.key] > 0) state.counts[baseMap.key]--;
+  save();
 }
 
 function closeModal() { $('modal').classList.add('hidden'); }
@@ -386,8 +578,7 @@ function save() {
 
 function refreshUI() {
   $('btn-undo').disabled = state.logs.length === 0;
-  $('btn-undo').textContent = state.logs.length === 0 ? "⟲ Nothing" : "⟲ Undo";
-
+  $('btn-undo').textContent = state.logs.length === 0 ? '↩ Nothing to undo' : '↩ Undo';
   MAP.forEach(({ key }) => {
     const count = state.counts[key];
     const e = els[key];
@@ -399,25 +590,20 @@ function refreshUI() {
   });
 }
 
-/* IN-PAGE REPORT FUNCTIONS */
 function showReport() {
   $('dashboard').classList.add('hidden');
   $('report-page').classList.remove('hidden');
-  
-  // Render Summary Table
   let summaryHTML = '<tr><th>Category</th><th>Count</th><th>Target</th></tr>';
   MAP.forEach(({ key }) => {
     summaryHTML += `<tr><td>${key}</td><td><b>${state.counts[key]}</b></td><td>${TARGETS[key]}</td></tr>`;
   });
   $('summary-table').innerHTML = summaryHTML;
-
-  // Render Detailed Logs Table
-  let logsHTML = '<tr><th>#</th><th>Category</th><th>Details/Value</th><th>Time</th></tr>';
+  let logsHTML = '<tr><th>#</th><th>Category</th><th>Details</th><th>Time</th></tr>';
   if (state.logs.length === 0) {
-    logsHTML += '<tr><td colspan="4" style="text-align:center; padding: 20px;">No entries recorded yet.</td></tr>';
+    logsHTML += '<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-muted);">No entries recorded yet.</td></tr>';
   } else {
-    state.logs.forEach((log, index) => {
-      logsHTML += `<tr><td>${index + 1}</td><td>${log.cat}</td><td>${log.val}</td><td>${log.time}</td></tr>`;
+    state.logs.forEach((log, i) => {
+      logsHTML += `<tr><td>${i+1}</td><td>${log.cat}</td><td>${log.val}</td><td>${log.time}</td></tr>`;
     });
   }
   $('logs-table').innerHTML = logsHTML;
@@ -434,44 +620,33 @@ function generatePDF() {
   const doc = new jsPDF();
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-GB');
-
-  doc.setFontSize(16); doc.setTextColor(0, 51, 102);
-  doc.text('SBI BANK SUMMARY REPORT', 14, 15);
+  doc.setFontSize(16); doc.setTextColor(0,51,102);
+  doc.text('SBI Bank Summary Report', 14, 15);
   doc.setFontSize(10); doc.setTextColor(100);
   doc.text(`Login Time: ${state.loginTime || 'N/A'}`, 14, 22);
   doc.text(`Date: ${dateStr}`, 14, 27);
-
   doc.autoTable({
     startY: 32,
-    head: [['Category', 'Count', 'Target']],
-    body: [
-      ['NPS',                state.counts['NPS'],                TARGETS['NPS']],
-      ['WhatsApp',           state.counts['WhatsApp'],           TARGETS['WhatsApp']],
-      ['Yono SBI',           state.counts['Yono SBI'],           TARGETS['Yono SBI']],
-      ['Contact Centre',     state.counts['Contact Centre'],     TARGETS['Contact Centre']],
-      ['Re-KYC',  state.counts['Re-KYC'],  TARGETS['Re-KYC']],  
-    ],
-    headStyles: { fillColor: [0, 51, 102] },
+    head: [['Category','Count','Target']],
+    body: MAP.map(({ key }) => [key, state.counts[key], TARGETS[key]]),
+    headStyles: { fillColor: [0,51,102] },
     theme: 'grid'
   });
-
   const afterSummary = doc.lastAutoTable.finalY + 8;
-  doc.setFontSize(12); doc.setTextColor(0, 51, 102);
-  doc.text('Detailed Log', 14, afterSummary);
-
+  doc.setFontSize(12); doc.setTextColor(0,51,102);
+  doc.text('Detailed log', 14, afterSummary);
   doc.autoTable({
     startY: afterSummary + 4,
-    head: [['S.No', 'Details (Action Time)', 'Value / Action']],
-    body: state.logs.map((l, index) => [index + 1, `${l.cat} [${l.time}]`, l.val]), 
-    headStyles: { fillColor: [0, 51, 102] }, theme: 'grid'
+    head: [['S.No','Details (action time)','Value / Action']],
+    body: state.logs.map((l, i) => [i+1, `${l.cat} [${l.time}]`, l.val]),
+    headStyles: { fillColor: [0,51,102] },
+    theme: 'grid'
   });
-
   doc.save(`SB_${dateStr.replace(/\//g,'_')}.pdf`);
-  
-  setTimeout(() => { 
-      localStorage.clear(); 
-      alert('Report Saved. App will return to the main menu.'); 
-      window.location.href = 'index.html';
+  setTimeout(() => {
+    localStorage.clear();
+    alert('Report saved. Returning to main menu.');
+    window.location.href = 'index.html';
   }, 1500);
 }
 
@@ -490,14 +665,18 @@ function shareWA() {
   window.open('https://wa.me/?text=' + encodeURIComponent(msg));
 }
 
-function resetApp() { 
-  if (confirm('Manual Override: Wipe all data?')) { 
-    localStorage.clear(); 
-    window.location.href = 'index.html'; 
-  } 
+function resetApp() {
+  if (confirm('Manual override: wipe all data?')) {
+    localStorage.clear();
+    window.location.href = 'index.html';
+  }
 }
 
-window.onload = () => { if (state.loginTime) doLogin(); else refreshUI(); };
+window.onload = () => {
+  const savedTheme = localStorage.getItem('sbi_theme');
+  if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+  if (state.loginTime) doLogin(); else refreshUI();
+};
 </script>
 </body>
 </html>
