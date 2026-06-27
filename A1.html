@@ -233,10 +233,10 @@ button:active { opacity: 0.8; transform: scale(0.98); }
       </div>
 
       <div class="card full-width" id="card-cm">
-        <h3>Channel Migration</h3><span class="target-label">Target: 10</span>
+        <h3>Re-KYC</h3><span class="target-label">Target: 10</span>
         <div class="count" id="c-cm">0</div>
         <div class="pb-wrap"><div class="pb-fill" id="pb-cm" style="background: #7c3aed;"></div></div>
-        <button id="btn-cm" class="btn-cm" onclick="addSimple('Channel Migration')">Add</button>
+        <button id="btn-cm" class="btn-cm" onclick="addSimple('Re-KYC')">Add</button>
       </div>
     </div>
 
@@ -295,7 +295,7 @@ const TARGETS = {
   WhatsApp: 15,
   'Yono SBI': 5,
   'Contact Centre': 10,
-  'Channel Migration': 10
+  'Re-KYC': 10
 };
 
 const MAP = [
@@ -303,16 +303,16 @@ const MAP = [
   { key:'WhatsApp',          id:'wa'      },
   { key:'Yono SBI',          id:'yono'    },
   { key:'Contact Centre',    id:'contact' },
-  { key:'Channel Migration', id:'cm'      }
+  { key:'Re-KYC', id:'cm'      }
 ];
 
 let state = JSON.parse(localStorage.getItem('sbi_v14')) || {
-  counts: { NPS: 0, WhatsApp: 0, 'Yono SBI': 0, 'Contact Centre': 0, 'Other Forms': 0, 'Channel Migration': 0 },
+  counts: { NPS: 0, WhatsApp: 0, 'Yono SBI': 0, 'Contact Centre': 0, 'Other Forms': 0, 'Re-KYC': 0 },
   logs: [], loginTime: null,
   brName:'SBI KOMTALPETA', brCode:'17978', userName:'ASHUTOSH PATTNAIK'
 };
 
-if (state.counts['Channel Migration'] === undefined) state.counts['Channel Migration'] = 0;
+if (state.counts['Re-KYC'] === undefined) state.counts['Re-KYC'] = 0;
 
 let activeCat = '', selType = 'Account Number';
 
@@ -449,7 +449,7 @@ function generatePDF() {
       ['WhatsApp',           state.counts['WhatsApp'],           TARGETS['WhatsApp']],
       ['Yono SBI',           state.counts['Yono SBI'],           TARGETS['Yono SBI']],
       ['Contact Centre',     state.counts['Contact Centre'],     TARGETS['Contact Centre']],
-      ['Channel Migration',  state.counts['Channel Migration'],  TARGETS['Channel Migration']],  
+      ['Re-KYC',  state.counts['Re-KYC'],  TARGETS['Re-KYC']],  
     ],
     headStyles: { fillColor: [0, 51, 102] },
     theme: 'grid'
@@ -485,7 +485,7 @@ function shareWA() {
     `NPS: ${c.NPS}\nWhatsApp: ${c.WhatsApp}\n` +
     `Yono SBI Registration: ${c['Yono SBI']}\n` +
     `Contact Centre: ${c['Contact Centre']}\n` +
-    `Channel Migration: ${c['Channel Migration']}\n` +
+    `Re-KYC: ${c['Re-KYC']}\n` +
     `Other Forms: ${15 + (c['Other Forms'] || 0)}`;
   window.open('https://wa.me/?text=' + encodeURIComponent(msg));
 }
