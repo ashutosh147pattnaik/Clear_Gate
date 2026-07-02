@@ -40,6 +40,7 @@
 
   --danger-text: #f87171;
   --danger-bdr:  rgba(248, 113, 113, 0.4);
+  --danger-bg:   rgba(248, 113, 113, 0.15);
 
   --header-bdr: #1e293b;
   --divider:    rgba(255,255,255,0.1);
@@ -181,6 +182,7 @@ button {
 }
 button:active { transform: scale(0.98); }
 button:hover  { background: var(--bg-btn-h); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .btn-primary {
   background: var(--accent);
@@ -318,6 +320,51 @@ button:hover  { background: var(--bg-btn-h); }
 .report-table th { background: var(--bg-btn); color: var(--text-secondary); font-weight: 500; font-size: 12px; }
 .report-table tr:last-child td { border-bottom: none; }
 .table-responsive { overflow-x: auto; }
+
+/* CONFIRM MODAL - shared structure, themed via variant classes */
+.confirm-box {
+  border-width: 1px;
+  border-style: solid;
+  text-align: center;
+}
+.confirm-icon {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+  font-size: 20px;
+  font-weight: 600;
+}
+.confirm-box h4 { text-align: center; }
+.confirm-msg { font-size: 13px; color: var(--text-secondary); margin: 0 0 18px; line-height: 1.5; }
+.confirm-hint { font-size: 11px; color: var(--text-muted); margin: -10px 0 14px; }
+#confirm-field {
+  width: 100%; padding: 11px 12px; margin-bottom: 6px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r);
+  font-size: 1rem;
+  font-family: 'DM Mono', monospace;
+  color: var(--text-primary);
+  background: var(--bg-page);
+  outline: none;
+  text-align: center;
+  text-transform: lowercase;
+}
+#confirm-field:focus { border-color: var(--accent); }
+
+/* PDF (success) variant */
+.confirm-pdf .modal-box { border-color: rgba(16, 185, 129, 0.35); }
+.confirm-pdf .confirm-icon { background: var(--success-bg); color: var(--success-text); }
+.confirm-pdf #confirm-field:focus { border-color: var(--success); }
+.confirm-pdf #confirm-ok { background: var(--success); border-color: transparent; color: #06281c; }
+.confirm-pdf #confirm-ok:hover { opacity: 0.9; background: var(--success); }
+
+/* Reset (danger) variant */
+.confirm-danger .modal-box { border-color: var(--danger-bdr); }
+.confirm-danger .confirm-icon { background: var(--danger-bg); color: var(--danger-text); }
+.confirm-danger #confirm-field:focus { border-color: var(--danger-text); }
+.confirm-danger #confirm-ok { background: var(--danger-text); border-color: transparent; color: #2a0a0a; }
+.confirm-danger #confirm-ok:hover { opacity: 0.9; background: var(--danger-text); }
 </style>
 </head>
 <body>
@@ -417,6 +464,19 @@ button:hover  { background: var(--bg-btn-h); }
     <input type="number" id="val-field" placeholder="Enter digits">
     <button class="btn-primary" onclick="saveEntry()">Save</button>
     <button class="btn-cancel"  onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- CONFIRMATION MODAL (shared for PDF download + Manual reset) -->
+<div id="confirm-modal" class="modal hidden">
+  <div class="modal-box confirm-box">
+    <div class="confirm-icon" id="confirm-icon">!</div>
+    <h4 id="confirm-title">Confirm action</h4>
+    <p class="confirm-msg" id="confirm-msg">Are you sure you want to continue?</p>
+    <p class="confirm-hint">Type <strong>yes</strong> below to proceed</p>
+    <input type="text" id="confirm-field" placeholder="Type yes to confirm" autocomplete="off">
+    <button class="btn-primary" id="confirm-ok" onclick="handleConfirmSubmit()">Confirm</button>
+    <button class="btn-cancel" onclick="closeConfirmModal()">Cancel</button>
   </div>
 </div>
 
@@ -545,7 +605,75 @@ function hideReport() {
   window.scrollTo(0,0);
 }
 
+/* ============ CONFIRMATION MODAL LOGIC ============ */
+// pendingAction holds which real function to run once "yes" is confirmed
+let pendingAction = null;
+
+const CONFIRM_CONFIG = {
+  pdf: {
+    variant: 'confirm-pdf',
+    icon: '↓',
+    title: 'Download PDF report',
+    msg: 'This will generate and download the PDF summary, then clear all saved data and return you to the main menu.'
+  },
+  reset: {
+    variant: 'confirm-danger',
+    icon: '⚠',
+    title: 'Manual reset',
+    msg: 'This will permanently wipe all recorded data for this session. This action cannot be undone.'
+  }
+};
+
+function openConfirmModal(type, action) {
+  const cfg = CONFIRM_CONFIG[type];
+  pendingAction = action;
+
+  const modal = $('confirm-modal');
+  modal.classList.remove('hidden');
+  modal.classList.remove('confirm-pdf', 'confirm-danger');
+  modal.classList.add(cfg.variant);
+
+  $('confirm-icon').textContent = cfg.icon;
+  $('confirm-title').textContent = cfg.title;
+  $('confirm-msg').textContent = cfg.msg;
+  $('confirm-field').value = '';
+
+  setTimeout(() => $('confirm-field').focus(), 100);
+}
+
+function closeConfirmModal() {
+  $('confirm-modal').classList.add('hidden');
+  $('confirm-field').value = '';
+  pendingAction = null;
+}
+
+function handleConfirmSubmit() {
+  const typed = $('confirm-field').value.trim().toLowerCase();
+  if (typed !== 'yes') {
+    // Silent cancel on wrong input: just clear the field, keep modal open
+    $('confirm-field').value = '';
+    $('confirm-field').focus();
+    return;
+  }
+  const action = pendingAction;
+  closeConfirmModal();
+  if (typeof action === 'function') action();
+}
+
+// Allow pressing Enter inside the confirm field to submit
+$('confirm-field').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    handleConfirmSubmit();
+  }
+});
+
+/* ============ PDF GENERATION ============ */
 function generatePDF() {
+  openConfirmModal('pdf', doGeneratePDF);
+}
+
+function doGeneratePDF() {
   const doc = new jsPDF();
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-GB');
@@ -595,11 +723,14 @@ function shareWA() {
   window.open('https://wa.me/?text=' + encodeURIComponent(msg));
 }
 
+/* ============ MANUAL RESET ============ */
 function resetApp() {
-  if (confirm('Manual override: wipe all data?')) {
-    localStorage.clear();
-    window.location.href = 'index.html';
-  }
+  openConfirmModal('reset', doResetApp);
+}
+
+function doResetApp() {
+  localStorage.clear();
+  window.location.href = 'index.html';
 }
 
 window.onload = () => {
