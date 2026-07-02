@@ -3,67 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SBI Bank Ops - Target Portal</title>
+<title>SBI Bank Ops - Target Ledger</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* Professional Dark Slate Theme */
-  --bg-page:   #0f172a;
-  --bg-card:   #1e293b;
-  --bg-btn:    #334155;
-  --bg-btn-h:  #475569;
-  --bg-header: #0f172a;
+  /* Ledger — deep navy vault + brass seal */
+  --bg-page:     #0a0f1c;
+  --bg-surface:  #10182b;
+  --bg-surface2: #161f38;
+  --bg-raised:   #1c2645;
 
-  --border:        #334155;
-  --border-strong: #475569;
+  --line:      #253150;
+  --line-soft: rgba(201, 169, 97, 0.14);
 
-  --text-primary:   #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted:     #94a3b8;
+  --gold:        #c9a961;
+  --gold-strong: #e0c380;
+  --gold-soft:   rgba(201, 169, 97, 0.13);
+  --gold-bdr:    rgba(201, 169, 97, 0.35);
 
-  --accent:      #3b82f6;
-  --accent-bg:   rgba(59, 130, 246, 0.15);
-  --accent-text: #93c5fd;
+  --emerald:      #3ecf8e;
+  --emerald-soft: rgba(62, 207, 142, 0.14);
+  --emerald-bdr:  rgba(62, 207, 142, 0.32);
 
-  --success:      #10b981;
-  --success-bg:   rgba(16, 185, 129, 0.15);
-  --success-text: #6ee7b7;
+  --danger:      #e0776b;
+  --danger-soft: rgba(224, 119, 107, 0.14);
+  --danger-bdr:  rgba(224, 119, 107, 0.4);
 
-  --warning-bg:   rgba(245, 158, 11, 0.15);
-  --warning-text: #fcd34d;
-  --warning-bdr:  rgba(245, 158, 11, 0.3);
+  --text-hi:  #f4f1ea;
+  --text-mid: #9aa5bd;
+  --text-low: #64708c;
 
-  --pro-bg:   rgba(139, 92, 246, 0.15);
-  --pro-fill: #a78bfa;
-
-  --danger-text: #f87171;
-  --danger-bdr:  rgba(248, 113, 113, 0.4);
-  --danger-bg:   rgba(248, 113, 113, 0.15);
-
-  --header-bdr: #1e293b;
-  --divider:    rgba(255,255,255,0.1);
-  --clock-bg:   #1e293b;
-
-  --r: 8px;
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
 }
 
 *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+html { -webkit-font-smoothing: antialiased; }
+
 body {
   font-family: 'DM Sans', sans-serif;
   margin: 0;
-  padding-bottom: 40px;
+  padding-bottom: 48px;
   min-height: 100vh;
-  background: var(--bg-page);
-  color: var(--text-primary);
+  background:
+    radial-gradient(1200px 500px at 50% -10%, rgba(201,169,97,0.07), transparent 60%),
+    var(--bg-page);
+  color: var(--text-hi);
 }
+
+.serif { font-family: 'Fraunces', serif; }
+.mono  { font-family: 'DM Mono', monospace; }
 
 /* HEADER */
 header {
-  background: var(--bg-header);
-  border-bottom: 1px solid var(--header-bdr);
+  background: rgba(10, 15, 28, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
   padding: 14px 20px;
   display: flex;
   justify-content: space-between;
@@ -73,377 +72,554 @@ header {
   z-index: 100;
 }
 
-.brand {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.brand-dot {
-  width: 8px;
-  height: 8px;
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-seal {
+  width: 26px; height: 26px;
   border-radius: 50%;
-  background: var(--accent);
+  border: 1.5px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold-strong);
   flex-shrink: 0;
 }
-
-.header-right { display: flex; align-items: center; gap: 10px; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+.brand-name { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600; color: var(--text-hi); }
+.brand-sub { font-size: 10px; letter-spacing: 0.6px; color: var(--text-low); text-transform: uppercase; }
 
 #live-clock {
   font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  color: var(--text-muted);
-  background: var(--clock-bg);
+  font-size: 11.5px;
+  color: var(--gold-strong);
+  background: var(--gold-soft);
+  border: 1px solid var(--gold-bdr);
   padding: 5px 10px;
   border-radius: 20px;
+  letter-spacing: 0.3px;
 }
 
 /* LAYOUT */
-#main-content { padding: 16px; max-width: 500px; margin: auto; }
+#main-content { padding: 18px 16px; max-width: 500px; margin: auto; }
 .hidden { display: none !important; }
 
 /* LOGIN */
 #login-page {
+  margin-top: 54px;
   text-align: center;
-  margin-top: 40px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  padding: 40px 24px;
-  border-radius: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
-#login-page h2 { color: var(--text-primary); font-size: 1.4rem; font-weight: 500; margin-bottom: 6px; }
-#login-page p  { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 28px; }
-#login-page .btn-primary { width: 100%; max-width: 180px; margin: 0 auto; }
+.login-seal {
+  width: 64px; height: 64px;
+  margin: 0 auto 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--gold-strong);
+  background: var(--gold-soft);
+}
+#login-page h2 {
+  font-family: 'Fraunces', serif;
+  color: var(--text-hi);
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0 0 6px;
+  letter-spacing: 0.2px;
+}
+#login-page p {
+  color: var(--text-mid);
+  font-size: 0.85rem;
+  margin-bottom: 30px;
+  letter-spacing: 0.2px;
+}
+#login-page .btn-primary { width: 100%; max-width: 200px; margin: 0 auto; }
 
-.login-info-box { font-size: 12px; color: var(--text-muted); text-align: right; margin-bottom: 12px; }
-
-/* GRID + CARDS */
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-.card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  padding: 14px 12px;
-  border-radius: 12px;
+.login-info-box {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-low);
   text-align: center;
+  margin-bottom: 16px;
+  letter-spacing: 0.3px;
+}
+
+/* SEAL PROGRESS CARD (signature element) */
+.seal-card {
+  background: linear-gradient(180deg, var(--bg-surface2), var(--bg-surface));
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 22px 20px 18px;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.seal-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(220px 140px at 85% -20%, rgba(201,169,97,0.10), transparent 70%);
+  pointer-events: none;
+}
+.seal-row { display: flex; align-items: center; gap: 18px; position: relative; }
+
+.seal-ring-wrap { position: relative; width: 92px; height: 92px; flex-shrink: 0; }
+.seal-ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.seal-track { fill: none; stroke: var(--line); stroke-width: 8; }
+.seal-fill  { fill: none; stroke: var(--gold); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
+.seal-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.seal-pct { font-family: 'DM Mono', monospace; font-size: 17px; font-weight: 500; color: var(--gold-strong); line-height: 1; }
+.seal-frac { font-family: 'DM Mono', monospace; font-size: 9.5px; color: var(--text-low); margin-top: 3px; }
+
+.seal-meta { flex: 1; min-width: 0; }
+.seal-meta-title {
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-hi);
+  margin-bottom: 8px;
+}
+.seal-meta-line {
+  display: flex; justify-content: space-between; gap: 8px;
+  font-size: 11.5px;
+  color: var(--text-mid);
+  padding: 3px 0;
+  border-bottom: 1px dotted var(--line);
+}
+.seal-meta-line:last-child { border-bottom: none; }
+.seal-meta-line span:last-child { font-family: 'DM Mono', monospace; color: var(--text-hi); text-align: right; }
+
+/* DIVIDER */
+.divider {
   display: flex;
-  flex-direction: column;
-  transition: background 0.2s, border-color 0.2s;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  align-items: baseline;
+  gap: 10px;
+  margin: 24px 2px 12px;
+  color: var(--gold-strong);
+  font-family: 'Fraunces', serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
-.card.met {
-  background: var(--success-bg);
-  border-color: rgba(16, 185, 129, 0.3);
-}
-.card.full-width { grid-column: 1 / -1; }
+.divider::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line-soft), transparent); }
 
-.card h3 {
-  margin: 0;
+/* LEDGER ROWS */
+.ledger {
+  background: var(--bg-surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.ledger-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  transition: background 0.15s;
+}
+.ledger-row:last-child { border-bottom: none; }
+.ledger-row.met { background: var(--emerald-soft); }
+
+.ledger-row-main { flex: 1; min-width: 0; }
+.ledger-label-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px; gap: 8px; }
+.ledger-name {
+  font-family: 'Fraunces', serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text-hi);
+}
+.ledger-target {
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px;
+  color: var(--text-low);
+  white-space: nowrap;
+}
+.ledger-track { width: 100%; height: 4px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.ledger-fill { height: 100%; border-radius: 99px; background: var(--gold); transition: width 0.4s ease; }
+.ledger-row.met .ledger-fill { background: var(--emerald); }
+
+.ledger-value {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.ledger-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--text-hi);
+  min-width: 26px;
+  text-align: right;
+}
+.ledger-row.met .ledger-count { color: var(--emerald); }
+
+.ledger-btn {
+  width: auto;
+  padding: 8px 12px;
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  height: auto;
-  margin-bottom: 2px;
+  border-radius: var(--r-sm);
+  background: var(--gold-soft);
+  border: 1px solid var(--gold-bdr);
+  color: var(--gold-strong);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.12s, transform 0.1s;
 }
-.target-label { font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 8px; }
-
-.count {
-  font-size: 2rem;
-  font-weight: 500;
-  margin: 0 0 8px;
-  color: var(--text-primary);
-  font-family: 'DM Mono', monospace;
-  line-height: 1;
+.ledger-btn:active { transform: scale(0.96); }
+.ledger-btn:hover { background: rgba(201,169,97,0.22); }
+.ledger-btn.met {
+  background: var(--emerald-soft);
+  border-color: var(--emerald-bdr);
+  color: var(--emerald);
 }
-.card.met .count { color: var(--success-text); }
 
-.pb-wrap { width: 100%; height: 4px; background: var(--border); border-radius: 99px; margin-bottom: 10px; overflow: hidden; }
-.pb-fill  { height: 100%; border-radius: 99px; background: var(--accent); transition: width 0.3s ease; }
-.card.met .pb-fill { background: var(--success); }
-
-/* BUTTONS */
+/* GENERIC BUTTONS */
 button {
-  padding: 9px 10px;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--r);
-  background: var(--bg-btn);
-  color: var(--text-primary);
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--bg-raised);
+  color: var(--text-hi);
   font-weight: 500;
   cursor: pointer;
   font-size: 13px;
   width: 100%;
   font-family: 'DM Sans', sans-serif;
-  transition: background 0.12s, transform 0.1s;
+  transition: background 0.12s, transform 0.1s, border-color 0.12s;
 }
 button:active { transform: scale(0.98); }
-button:hover  { background: var(--bg-btn-h); }
-button:disabled { opacity: 0.5; cursor: not-allowed; }
+button:hover  { background: var(--bg-surface2); }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .btn-primary {
-  background: var(--accent);
-  color: #fff;
+  background: var(--gold);
+  color: #1a1305;
   border-color: transparent;
-  margin-top: auto;
-  padding: 10px;
-  display: block;
+  font-weight: 600;
+  padding: 12px;
+  letter-spacing: 0.2px;
 }
-.btn-primary:hover { opacity: 0.9; background: var(--accent); }
+.btn-primary:hover { background: var(--gold-strong); }
 
-.btn-target-met {
-  background: var(--success-bg) !important;
-  border-color: rgba(16, 185, 129, 0.4) !important;
-  color: var(--success-text) !important;
-}
-
-.btn-cm {
-  background: var(--pro-bg);
-  border-color: rgba(139, 92, 246, 0.3);
-  color: var(--pro-fill);
-  margin-top: auto;
-  padding: 10px;
-}
-.btn-cm:hover { opacity: 0.9; }
-.btn-cm.btn-target-met { background: var(--success-bg) !important; border-color: rgba(16, 185, 129, 0.4) !important; color: var(--success-text) !important; }
-
-/* DIVIDER */
-.divider {
-  display: flex;
-  align-items: center;
+/* ACTIONS STRIP */
+.actions-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  margin: 18px 0 10px;
-  color: var(--text-muted);
-  font-size: 11px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
-.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--divider); }
+.action-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 12px 6px 10px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--text-mid);
+  letter-spacing: 0.1px;
+}
+.action-btn svg { width: 18px; height: 18px; stroke: var(--gold-strong); fill: none; stroke-width: 1.7; }
+.action-btn:hover { background: var(--bg-surface2); border-color: var(--gold-bdr); color: var(--text-hi); }
+.action-btn:disabled svg { stroke: var(--text-low); }
+
+/* RESET LINK */
+.reset-link-wrap { text-align: center; margin-top: 22px; }
+.reset-link {
+  background: none;
+  border: none;
+  width: auto;
+  color: var(--text-low);
+  font-size: 11.5px;
+  padding: 8px;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+.reset-link:hover { color: var(--danger); text-decoration-color: var(--danger); background: none; }
 
 /* MODAL */
 .modal {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(5, 8, 16, 0.78);
   backdrop-filter: blur(4px);
   display: flex; justify-content: center; align-items: center;
   z-index: 2000; padding: 20px;
 }
 .modal-box {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  padding: 24px 20px;
-  border-radius: 16px;
+  background: var(--bg-surface2);
+  border: 1px solid var(--line);
+  padding: 26px 22px;
+  border-radius: var(--r-lg);
   width: 100%;
   max-width: 320px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6);
 }
-.modal-box h4 { margin: 0 0 16px; font-size: 1.1rem; font-weight: 500; color: var(--text-primary); }
+.modal-box h4 {
+  font-family: 'Fraunces', serif;
+  margin: 0 0 18px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-hi);
+}
 
 /* TOGGLE */
-.toggle-wrap { display: flex; gap: 6px; margin-bottom: 16px; background: var(--bg-btn); padding: 5px; border-radius: 10px; }
+.toggle-wrap { display: flex; gap: 6px; margin-bottom: 16px; background: var(--bg-page); padding: 5px; border-radius: 10px; border: 1px solid var(--line); }
 .toggle-btn {
   background: transparent;
-  color: var(--text-muted);
+  color: var(--text-mid);
   flex: 1;
   border: none;
   padding: 8px;
   border-radius: 7px;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
 }
-.toggle-btn.active { background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-.toggle-btn:hover { background: var(--bg-btn-h); }
+.toggle-btn.active { background: var(--gold-soft); color: var(--gold-strong); border: 1px solid var(--gold-bdr); }
+.toggle-btn:hover { background: var(--bg-surface2); }
 
 /* INPUT */
-#val-field {
-  width: 100%; padding: 11px 12px; margin-bottom: 14px;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--r);
+#val-field, #confirm-field {
+  width: 100%; padding: 12px 12px; margin-bottom: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
   font-size: 1rem;
   font-family: 'DM Mono', monospace;
-  color: var(--text-primary);
+  color: var(--text-hi);
   background: var(--bg-page);
   outline: none;
 }
-#val-field:focus { border-color: var(--accent); }
+#val-field:focus { border-color: var(--gold); }
 
 .btn-cancel {
   background: none;
-  color: var(--text-muted);
+  color: var(--text-low);
   border: none;
   margin-top: 6px;
-  font-size: 13px;
+  font-size: 12.5px;
   padding: 8px;
   font-weight: 500;
   width: 100%;
 }
-.btn-cancel:hover { background: var(--bg-btn); }
-
-/* ACTION BUTTONS */
-.actions-compact { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.btn-action { padding: 10px; font-size: 13px; font-weight: 500; margin: 0; }
-
-.btn-undo   { background: var(--warning-bg); border-color: var(--warning-bdr); color: var(--warning-text); }
-.btn-report { background: var(--accent-bg);  border-color: rgba(59, 130, 246, 0.3); color: var(--accent-text); }
-.btn-pdf    { background: var(--success-bg); border-color: rgba(16, 185, 129, 0.3); color: var(--success-text); }
-.btn-wa     { background: var(--success-bg); border-color: rgba(16, 185, 129, 0.3); color: var(--success-text); }
-
-.btn-undo:hover, .btn-report:hover, .btn-pdf:hover, .btn-wa:hover { opacity: 0.85; }
-.btn-undo:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-.btn-reset {
-  background: none;
-  color: var(--danger-text);
-  border: 1px solid var(--danger-bdr);
-  margin-top: 10px;
-  padding: 9px;
-  font-size: 12px;
-  font-weight: 500;
-}
-.btn-reset:hover { opacity: 0.8; background: none; }
+.btn-cancel:hover { background: var(--bg-page); color: var(--text-mid); }
 
 /* REPORT PAGE */
-.report-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  padding: 20px;
-  border-radius: 12px;
-  margin-top: 14px;
+.report-back {
+  background: var(--bg-surface);
+  border: 1px solid var(--line);
+  color: var(--text-mid);
+  font-size: 12.5px;
+  padding: 10px;
+  margin-bottom: 14px;
 }
-.report-card h3 { margin-top: 0; margin-bottom: 14px; color: var(--text-primary); font-size: 1rem; font-weight: 500; }
-.report-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
-.report-table th, .report-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); text-align: left; color: var(--text-primary); }
-.report-table th { background: var(--bg-btn); color: var(--text-secondary); font-weight: 500; font-size: 12px; }
+.report-back:hover { color: var(--text-hi); background: var(--bg-surface2); }
+
+.report-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--line);
+  padding: 20px;
+  border-radius: var(--r-lg);
+  margin-bottom: 14px;
+}
+.report-card h3 {
+  font-family: 'Fraunces', serif;
+  margin-top: 0; margin-bottom: 14px;
+  color: var(--text-hi); font-size: 1rem; font-weight: 600;
+}
+.report-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.report-table th, .report-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: left; color: var(--text-hi); }
+.report-table th { background: var(--bg-page); color: var(--text-mid); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+.report-table td { font-family: 'DM Mono', monospace; }
+.report-table td:first-child, .report-table th:first-child { font-family: 'DM Sans', sans-serif; }
 .report-table tr:last-child td { border-bottom: none; }
 .table-responsive { overflow-x: auto; }
 
-/* CONFIRM MODAL - shared structure, themed via variant classes */
-.confirm-box {
-  border-width: 1px;
-  border-style: solid;
-  text-align: center;
-}
+/* CONFIRM MODAL */
+.confirm-box { text-align: center; }
 .confirm-icon {
-  width: 44px; height: 44px;
+  width: 46px; height: 46px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   margin: 0 auto 14px;
-  font-size: 20px;
-  font-weight: 600;
 }
+.confirm-icon svg { width: 20px; height: 20px; stroke-width: 2; fill: none; }
 .confirm-box h4 { text-align: center; }
-.confirm-msg { font-size: 13px; color: var(--text-secondary); margin: 0 0 18px; line-height: 1.5; }
-.confirm-hint { font-size: 11px; color: var(--text-muted); margin: -10px 0 14px; }
-#confirm-field {
-  width: 100%; padding: 11px 12px; margin-bottom: 6px;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--r);
-  font-size: 1rem;
-  font-family: 'DM Mono', monospace;
-  color: var(--text-primary);
-  background: var(--bg-page);
-  outline: none;
-  text-align: center;
-  text-transform: lowercase;
-}
-#confirm-field:focus { border-color: var(--accent); }
+.confirm-msg { font-size: 13px; color: var(--text-mid); margin: 0 0 18px; line-height: 1.55; }
+.confirm-hint { font-size: 10.5px; color: var(--text-low); margin: -10px 0 14px; letter-spacing: 0.2px; }
+#confirm-field { text-align: center; }
 
-/* PDF (success) variant */
-.confirm-pdf .modal-box { border-color: rgba(16, 185, 129, 0.35); }
-.confirm-pdf .confirm-icon { background: var(--success-bg); color: var(--success-text); }
-.confirm-pdf #confirm-field:focus { border-color: var(--success); }
-.confirm-pdf #confirm-ok { background: var(--success); border-color: transparent; color: #06281c; }
-.confirm-pdf #confirm-ok:hover { opacity: 0.9; background: var(--success); }
+.confirm-pdf .modal-box { border-color: var(--emerald-bdr); }
+.confirm-pdf .confirm-icon { background: var(--emerald-soft); }
+.confirm-pdf .confirm-icon svg { stroke: var(--emerald); }
+.confirm-pdf #confirm-field:focus { border-color: var(--emerald); }
+.confirm-pdf #confirm-ok { background: var(--emerald); border-color: transparent; color: #062018; }
+.confirm-pdf #confirm-ok:hover { opacity: 0.9; background: var(--emerald); }
 
-/* Reset (danger) variant */
 .confirm-danger .modal-box { border-color: var(--danger-bdr); }
-.confirm-danger .confirm-icon { background: var(--danger-bg); color: var(--danger-text); }
-.confirm-danger #confirm-field:focus { border-color: var(--danger-text); }
-.confirm-danger #confirm-ok { background: var(--danger-text); border-color: transparent; color: #2a0a0a; }
-.confirm-danger #confirm-ok:hover { opacity: 0.9; background: var(--danger-text); }
+.confirm-danger .confirm-icon { background: var(--danger-soft); }
+.confirm-danger .confirm-icon svg { stroke: var(--danger); }
+.confirm-danger #confirm-field:focus { border-color: var(--danger); }
+.confirm-danger #confirm-ok { background: var(--danger); border-color: transparent; color: #2a0a06; }
+.confirm-danger #confirm-ok:hover { opacity: 0.9; background: var(--danger); }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="brand"><div class="brand-dot"></div> SBI Bank &nbsp;Jlqshf84</div>
-  <div class="header-right">
-    <div id="live-clock">00:00:00</div>
+  <div class="brand">
+    <div class="brand-seal">SB</div>
+    <div class="brand-text">
+      <span class="brand-name">SBI Bank</span>
+      <span class="brand-sub">Operations Ledger</span>
+    </div>
   </div>
+  <div id="live-clock" class="mono">00:00:00</div>
 </header>
 
 <div id="main-content">
 
   <!-- LOGIN PAGE -->
   <div id="login-page">
-    <h2>Operations portal</h2>
+    <div class="login-seal">SB</div>
+    <h2>Operations Ledger</h2>
     <p>SBI Bank — secure branch access</p>
-    <button class="btn-primary" onclick="doLogin()">Login</button>
+    <button class="btn-primary" onclick="doLogin()">Enter ledger</button>
   </div>
 
   <!-- MAIN DASHBOARD -->
   <div id="dashboard" class="hidden">
-    <div id="login-ts" class="login-info-box"></div>
 
-    <div class="grid">
-      <div class="card" id="card-nps">
-        <h3>NPS</h3><span class="target-label">Target: 10</span>
-        <div class="count" id="c-nps">0</div>
-        <div class="pb-wrap"><div class="pb-fill" id="pb-nps"></div></div>
-        <button id="btn-nps" class="btn-primary" onclick="addSimple('NPS')">Add</button>
+    <!-- SIGNATURE SEAL PROGRESS CARD -->
+    <div class="seal-card">
+      <div class="seal-row">
+        <div class="seal-ring-wrap">
+          <svg viewBox="0 0 100 100">
+            <circle class="seal-track" cx="50" cy="50" r="42"></circle>
+            <circle class="seal-fill" id="seal-ring-fill" cx="50" cy="50" r="42"></circle>
+          </svg>
+          <div class="seal-center">
+            <span class="seal-pct" id="seal-pct">0%</span>
+            <span class="seal-frac" id="seal-frac">0 / 50</span>
+          </div>
+        </div>
+        <div class="seal-meta">
+          <div class="seal-meta-title">Today's entries</div>
+          <div class="seal-meta-line"><span>Logged in</span><span id="login-ts">—</span></div>
+          <div class="seal-meta-line"><span>Branch</span><span>KOMTALPETA · 17978</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">Target ledger</div>
+
+    <div class="ledger">
+      <div class="ledger-row" id="card-nps">
+        <div class="ledger-row-main">
+          <div class="ledger-label-row">
+            <span class="ledger-name">NPS</span>
+            <span class="ledger-target mono">Target 10</span>
+          </div>
+          <div class="ledger-track"><div class="ledger-fill" id="pb-nps"></div></div>
+        </div>
+        <div class="ledger-value">
+          <span class="ledger-count" id="c-nps">0</span>
+          <button id="btn-nps" class="ledger-btn" onclick="addSimple('NPS')">+1</button>
+        </div>
       </div>
 
-      <div class="card" id="card-wa">
-        <h3>WhatsApp</h3><span class="target-label">Target: 15</span>
-        <div class="count" id="c-wa">0</div>
-        <div class="pb-wrap"><div class="pb-fill" id="pb-wa"></div></div>
-        <button id="btn-wa" class="btn-primary" onclick="openModal('WhatsApp')">Action</button>
+      <div class="ledger-row" id="card-wa">
+        <div class="ledger-row-main">
+          <div class="ledger-label-row">
+            <span class="ledger-name">WhatsApp</span>
+            <span class="ledger-target mono">Target 15</span>
+          </div>
+          <div class="ledger-track"><div class="ledger-fill" id="pb-wa"></div></div>
+        </div>
+        <div class="ledger-value">
+          <span class="ledger-count" id="c-wa">0</span>
+          <button id="btn-wa" class="ledger-btn" onclick="openModal('WhatsApp')">Log</button>
+        </div>
       </div>
 
-      <div class="card" id="card-yono">
-        <h3>Yono SBI</h3><span class="target-label">Target: 5</span>
-        <div class="count" id="c-yono">0</div>
-        <div class="pb-wrap"><div class="pb-fill" id="pb-yono"></div></div>
-        <button id="btn-yono" class="btn-primary" onclick="openModal('Yono SBI')">Action</button>
+      <div class="ledger-row" id="card-yono">
+        <div class="ledger-row-main">
+          <div class="ledger-label-row">
+            <span class="ledger-name">Yono SBI</span>
+            <span class="ledger-target mono">Target 5</span>
+          </div>
+          <div class="ledger-track"><div class="ledger-fill" id="pb-yono"></div></div>
+        </div>
+        <div class="ledger-value">
+          <span class="ledger-count" id="c-yono">0</span>
+          <button id="btn-yono" class="ledger-btn" onclick="openModal('Yono SBI')">Log</button>
+        </div>
       </div>
 
-      <div class="card" id="card-contact">
-        <h3>Contact centre</h3><span class="target-label">Target: 10</span>
-        <div class="count" id="c-contact">0</div>
-        <div class="pb-wrap"><div class="pb-fill" id="pb-contact"></div></div>
-        <button id="btn-contact" class="btn-primary" onclick="openModal('Contact Centre')">Action</button>
+      <div class="ledger-row" id="card-contact">
+        <div class="ledger-row-main">
+          <div class="ledger-label-row">
+            <span class="ledger-name">Contact centre</span>
+            <span class="ledger-target mono">Target 10</span>
+          </div>
+          <div class="ledger-track"><div class="ledger-fill" id="pb-contact"></div></div>
+        </div>
+        <div class="ledger-value">
+          <span class="ledger-count" id="c-contact">0</span>
+          <button id="btn-contact" class="ledger-btn" onclick="openModal('Contact Centre')">Log</button>
+        </div>
       </div>
 
-      <div class="card full-width" id="card-cm">
-        <h3>Re-KYC</h3><span class="target-label">Target: 10</span>
-        <div class="count" id="c-cm">0</div>
-        <div class="pb-wrap"><div class="pb-fill" id="pb-cm" style="background: var(--pro-fill);"></div></div>
-        <button id="btn-cm" class="btn-cm" onclick="addSimple('Re-KYC')">Add</button>
+      <div class="ledger-row" id="card-cm">
+        <div class="ledger-row-main">
+          <div class="ledger-label-row">
+            <span class="ledger-name">Re-KYC</span>
+            <span class="ledger-target mono">Target 10</span>
+          </div>
+          <div class="ledger-track"><div class="ledger-fill" id="pb-cm"></div></div>
+        </div>
+        <div class="ledger-value">
+          <span class="ledger-count" id="c-cm">0</span>
+          <button id="btn-cm" class="ledger-btn" onclick="addSimple('Re-KYC')">+1</button>
+        </div>
       </div>
     </div>
 
     <div class="divider">Actions</div>
 
-    <div class="actions-compact">
-      <button id="btn-undo" class="btn-action btn-undo" onclick="undoLast()">↩ Undo</button>
-      <button class="btn-action btn-report" onclick="showReport()">Report</button>
-      <button class="btn-action btn-pdf" onclick="generatePDF()">Download PDF</button>
-      <button class="btn-action btn-wa" onclick="shareWA()">WhatsApp</button>
+    <div class="actions-strip">
+      <button id="btn-undo" class="action-btn" onclick="undoLast()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+        Undo
+      </button>
+      <button class="action-btn" onclick="showReport()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"/><path d="M9 12h6M9 16h6M9 8h2"/></svg>
+        Report
+      </button>
+      <button class="action-btn" onclick="generatePDF()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        PDF
+      </button>
+      <button class="action-btn" onclick="shareWA()">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        Share
+      </button>
     </div>
 
-    <button class="btn-reset" onclick="resetApp()">Manual reset</button>
+    <div class="reset-link-wrap">
+      <button class="reset-link" onclick="resetApp()">Reset all entries</button>
+    </div>
   </div>
 
   <!-- REPORT PAGE -->
   <div id="report-page" class="hidden">
-    <button class="btn-action btn-undo" onclick="hideReport()" style="margin-bottom:4px;">← Back to dashboard</button>
+    <button class="report-back" onclick="hideReport()">← Back to ledger</button>
     <div class="report-card">
       <h3>Summary</h3>
       <table class="report-table" id="summary-table"></table>
+    </div>
+    <div class="report-card">
       <h3>Detailed logs</h3>
       <div class="table-responsive">
         <table class="report-table" id="logs-table"></table>
@@ -462,7 +638,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
       <button id="t-mob" class="toggle-btn"        onclick="setType('Mobile Number')">Mobile</button>
     </div>
     <input type="number" id="val-field" placeholder="Enter digits">
-    <button class="btn-primary" onclick="saveEntry()">Save</button>
+    <button class="btn-primary" onclick="saveEntry()">Save entry</button>
     <button class="btn-cancel"  onclick="closeModal()">Cancel</button>
   </div>
 </div>
@@ -470,7 +646,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 <!-- CONFIRMATION MODAL (shared for PDF download + Manual reset) -->
 <div id="confirm-modal" class="modal hidden">
   <div class="modal-box confirm-box">
-    <div class="confirm-icon" id="confirm-icon">!</div>
+    <div class="confirm-icon" id="confirm-icon"></div>
     <h4 id="confirm-title">Confirm action</h4>
     <p class="confirm-msg" id="confirm-msg">Are you sure you want to continue?</p>
     <p class="confirm-hint">Type <strong>yes</strong> below to proceed</p>
@@ -486,6 +662,7 @@ const { jsPDF } = window.jspdf;
 const TARGETS = {
   NPS: 10, WhatsApp: 15, 'Yono SBI': 5, 'Contact Centre': 10, 'Re-KYC': 10
 };
+const TOTAL_TARGET = Object.values(TARGETS).reduce((a,b) => a+b, 0);
 
 const MAP = [
   { key:'NPS',            id:'nps'     },
@@ -510,13 +687,17 @@ MAP.forEach(({ key, id }) => {
   els[key] = { count: $('c-'+id), pb: $('pb-'+id), btn: $('btn-'+id), card: $('card-'+id) };
 });
 
+const SEAL_CIRC = 2 * Math.PI * 42;
+$('seal-ring-fill').style.strokeDasharray = SEAL_CIRC;
+$('seal-ring-fill').style.strokeDashoffset = SEAL_CIRC;
+
 setInterval(() => $('live-clock').textContent = new Date().toLocaleTimeString(), 1000);
 
 function doLogin() {
   if (!state.loginTime) state.loginTime = new Date().toLocaleTimeString();
   $('login-page').classList.add('hidden');
   $('dashboard').classList.remove('hidden');
-  $('login-ts').textContent = 'Logged in at: ' + state.loginTime;
+  $('login-ts').textContent = state.loginTime;
   save();
 }
 
@@ -567,16 +748,24 @@ function save() {
 
 function refreshUI() {
   $('btn-undo').disabled = state.logs.length === 0;
-  $('btn-undo').textContent = state.logs.length === 0 ? '↩ Nothing to undo' : '↩ Undo';
+
+  let totalCount = 0;
   MAP.forEach(({ key }) => {
     const count = state.counts[key];
+    totalCount += count;
     const e = els[key];
     e.count.textContent = count;
     e.pb.style.width = Math.min(100, Math.round(count / TARGETS[key] * 100)) + '%';
     const met = count >= TARGETS[key];
-    e.btn.classList.toggle('btn-target-met', met);
+    e.btn.classList.toggle('met', met);
     e.card.classList.toggle('met', met);
   });
+
+  const pct = Math.min(100, Math.round((totalCount / TOTAL_TARGET) * 100));
+  $('seal-pct').textContent = pct + '%';
+  $('seal-frac').textContent = `${totalCount} / ${TOTAL_TARGET}`;
+  const offset = SEAL_CIRC - (Math.min(1, totalCount / TOTAL_TARGET) * SEAL_CIRC);
+  $('seal-ring-fill').style.strokeDashoffset = offset;
 }
 
 function showReport() {
@@ -589,7 +778,7 @@ function showReport() {
   $('summary-table').innerHTML = summaryHTML;
   let logsHTML = '<tr><th>#</th><th>Category</th><th>Details</th><th>Time</th></tr>';
   if (state.logs.length === 0) {
-    logsHTML += '<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-muted);">No entries recorded yet.</td></tr>';
+    logsHTML += '<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-low); font-family:\'DM Sans\',sans-serif;">No entries recorded yet.</td></tr>';
   } else {
     state.logs.forEach((log, i) => {
       logsHTML += `<tr><td>${i+1}</td><td>${log.cat}</td><td>${log.val}</td><td>${log.time}</td></tr>`;
@@ -606,20 +795,24 @@ function hideReport() {
 }
 
 /* ============ CONFIRMATION MODAL LOGIC ============ */
-// pendingAction holds which real function to run once "yes" is confirmed
 let pendingAction = null;
+
+const ICONS = {
+  pdf: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>',
+  reset: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.7 3.86a2 2 0 0 0-3.4 0z"/></svg>'
+};
 
 const CONFIRM_CONFIG = {
   pdf: {
     variant: 'confirm-pdf',
-    icon: '↓',
+    icon: ICONS.pdf,
     title: 'Download PDF report',
     msg: 'This will generate and download the PDF summary, then clear all saved data and return you to the main menu.'
   },
   reset: {
     variant: 'confirm-danger',
-    icon: '⚠',
-    title: 'Manual reset',
+    icon: ICONS.reset,
+    title: 'Reset all entries',
     msg: 'This will permanently wipe all recorded data for this session. This action cannot be undone.'
   }
 };
@@ -633,7 +826,7 @@ function openConfirmModal(type, action) {
   modal.classList.remove('confirm-pdf', 'confirm-danger');
   modal.classList.add(cfg.variant);
 
-  $('confirm-icon').textContent = cfg.icon;
+  $('confirm-icon').innerHTML = cfg.icon;
   $('confirm-title').textContent = cfg.title;
   $('confirm-msg').textContent = cfg.msg;
   $('confirm-field').value = '';
@@ -650,7 +843,6 @@ function closeConfirmModal() {
 function handleConfirmSubmit() {
   const typed = $('confirm-field').value.trim().toLowerCase();
   if (typed !== 'yes') {
-    // Silent cancel on wrong input: just clear the field, keep modal open
     $('confirm-field').value = '';
     $('confirm-field').focus();
     return;
@@ -660,7 +852,6 @@ function handleConfirmSubmit() {
   if (typeof action === 'function') action();
 }
 
-// Allow pressing Enter inside the confirm field to submit
 $('confirm-field').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
     e.preventDefault();
