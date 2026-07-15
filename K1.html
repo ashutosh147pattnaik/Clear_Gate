@@ -13,312 +13,296 @@
         }
 
         :root {
-            --bg-deep:    #0b0f1a;
-            --bg-card:    #141927;
-            --bg-card-2:  #1a2035;
-            --border:     rgba(255,255,255,0.08);
-            --border-s:   rgba(255,255,255,0.14);
+            /* Light Lavender Theme Palette */
+            --bg-page:    #f9f8fc; 
+            --bg-card:    #ffffff;
+            --bg-card-h:  #f4f1f9;
+            --bg-header:  #ffffff;
 
-            --text-primary:   #f0f2f8;
-            --text-secondary: #8b95b0;
-            --text-muted:     #4a5270;
+            --border:     rgba(139, 92, 246, 0.12);
+            --border-s:   rgba(139, 92, 246, 0.22);
 
-            --accent:   #6366f1;
-            --accent-2: #818cf8;
+            --text-primary:   #2e243b; /* Deep Eggplant */
+            --text-secondary: #5a4b6e; /* Muted Purple */
+            --text-muted:     #9384a8; /* Soft Lilac Gray */
 
-            --mid-fill:  linear-gradient(135deg, #f59e0b, #f97316);
-            --met-fill:  linear-gradient(135deg, #10b981, #34d399);
+            --accent:       #8b5cf6; /* Vibrant Lavender */
+            --accent-light: #ede9fe;
+            --accent-grad:  linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
 
-            --radius: 14px;
+            --mid-bg:     #fffbeb;
+            --mid-border: rgba(245, 158, 11, 0.25);
+            --mid-color:  #d97706;
+            --mid-fill:   #f59e0b;
+            --mid-name:   #b45309;
+
+            --met-bg:     #f0fdf4;
+            --met-border: rgba(16, 185, 129, 0.25);
+            --met-color:  #059669;
+            --met-fill:   linear-gradient(90deg, #34d399, #059669);
+            --met-name:   #047857;
+
+            --send-bg:    #f0f9ff;
+            --send-bdr:   rgba(14, 165, 233, 0.25);
+            --send-color: #0284c7;
+
+            --reset-bg:   #fff1f2;
+            --reset-bdr:  rgba(244, 63, 94, 0.2);
+            --reset-color:#e11d48;
+
+            --radius: 16px;
         }
 
         body, html {
             min-height: 100vh;
             width: 100%;
             font-family: 'DM Sans', system-ui, sans-serif;
-            background: var(--bg-deep);
+            background: var(--bg-page);
             color: var(--text-primary);
             display: grid;
             place-items: start center;
-            padding: 0 0 48px;
+            padding: 0 0 56px;
             overflow-y: auto;
         }
 
         /* ── HEADER ── */
         header {
             width: 100%;
-            background: #0f1422;
-            border-bottom: 0.5px solid var(--border);
-            padding: 16px 20px;
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--border-s);
+            padding: 14px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.05);
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .brand { display: flex; align-items: center; gap: 10px; }
 
         .brand-icon {
-            width: 34px;
-            height: 34px;
+            width: 32px; height: 32px;
             border-radius: 8px;
-            background: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 600;
-            color: #fff;
-            letter-spacing: 0.5px;
-            flex-shrink: 0;
+            background: var(--accent-grad);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 600; color: #fff;
+            letter-spacing: 0.5px; flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(139, 92, 246, 0.3);
         }
 
         .brand-text { display: flex; flex-direction: column; }
-        .brand-name { font-size: 14px; font-weight: 500; color: var(--text-primary); line-height: 1.2; }
+        .brand-name { font-size: 13px; font-weight: 600; color: var(--text-primary); line-height: 1.2; }
         .brand-sub  { font-size: 11px; color: var(--text-muted); line-height: 1.2; }
 
-        .header-right { display: flex; align-items: center; gap: 10px; }
+        .header-right { display: flex; align-items: center; gap: 12px; }
 
         #live-date {
-            font-size: 12px;
-            color: var(--text-muted);
+            font-size: 12px; color: var(--text-muted);
             font-family: 'DM Mono', monospace;
         }
 
         .logout-btn {
-            background: rgba(255,255,255,0.06);
-            color: var(--text-secondary);
-            border: 0.5px solid var(--border-s);
-            padding: 7px 14px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
+            background: var(--accent-light);
+            color: var(--accent);
+            border: 1px solid var(--border-s);
+            padding: 6px 13px; border-radius: 8px;
+            font-size: 12px; font-weight: 600; cursor: pointer;
             font-family: 'DM Sans', sans-serif;
-            transition: background 0.15s;
+            transition: all 0.2s;
         }
-        .logout-btn:hover { background: rgba(255,255,255,0.10); }
+        .logout-btn:hover { background: #ddd6fe; }
 
         /* ── MAIN CONTENT ── */
         #main-content {
-            width: 94%;
-            max-width: 540px;
-            margin: 0 auto;
-            padding-top: 20px;
+            width: 94%; max-width: 540px;
+            margin: 0 auto; padding-top: 24px;
         }
 
         /* ── LOGIN ── */
         #login-page {
             background: var(--bg-card);
-            border: 0.5px solid var(--border-s);
-            border-radius: 20px;
-            padding: 44px 28px;
+            border: 1px solid var(--border-s);
+            border-radius: 24px;
+            padding: 48px 28px;
             text-align: center;
             margin-top: 40px;
+            box-shadow: 0 12px 32px rgba(139, 92, 246, 0.08);
         }
 
         .logo-mark {
-            width: 60px;
-            height: 60px;
-            border-radius: 14px;
-            background: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 18px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #fff;
+            width: 64px; height: 64px;
+            border-radius: 18px;
+            background: var(--accent-grad);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 16px; font-weight: 700; color: #fff;
             letter-spacing: 1px;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
         }
 
         #login-page h1 {
-            font-size: 1.35rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 6px;
+            font-size: 1.4rem; font-weight: 600;
+            color: var(--text-primary); margin-bottom: 8px;
         }
-
-        #login-page p {
-            color: var(--text-muted);
-            font-size: 0.875rem;
-            margin-bottom: 28px;
-        }
+        #login-page p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 32px; }
 
         .login-btn {
-            width: 100%;
-            padding: 14px;
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
+            width: 100%; padding: 15px;
+            background: var(--accent-grad);
+            color: #fff; border: none; border-radius: 12px;
+            font-size: 15px; font-weight: 600; cursor: pointer;
             font-family: 'DM Sans', sans-serif;
-            transition: opacity 0.15s;
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.25);
+            transition: all 0.2s;
         }
-        .login-btn:hover { opacity: 0.88; }
-        .login-btn:active { opacity: 0.75; transform: scale(0.98); }
+        .login-btn:hover  { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3); }
+        .login-btn:active { transform: scale(0.98); }
 
         .hidden { display: none !important; }
 
-        /* ── DASHBOARD ── */
-        #dashboard {}
-
+        /* ── SECTION LABEL ── */
         .section-label {
-            font-size: 11px;
-            font-weight: 500;
+            font-size: 12px; font-weight: 600;
             color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 12px;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 16px;
         }
 
         /* ── COUNTER GRID ── */
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 16px;
+            gap: 12px; margin-bottom: 20px;
         }
 
         .counter-btn {
             background: var(--bg-card);
-            border: 0.5px solid var(--border);
+            border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 16px 12px 14px;
+            padding: 18px 12px 16px;
             cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            transition: border-color 0.15s, background 0.15s, transform 0.1s;
-            -webkit-user-select: none;
-            user-select: none;
+            display: flex; flex-direction: column;
+            align-items: center; gap: 4px;
+            transition: all 0.2s ease;
+            -webkit-user-select: none; user-select: none;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.04);
         }
 
+        .counter-btn:hover  { 
+            border-color: var(--border-s); 
+            background: var(--bg-card-h); 
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.1); 
+        }
         .counter-btn:active { transform: scale(0.96); }
-        .counter-btn:hover  { border-color: var(--border-s); background: var(--bg-card-2); }
 
-        .cb-icon  { font-size: 1.5rem; margin-bottom: 4px; }
-        .cb-name  { font-size: 12px; font-weight: 500; color: var(--text-secondary); text-align: center; line-height: 1.3; }
-        .cb-target { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+        .cb-icon   { font-size: 1.6rem; margin-bottom: 4px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05)); }
+        .cb-name   { font-size: 13px; font-weight: 600; color: var(--text-secondary); text-align: center; line-height: 1.3; }
+        .cb-target { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
 
         .cb-count {
-            font-size: 1.9rem;
-            font-weight: 500;
+            font-size: 2rem; font-weight: 500;
             color: var(--text-primary);
             font-family: 'DM Mono', monospace;
-            line-height: 1;
-            margin-bottom: 8px;
+            line-height: 1; margin-bottom: 12px;
         }
 
         .pb-wrap {
-            width: 80%;
-            height: 3px;
-            background: rgba(255,255,255,0.07);
-            border-radius: 99px;
-            overflow: hidden;
+            width: 85%; height: 6px;
+            background: var(--accent-light);
+            border-radius: 99px; overflow: hidden;
         }
         .pb-fill {
-            height: 100%;
-            border-radius: 99px;
-            background: var(--accent-2);
-            width: 0%;
-            transition: width 0.3s ease;
+            height: 100%; border-radius: 99px;
+            background: var(--accent);
+            width: 0%; transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
         }
 
         /* MID state */
         .counter-btn.mid {
-            background: #1c1608;
-            border-color: rgba(245,158,11,0.25);
+            background: var(--mid-bg);
+            border-color: var(--mid-border);
         }
-        .counter-btn.mid .cb-count { color: #fbbf24; }
-        .counter-btn.mid .pb-fill  { background: #f59e0b; }
-        .counter-btn.mid .cb-name  { color: #fcd34d; }
+        .counter-btn.mid .cb-count { color: var(--mid-color); }
+        .counter-btn.mid .pb-fill  { background: var(--mid-fill); }
+        .counter-btn.mid .cb-name  { color: var(--mid-name); }
 
         /* MET state */
         .counter-btn.met {
-            background: #0a1f14;
-            border-color: rgba(16,185,129,0.25);
+            background: var(--met-bg);
+            border-color: var(--met-border);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);
         }
-        .counter-btn.met .cb-count { color: #34d399; }
-        .counter-btn.met .pb-fill  { background: #10b981; }
-        .counter-btn.met .cb-name  { color: #6ee7b7; }
+        .counter-btn.met .cb-count { color: var(--met-color); }
+        .counter-btn.met .pb-fill  { background: var(--met-fill); }
+        .counter-btn.met .cb-name  { color: var(--met-name); }
 
         .full-width { grid-column: 1 / -1; }
 
-        /* ── ACTION STRIP ── */
+        /* ── DIVIDER ── */
         .divider {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 4px 0 12px;
-            font-size: 11px;
-            font-weight: 500;
+            display: flex; align-items: center; gap: 10px;
+            margin: 8px 0 16px;
+            font-size: 11px; font-weight: 600;
             color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
+            text-transform: uppercase; letter-spacing: 1px;
         }
-        .divider::before, .divider::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+        .divider::before, .divider::after {
+            content: ''; flex: 1; height: 1px; background: var(--border-s);
+        }
 
-        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        /* ── ACTION BUTTONS ── */
+        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         .act-btn {
-            padding: 13px 10px;
-            border-radius: 10px;
-            border: 0.5px solid var(--border-s);
+            padding: 14px 10px; border-radius: 12px;
+            border: 1px solid var(--border-s);
             background: var(--bg-card);
             color: var(--text-primary);
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
+            font-size: 14px; font-weight: 600; cursor: pointer;
             font-family: 'DM Sans', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            transition: background 0.15s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(139, 92, 246, 0.05);
         }
-        .act-btn:hover  { background: var(--bg-card-2); }
+        .act-btn:hover  { transform: translateY(-1px); box-shadow: 0 6px 12px rgba(139, 92, 246, 0.1); }
         .act-btn:active { transform: scale(0.98); }
 
-        .act-btn.send  { background: #10251b; border-color: rgba(16,185,129,0.3); color: #34d399; }
-        .act-btn.reset { background: #1f1010; border-color: rgba(239,68,68,0.25); color: #f87171; }
-
+        .act-btn.send {
+            background: var(--send-bg);
+            border-color: var(--send-bdr);
+            color: var(--send-color);
+        }
+        .act-btn.send:hover { background: #e0f2fe; }
+        
+        .act-btn.reset {
+            background: var(--reset-bg);
+            border-color: var(--reset-bdr);
+            color: var(--reset-color);
+        }
+        .act-btn.reset:hover { background: #ffe4e6; }
+        
         .act-btn .ab-icon { font-size: 16px; }
 
         /* ── TOAST ── */
         #toast {
-            position: fixed;
-            bottom: -80px;
-            left: 50%;
+            position: fixed; bottom: -80px; left: 50%;
             transform: translateX(-50%);
-            background: var(--bg-card-2);
-            border: 0.5px solid var(--border-s);
-            color: var(--text-primary);
-            padding: 13px 22px;
-            border-radius: 50px;
-            font-size: 13px;
-            font-weight: 500;
-            white-space: nowrap;
-            z-index: 9999;
+            background: var(--text-primary);
+            color: #fff;
+            padding: 14px 24px; border-radius: 50px;
+            font-size: 14px; font-weight: 600;
+            white-space: nowrap; z-index: 9999;
             transition: bottom 0.4s cubic-bezier(0.4,0,0.2,1);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 24px rgba(46, 36, 59, 0.3);
         }
         #toast.show { bottom: 36px; }
     </style>
 </head>
 <body>
 
-<!-- HEADER (shown after login) -->
+<!-- HEADER -->
 <header id="app-header" class="hidden">
     <div class="brand">
         <div class="brand-icon">SBI</div>
@@ -351,7 +335,7 @@
             <div class="counter-btn" id="btn-nps" onclick="increment('nps')">
                 <span class="cb-icon">😊</span>
                 <span class="cb-name">NPS</span>
-                <span class="cb-target">Target: 30</span>
+                <span class="cb-target">Target: 15</span>
                 <div class="cb-count" id="nps">0</div>
                 <div class="pb-wrap"><div class="pb-fill" id="pb-nps"></div></div>
             </div>
@@ -359,7 +343,7 @@
             <div class="counter-btn" id="btn-whatsapp" onclick="increment('whatsapp')">
                 <span class="cb-icon">💬</span>
                 <span class="cb-name">WhatsApp</span>
-                <span class="cb-target">Target: 30</span>
+                <span class="cb-target">Target: 25</span>
                 <div class="cb-count" id="whatsapp">0</div>
                 <div class="pb-wrap"><div class="pb-fill" id="pb-whatsapp"></div></div>
             </div>
@@ -367,7 +351,7 @@
             <div class="counter-btn" id="btn-yonoRegistration" onclick="increment('yonoRegistration')">
                 <span class="cb-icon">📝</span>
                 <span class="cb-name">Yono Reg.</span>
-                <span class="cb-target">Target: 30</span>
+                <span class="cb-target">Target: 10</span>
                 <div class="cb-count" id="yonoRegistration">0</div>
                 <div class="pb-wrap"><div class="pb-fill" id="pb-yonoRegistration"></div></div>
             </div>
@@ -375,7 +359,7 @@
             <div class="counter-btn" id="btn-contactCentre" onclick="increment('contactCentre')">
                 <span class="cb-icon">☎️</span>
                 <span class="cb-name">Contact centre</span>
-                <span class="cb-target">Target: 30</span>
+                <span class="cb-target">Target: 40</span>
                 <div class="cb-count" id="contactCentre">0</div>
                 <div class="pb-wrap"><div class="pb-fill" id="pb-contactCentre"></div></div>
             </div>
@@ -383,7 +367,7 @@
             <div class="counter-btn" id="btn-cbdc" onclick="increment('cbdc')">
                 <span class="cb-icon">💳</span>
                 <span class="cb-name">CBDC</span>
-                <span class="cb-target">Target: 30</span>
+                <span class="cb-target">Target: 5</span>
                 <div class="cb-count" id="cbdc">0</div>
                 <div class="pb-wrap"><div class="pb-fill" id="pb-cbdc"></div></div>
             </div>
@@ -391,7 +375,7 @@
             <div class="counter-btn" id="btn-channelMigration" onclick="increment('channelMigration')">
                 <span class="cb-icon">🔄</span>
                 <span class="cb-name">Migration</span>
-                <span class="cb-target">Target: 30</span>
+                <span class="cb-target">Target: 12</span>
                 <div class="cb-count" id="channelMigration">0</div>
                 <div class="pb-wrap"><div class="pb-fill" id="pb-channelMigration"></div></div>
             </div>
@@ -399,7 +383,7 @@
             <div class="counter-btn" id="btn-yonoReregistration" onclick="increment('yonoReregistration')">
                 <span class="cb-icon">🔐</span>
                 <span class="cb-name">Yono Re-Reg</span>
-                <span class="cb-target">Target: 30</span>
+                <span class="cb-target">Target: 10</span>
                 <div class="cb-count" id="yonoReregistration">0</div>
                 <div class="pb-wrap"><div class="pb-fill" id="pb-yonoReregistration"></div></div>
             </div>
@@ -416,7 +400,7 @@
         <div class="divider">Actions</div>
 
         <div class="actions">
-            <button class="act-btn send"  onclick="exportToWhatsApp()">
+            <button class="act-btn send" onclick="exportToWhatsApp()">
                 <span class="ab-icon">📱</span> Send report
             </button>
             <button class="act-btn reset" onclick="resetData()">
@@ -430,9 +414,9 @@
 
 <script>
     const TARGETS = {
-        nps: 30, whatsapp: 30, yonoRegistration: 30,
-        contactCentre: 30, cbdc: 30, channelMigration: 30,
-        yonoReregistration: 30, rekyc: 20
+        nps: 15, whatsapp: 25, yonoRegistration: 10,
+        contactCentre: 40, cbdc: 5, channelMigration: 12,
+        yonoReregistration: 10, rekyc: 20
     };
 
     const FIELDS = Object.keys(TARGETS);
@@ -484,13 +468,11 @@
         const target = TARGETS[field];
         const mid = Math.floor(target / 2);
         const pct = Math.min(Math.round((val / target) * 100), 100);
-
         document.getElementById('pb-' + field).style.width = pct + '%';
-
         const btn = document.getElementById('btn-' + field);
         btn.classList.remove('mid', 'met');
-        if (val >= target)     btn.classList.add('met');
-        else if (val >= mid)   btn.classList.add('mid');
+        if (val >= target)   btn.classList.add('met');
+        else if (val >= mid) btn.classList.add('mid');
     }
 
     function increment(field) {
@@ -521,7 +503,6 @@
         const today = fmt(new Date());
         const d = {};
         FIELDS.forEach(f => { d[f] = document.getElementById(f).textContent; });
-
         const msg =
             `Date: ${today}\n` +
             `Name: ELIPOMA NAG\n` +
@@ -536,7 +517,6 @@
             `CBDC: ${d.cbdc}\n` +
             `Channel Migration: ${d.channelMigration}\n` +
             `Re-KYC: ${d.rekyc}`;
-
         window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
     }
 
