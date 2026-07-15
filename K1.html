@@ -13,22 +13,22 @@
         }
 
         :root {
-            /* Light Lavender Theme Palette */
-            --bg-page:    #f9f8fc; 
+            /* Modern Emerald Green Theme Palette */
+            --bg-page:    #f4fbf7; /* Soft mint */
             --bg-card:    #ffffff;
-            --bg-card-h:  #f4f1f9;
+            --bg-card-h:  #f0fdf4; /* Slightly richer mint on hover */
             --bg-header:  #ffffff;
 
-            --border:     rgba(139, 92, 246, 0.12);
-            --border-s:   rgba(139, 92, 246, 0.22);
+            --border:     rgba(16, 185, 129, 0.15);
+            --border-s:   rgba(16, 185, 129, 0.25);
 
-            --text-primary:   #2e243b; /* Deep Eggplant */
-            --text-secondary: #5a4b6e; /* Muted Purple */
-            --text-muted:     #9384a8; /* Soft Lilac Gray */
+            --text-primary:   #064e3b; /* Deep Forest Green */
+            --text-secondary: #047857; /* Emerald */
+            --text-muted:     #64748b; /* Cool Slate */
 
-            --accent:       #8b5cf6; /* Vibrant Lavender */
-            --accent-light: #ede9fe;
-            --accent-grad:  linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+            --accent:       #10b981; /* Primary Emerald */
+            --accent-light: #d1fae5; /* Light Emerald for backgrounds */
+            --accent-grad:  linear-gradient(135deg, #34d399 0%, #059669 100%);
 
             --mid-bg:     #fffbeb;
             --mid-border: rgba(245, 158, 11, 0.25);
@@ -36,11 +36,11 @@
             --mid-fill:   #f59e0b;
             --mid-name:   #b45309;
 
-            --met-bg:     #f0fdf4;
-            --met-border: rgba(16, 185, 129, 0.25);
-            --met-color:  #059669;
-            --met-fill:   linear-gradient(90deg, #34d399, #059669);
-            --met-name:   #047857;
+            --met-bg:     #ecfdf5;
+            --met-border: rgba(5, 150, 105, 0.25);
+            --met-color:  #047857;
+            --met-fill:   linear-gradient(90deg, #10b981, #047857);
+            --met-name:   #065f46;
 
             --send-bg:    #f0f9ff;
             --send-bdr:   rgba(14, 165, 233, 0.25);
@@ -77,7 +77,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.05);
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.06);
         }
 
         .brand { display: flex; align-items: center; gap: 10px; }
@@ -89,7 +89,7 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 12px; font-weight: 600; color: #fff;
             letter-spacing: 0.5px; flex-shrink: 0;
-            box-shadow: 0 2px 6px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
         }
 
         .brand-text { display: flex; flex-direction: column; }
@@ -105,14 +105,14 @@
 
         .logout-btn {
             background: var(--accent-light);
-            color: var(--accent);
+            color: var(--text-secondary);
             border: 1px solid var(--border-s);
             padding: 6px 13px; border-radius: 8px;
             font-size: 12px; font-weight: 600; cursor: pointer;
             font-family: 'DM Sans', sans-serif;
             transition: all 0.2s;
         }
-        .logout-btn:hover { background: #ddd6fe; }
+        .logout-btn:hover { background: #bbf7d0; }
 
         /* ── MAIN CONTENT ── */
         #main-content {
@@ -128,7 +128,7 @@
             padding: 48px 28px;
             text-align: center;
             margin-top: 40px;
-            box-shadow: 0 12px 32px rgba(139, 92, 246, 0.08);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.08);
         }
 
         .logo-mark {
@@ -139,7 +139,7 @@
             margin: 0 auto 20px;
             font-size: 16px; font-weight: 700; color: #fff;
             letter-spacing: 1px;
-            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
         }
 
         #login-page h1 {
@@ -154,10 +154,10 @@
             color: #fff; border: none; border-radius: 12px;
             font-size: 15px; font-weight: 600; cursor: pointer;
             font-family: 'DM Sans', sans-serif;
-            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.25);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.2);
             transition: all 0.2s;
         }
-        .login-btn:hover  { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3); }
+        .login-btn:hover  { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25); }
         .login-btn:active { transform: scale(0.98); }
 
         .hidden { display: none !important; }
@@ -187,13 +187,13 @@
             align-items: center; gap: 4px;
             transition: all 0.2s ease;
             -webkit-user-select: none; user-select: none;
-            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.04);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.04);
         }
 
         .counter-btn:hover  { 
             border-color: var(--border-s); 
             background: var(--bg-card-h); 
-            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.1); 
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.08); 
         }
         .counter-btn:active { transform: scale(0.96); }
 
@@ -232,7 +232,7 @@
         .counter-btn.met {
             background: var(--met-bg);
             border-color: var(--met-border);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
         }
         .counter-btn.met .cb-count { color: var(--met-color); }
         .counter-btn.met .pb-fill  { background: var(--met-fill); }
@@ -264,9 +264,9 @@
             font-family: 'DM Sans', sans-serif;
             display: flex; align-items: center; justify-content: center; gap: 8px;
             transition: all 0.2s;
-            box-shadow: 0 2px 6px rgba(139, 92, 246, 0.05);
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.05);
         }
-        .act-btn:hover  { transform: translateY(-1px); box-shadow: 0 6px 12px rgba(139, 92, 246, 0.1); }
+        .act-btn:hover  { transform: translateY(-1px); box-shadow: 0 6px 12px rgba(16, 185, 129, 0.08); }
         .act-btn:active { transform: scale(0.98); }
 
         .act-btn.send {
@@ -295,7 +295,7 @@
             font-size: 14px; font-weight: 600;
             white-space: nowrap; z-index: 9999;
             transition: bottom 0.4s cubic-bezier(0.4,0,0.2,1);
-            box-shadow: 0 8px 24px rgba(46, 36, 59, 0.3);
+            box-shadow: 0 8px 24px rgba(6, 78, 59, 0.25);
         }
         #toast.show { bottom: 36px; }
     </style>
