@@ -6,372 +6,249 @@
 <title>SBI Bank Ops - Target Ledger</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@500;600&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* Ledger — deep navy vault + brass seal */
-  --bg-page:     #0a0f1c;
-  --bg-surface:  #10182b;
-  --bg-surface2: #161f38;
-  --bg-raised:   #1c2645;
+  /* Vibrant Green Theme Palette */
+  --bg-page:       #f2fcf5; /* Soft Mint Background */
+  --bg-surface:    #ffffff;
+  
+  --primary:       #059669; /* Rich Forest/Emerald Green */
+  --primary-hover: #047857;
+  --primary-soft:  #d1fae5;
+  --primary-bdr:   #a7f3d0;
 
-  --line:      #253150;
-  --line-soft: rgba(201, 169, 97, 0.14);
+  --success:       #10b981; /* Bright Emerald for completed */
+  --success-soft:  #ecfdf5;
+  --success-bdr:   #6ee7b7;
 
-  --gold:        #c9a961;
-  --gold-strong: #e0c380;
-  --gold-soft:   rgba(201, 169, 97, 0.13);
-  --gold-bdr:    rgba(201, 169, 97, 0.35);
+  --danger:        #ef4444;
+  --danger-soft:   #fee2e2;
+  --danger-bdr:    #fecaca;
 
-  --amber:      #e0a860;
-  --amber-soft: rgba(224, 168, 96, 0.14);
-  --amber-bdr:  rgba(224, 168, 96, 0.4);
+  --warning:       #f59e0b;
+  --warning-soft:  #fef3c7;
+  --warning-bdr:   #fde68a;
 
-  --emerald:      #3ecf8e;
-  --emerald-soft: rgba(62, 207, 142, 0.14);
-  --emerald-bdr:  rgba(62, 207, 142, 0.32);
+  --text-main:     #064e3b; /* Deep Forest Green for high contrast text */
+  --text-muted:    #475569;
+  --line:          #e2e8f0;
 
-  --danger:      #e0776b;
-  --danger-soft: rgba(224, 119, 107, 0.14);
-  --danger-bdr:  rgba(224, 119, 107, 0.4);
-
-  --text-hi:  #f4f1ea;
-  --text-mid: #9aa5bd;
-  --text-low: #64708c;
-
-  --r-sm: 8px;
-  --r-md: 14px;
-  --r-lg: 20px;
+  --r-sm:  16px; /* softer inputs */
+  --r-lg:  28px; /* ultra rounded cards */
+  --r-pill: 100px; /* eye-catching pill buttons */
+  
+  --shadow-sm: 0 4px 12px rgba(5, 150, 105, 0.08);
+  --shadow-md: 0 8px 24px rgba(5, 150, 105, 0.12);
+  --shadow-lg: 0 16px 40px rgba(5, 150, 105, 0.16);
 }
 
 *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
 html { -webkit-font-smoothing: antialiased; }
-
 body {
   font-family: 'DM Sans', sans-serif;
   margin: 0;
-  padding-bottom: 48px;
+  padding-bottom: 100px; 
   min-height: 100vh;
-  background:
-    radial-gradient(1200px 500px at 50% -10%, rgba(201,169,97,0.07), transparent 60%),
-    var(--bg-page);
-  color: var(--text-hi);
+  background: var(--bg-page);
+  color: var(--text-main);
 }
 
-.serif { font-family: 'Fraunces', serif; }
-.mono  { font-family: 'DM Mono', monospace; }
+.mono { font-family: 'DM Mono', monospace; }
 
 /* HEADER */
 header {
-  background: rgba(10, 15, 28, 0.92);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line);
-  padding: 14px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  padding: 16px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 1px 0 rgba(5, 150, 105, 0.1);
 }
-
-.brand { display: flex; align-items: center; gap: 10px; }
+.brand { display: flex; align-items: center; gap: 12px; }
 .brand-seal {
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  border: 1.5px solid var(--gold);
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--primary-soft); color: var(--primary);
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Fraunces', serif;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--gold-strong);
-  flex-shrink: 0;
+  font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600;
 }
-.brand-text { display: flex; flex-direction: column; line-height: 1.15; }
-.brand-name { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600; color: var(--text-hi); }
-.brand-sub { font-size: 10px; letter-spacing: 0.6px; color: var(--text-low); text-transform: uppercase; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.2; }
+.brand-name { font-weight: 700; font-size: 16px; color: var(--text-main); }
+.brand-sub { font-size: 11px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
 
 #live-clock {
-  font-family: 'DM Mono', monospace;
-  font-size: 11.5px;
-  color: var(--gold-strong);
-  background: var(--gold-soft);
-  border: 1px solid var(--gold-bdr);
-  padding: 5px 10px;
-  border-radius: 20px;
-  letter-spacing: 0.3px;
+  font-size: 13px; font-weight: 700; color: #ffffff;
+  background: var(--primary); padding: 6px 14px; border-radius: var(--r-pill);
+  box-shadow: var(--shadow-sm);
 }
 
 /* LAYOUT */
-#main-content { padding: 18px 16px; max-width: 500px; margin: auto; }
+#main-content { padding: 20px 16px; max-width: 500px; margin: auto; }
 .hidden { display: none !important; }
 
 /* LOGIN */
-#login-page {
-  margin-top: 54px;
-  text-align: center;
-}
+#login-page { margin-top: 60px; text-align: center; }
 .login-seal {
-  width: 64px; height: 64px;
-  margin: 0 auto 22px;
-  border-radius: 50%;
-  border: 1.5px solid var(--gold);
+  width: 80px; height: 80px; margin: 0 auto 24px; border-radius: 50%;
+  background: var(--primary-soft); color: var(--primary);
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Fraunces', serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--gold-strong);
-  background: var(--gold-soft);
+  font-family: 'Fraunces', serif; font-size: 32px; font-weight: 600;
+  box-shadow: var(--shadow-md);
 }
-#login-page h2 {
-  font-family: 'Fraunces', serif;
-  color: var(--text-hi);
-  font-size: 1.6rem;
-  font-weight: 600;
-  margin: 0 0 6px;
-  letter-spacing: 0.2px;
+#login-page h2 { font-size: 1.8rem; font-weight: 700; margin: 0 0 8px; color: var(--text-main); }
+#login-page p { color: var(--text-muted); font-size: 1rem; margin-bottom: 36px; }
+
+/* CARDS */
+.card {
+  background: var(--bg-surface);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--primary-bdr);
 }
-#login-page p {
-  color: var(--text-mid);
-  font-size: 0.85rem;
-  margin-bottom: 30px;
-  letter-spacing: 0.2px;
-}
-#login-page .btn-primary { width: 100%; max-width: 200px; margin: 0 auto; }
 
 /* SEAL PROGRESS CARD */
-.seal-card {
-  background: linear-gradient(180deg, var(--bg-surface2), var(--bg-surface));
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  padding: 22px 20px 18px;
-  margin-bottom: 18px;
-  position: relative;
-  overflow: hidden;
-}
-.seal-card::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(220px 140px at 85% -20%, rgba(201,169,97,0.10), transparent 70%);
-  pointer-events: none;
-}
-.seal-row { display: flex; align-items: center; gap: 18px; position: relative; }
-
-.seal-ring-wrap { position: relative; width: 92px; height: 92px; flex-shrink: 0; }
+.seal-row { display: flex; align-items: center; gap: 24px; }
+.seal-ring-wrap { position: relative; width: 96px; height: 96px; flex-shrink: 0; }
 .seal-ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.seal-track { fill: none; stroke: var(--line); stroke-width: 8; }
-.seal-fill  { fill: none; stroke: var(--gold); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
-.seal-center {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-.seal-pct { font-family: 'DM Mono', monospace; font-size: 17px; font-weight: 500; color: var(--gold-strong); line-height: 1; }
-.seal-frac { font-family: 'DM Mono', monospace; font-size: 9.5px; color: var(--text-low); margin-top: 3px; }
+.seal-track { fill: none; stroke: var(--bg-page); stroke-width: 8; }
+.seal-fill  { fill: none; stroke: var(--primary); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
+.seal-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.seal-pct { font-size: 22px; font-weight: 700; color: var(--primary); line-height: 1; }
+.seal-frac { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-top: 4px; }
 
 .seal-meta { flex: 1; min-width: 0; }
-.seal-meta-title {
-  font-family: 'Fraunces', serif;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-hi);
-  margin-bottom: 8px;
-}
+.seal-meta-title { font-size: 17px; font-weight: 700; color: var(--text-main); margin-bottom: 12px; }
 .seal-meta-line {
-  display: flex; justify-content: space-between; gap: 8px;
-  font-size: 11.5px;
-  color: var(--text-mid);
-  padding: 3px 0;
-  border-bottom: 1px dotted var(--line);
+  display: flex; justify-content: space-between; font-size: 13px;
+  color: var(--text-muted); padding: 5px 0; border-bottom: 1px dashed var(--primary-bdr);
 }
 .seal-meta-line:last-child { border-bottom: none; }
-.seal-meta-line span:last-child { font-family: 'DM Mono', monospace; color: var(--text-hi); text-align: right; }
+.seal-meta-line span:last-child { font-weight: 700; color: var(--primary); }
 
 /* EXCEL TRACKER CARD */
-.excel-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  padding: 16px;
-  margin-bottom: 18px;
-}
-.excel-controls-row {
-  display: flex;
-  gap: 10px;
-}
-.excel-times-row {
-  display: flex;
-  justify-content: center;
-  margin-top: 12px;
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  color: var(--gold-strong);
-  padding: 0 4px;
-}
+.excel-controls-row { display: flex; gap: 12px; }
+.excel-times-row { display: flex; justify-content: center; margin-top: 16px; font-size: 14px; font-weight: 700; color: var(--primary); }
 
 /* DIVIDER */
-.divider {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin: 24px 2px 12px;
-  color: var(--gold-strong);
-  font-family: 'Fraunces', serif;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-}
-.divider::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line-soft), transparent); }
+.divider { font-size: 14px; font-weight: 700; color: var(--primary); margin: 32px 4px 16px; text-transform: uppercase; letter-spacing: 0.5px; }
 
 /* LEDGER ROWS */
-.ledger {
-  background: var(--bg-surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-}
 .ledger-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--line);
-  transition: background 0.15s;
+  display: flex; align-items: center; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--primary-bdr);
 }
-.ledger-row:last-child { border-bottom: none; }
-.ledger-row.met { background: var(--emerald-soft); }
-
+.ledger-row:last-child { border-bottom: none; padding-bottom: 0; }
 .ledger-row-main { flex: 1; min-width: 0; }
-.ledger-label-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px; gap: 8px; }
-.ledger-name { font-family: 'Fraunces', serif; font-size: 14.5px; font-weight: 600; color: var(--text-hi); }
-.ledger-target { font-family: 'DM Mono', monospace; font-size: 10.5px; color: var(--text-low); white-space: nowrap; }
-.ledger-track { width: 100%; height: 4px; background: var(--line); border-radius: 99px; overflow: hidden; }
-.ledger-fill { height: 100%; border-radius: 99px; background: var(--gold); transition: width 0.4s ease; }
-.ledger-row.met .ledger-fill { background: var(--emerald); }
+.ledger-label-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.ledger-name { font-size: 16px; font-weight: 700; color: var(--text-main); }
+.ledger-target { font-size: 12px; font-weight: 700; color: var(--primary); background: var(--primary-soft); padding: 4px 10px; border-radius: var(--r-pill); }
+.ledger-track { width: 100%; height: 8px; background: var(--bg-page); border-radius: var(--r-pill); overflow: hidden; }
+.ledger-fill { height: 100%; border-radius: var(--r-pill); background: var(--primary); transition: width 0.4s ease, background-color 0.3s; }
+.ledger-row.met .ledger-fill { background: var(--success); }
+.ledger-value { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.ledger-count { font-size: 1.4rem; font-weight: 700; color: var(--primary); min-width: 30px; text-align: right; }
+.ledger-row.met .ledger-count { color: var(--success); }
 
-.ledger-value { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.ledger-count { font-family: 'DM Mono', monospace; font-size: 1.15rem; font-weight: 500; color: var(--text-hi); min-width: 26px; text-align: right; }
-.ledger-row.met .ledger-count { color: var(--emerald); }
-
-.ledger-btn {
-  width: auto; padding: 8px 12px; font-size: 12px; font-weight: 500; border-radius: var(--r-sm);
-  background: var(--gold-soft); border: 1px solid var(--gold-bdr); color: var(--gold-strong); cursor: pointer;
-  font-family: 'DM Sans', sans-serif; transition: background 0.12s, transform 0.1s;
-}
-.ledger-btn:active { transform: scale(0.96); }
-.ledger-btn:hover { background: rgba(201,169,97,0.22); }
-.ledger-btn.met { background: var(--emerald-soft); border-color: var(--emerald-bdr); color: var(--emerald); }
-
-/* GENERIC BUTTONS */
+/* BUTTONS (EYE CATCHING SHAPES) */
 button {
-  padding: 10px; border: 1px solid var(--line); border-radius: var(--r-sm);
-  background: var(--bg-raised); color: var(--text-hi); font-weight: 500; cursor: pointer;
-  font-size: 13px; width: 100%; font-family: 'DM Sans', sans-serif;
-  transition: background 0.12s, transform 0.1s, border-color 0.12s;
+  height: 52px; border-radius: var(--r-pill); font-size: 15px; font-weight: 700; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; width: 100%;
+  border: none; transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s, box-shadow 0.2s;
 }
-button:active { transform: scale(0.98); }
-button:hover  { background: var(--bg-surface2); }
-button:disabled { opacity: 0.45; cursor: not-allowed; }
+button:active { transform: scale(0.94); }
+button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-.btn-primary { background: var(--gold); color: #1a1305; border-color: transparent; font-weight: 600; padding: 12px; letter-spacing: 0.2px; }
-.btn-primary:hover { background: var(--gold-strong); }
-.btn-primary:disabled { background: var(--bg-raised); color: var(--text-low); border-color: var(--line); }
+.btn-primary { background: var(--primary); color: white; box-shadow: 0 6px 16px rgba(5, 150, 105, 0.25); }
+.btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15); }
+.btn-danger { background: var(--danger-soft); color: var(--danger); }
+.btn-cancel { background: var(--bg-page); color: var(--text-main); margin-top: 12px; }
+.btn-cancel:hover { background: var(--primary-bdr); }
 
-.btn-danger { background: var(--danger-soft); color: var(--danger); border-color: var(--danger-bdr); font-weight: 600; padding: 12px; }
-.btn-danger:hover { background: rgba(224, 119, 107, 0.25); }
+.ledger-btn { width: auto; padding: 0 20px; background: var(--primary-soft); color: var(--primary); height: 42px; box-shadow: none; border-radius: var(--r-pill); }
+.ledger-row.met .ledger-btn { background: var(--success); color: white; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
 
-/* ACTIONS STRIP */
-.actions-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.action-btn {
-  background: var(--bg-surface); border: 1px solid var(--line); border-radius: var(--r-md);
-  padding: 12px 6px 10px; display: flex; flex-direction: column; align-items: center; gap: 6px;
-  font-size: 10.5px; font-weight: 500; color: var(--text-mid); letter-spacing: 0.1px;
+/* FLOATING ACTION BAR */
+.floating-action-bar {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px);
+  border-radius: var(--r-pill); padding: 10px 20px; display: flex; gap: 16px;
+  box-shadow: var(--shadow-lg); border: 1px solid var(--primary-bdr); z-index: 100;
 }
-.action-btn svg { width: 18px; height: 18px; stroke: var(--gold-strong); fill: none; stroke-width: 1.7; }
-.action-btn:hover { background: var(--bg-surface2); border-color: var(--gold-bdr); color: var(--text-hi); }
-.action-btn:disabled svg { stroke: var(--text-low); }
+.fab-btn {
+  width: 54px; height: 54px; border-radius: 50%; background: var(--primary-soft);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary);
+}
+.fab-btn svg { width: 22px; height: 22px; stroke: var(--primary); fill: none; stroke-width: 2.2; }
+.fab-btn:hover { background: var(--primary); color: white; }
+.fab-btn:hover svg { stroke: white; }
+.fab-btn:disabled svg { stroke: var(--text-muted); opacity: 0.5; }
 
-/* RESET LINK */
-.reset-link-wrap { text-align: center; margin-top: 22px; }
-.reset-link {
-  background: none; border: none; width: auto; color: var(--text-low); font-size: 11.5px; padding: 8px;
-  text-decoration: underline; text-decoration-color: transparent; transition: color 0.15s, text-decoration-color 0.15s;
+/* BOTTOM SHEETS (Modals) */
+.overlay {
+  position: fixed; inset: 0; background: rgba(6, 78, 59, 0.6); backdrop-filter: blur(3px);
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 2000;
 }
-.reset-link:hover { color: var(--danger); text-decoration-color: var(--danger); background: none; }
-
-/* MODALS */
-.modal {
-  position: fixed; inset: 0; background: rgba(5, 8, 16, 0.78); backdrop-filter: blur(4px);
-  display: flex; justify-content: center; align-items: center; z-index: 2000; padding: 20px;
+.overlay.show { opacity: 1; pointer-events: auto; }
+.bottom-sheet {
+  position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-surface);
+  padding: 28px 24px 44px; border-radius: 32px 32px 0 0;
+  transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  z-index: 2001; box-shadow: var(--shadow-lg); max-width: 500px; margin: auto;
+  border-top: 1px solid var(--primary-bdr);
 }
-.modal-box {
-  background: var(--bg-surface2); border: 1px solid var(--line); padding: 26px 22px;
-  border-radius: var(--r-lg); width: 100%; max-width: 320px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6);
-}
-.modal-box h4 { font-family: 'Fraunces', serif; margin: 0 0 18px; font-size: 1.05rem; font-weight: 600; color: var(--text-hi); }
+.overlay.show .bottom-sheet { transform: translateY(0); }
+.bottom-sheet h4 { font-size: 1.25rem; font-weight: 700; margin: 0 0 24px; text-align: center; color: var(--primary); }
 
 /* TOGGLE */
-.toggle-wrap { display: flex; gap: 6px; margin-bottom: 16px; background: var(--bg-page); padding: 5px; border-radius: 10px; border: 1px solid var(--line); }
-.toggle-btn { background: transparent; color: var(--text-mid); flex: 1; border: none; padding: 8px; border-radius: 7px; font-size: 12.5px; font-weight: 500; }
-.toggle-btn.active { background: var(--gold-soft); color: var(--gold-strong); border: 1px solid var(--gold-bdr); }
-.toggle-btn:hover { background: var(--bg-surface2); }
+.toggle-wrap { display: flex; background: var(--bg-page); padding: 6px; border-radius: var(--r-pill); margin-bottom: 24px; border: 1px solid var(--primary-bdr); }
+.toggle-btn { background: transparent; color: var(--text-muted); flex: 1; height: 44px; border-radius: var(--r-pill); font-weight: 700; }
+.toggle-btn.active { background: var(--primary); color: white; box-shadow: var(--shadow-sm); }
 
 /* INPUT */
 #val-field, #confirm-field {
-  width: 100%; padding: 12px 12px; margin-bottom: 14px; border: 1px solid var(--line);
-  border-radius: var(--r-sm); font-size: 1rem; font-family: 'DM Mono', monospace; color: var(--text-hi);
-  background: var(--bg-page); outline: none;
+  width: 100%; height: 56px; padding: 0 20px; margin-bottom: 20px;
+  border: 2px solid var(--primary-bdr); border-radius: var(--r-pill);
+  font-size: 1.2rem; font-family: 'DM Mono', monospace; font-weight: 600; color: var(--text-main);
+  background: var(--bg-page); outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  text-align: center;
 }
-#val-field:focus { border-color: var(--gold); }
+#val-field:focus, #confirm-field:focus { border-color: var(--primary); background: var(--bg-surface); box-shadow: 0 0 0 4px var(--primary-soft); }
 
 /* DUPLICATE WARNING */
 .dup-warning {
-  display: flex; align-items: flex-start; gap: 9px; background: var(--amber-soft); border: 1px solid var(--amber-bdr);
-  border-radius: var(--r-sm); padding: 10px 11px; margin: -4px 0 14px; font-size: 11.5px; line-height: 1.5;
-  color: var(--amber); text-align: left;
+  display: flex; gap: 10px; background: var(--warning-soft); border: 1px solid var(--warning-bdr);
+  border-radius: var(--r-sm); padding: 14px; margin-top: -8px; margin-bottom: 20px;
+  font-size: 13px; line-height: 1.5; color: #925e00; text-align: left;
 }
-.dup-warning svg { width: 15px; height: 15px; stroke: var(--amber); fill: none; stroke-width: 2; flex-shrink: 0; margin-top: 1px; }
-.dup-warning strong { color: var(--gold-strong); }
-.btn-primary.dup-pending { background: var(--amber); }
-.btn-primary.dup-pending:hover { background: var(--amber); opacity: 0.9; }
+.dup-warning svg { width: 20px; height: 20px; stroke: #925e00; flex-shrink: 0; }
+.btn-primary.dup-pending { background: var(--warning); color: #111827; box-shadow: none; }
 
-.btn-cancel { background: none; color: var(--text-low); border: none; margin-top: 6px; font-size: 12.5px; padding: 8px; font-weight: 500; width: 100%; }
-.btn-cancel:hover { background: var(--bg-page); color: var(--text-mid); }
+/* CONFIRM MODAL SPECIFICS */
+.confirm-icon {
+  width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 20px;
+  display: flex; align-items: center; justify-content: center;
+}
+.confirm-icon svg { width: 28px; height: 28px; stroke-width: 2.5; fill: none; }
+.confirm-msg { text-align: center; font-size: 15px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.5; font-weight: 500; }
+
+.confirm-pdf .confirm-icon { background: var(--primary-soft); color: var(--primary); }
+.confirm-pdf .confirm-icon svg { stroke: var(--primary); }
+
+.confirm-danger .confirm-icon { background: var(--danger-soft); color: var(--danger); }
+.confirm-danger .confirm-icon svg { stroke: var(--danger); }
+.confirm-danger #confirm-ok { background: var(--danger); box-shadow: 0 6px 16px rgba(239, 68, 68, 0.25); }
 
 /* REPORT PAGE */
-.report-back { background: var(--bg-surface); border: 1px solid var(--line); color: var(--text-mid); font-size: 12.5px; padding: 10px; margin-bottom: 14px; }
-.report-back:hover { color: var(--text-hi); background: var(--bg-surface2); }
-.report-card { background: var(--bg-surface); border: 1px solid var(--line); padding: 20px; border-radius: var(--r-lg); margin-bottom: 14px; }
-.report-card h3 { font-family: 'Fraunces', serif; margin-top: 0; margin-bottom: 14px; color: var(--text-hi); font-size: 1rem; font-weight: 600; }
-.report-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-.report-table th, .report-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: left; color: var(--text-hi); }
-.report-table th { background: var(--bg-page); color: var(--text-mid); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
-.report-table td { font-family: 'DM Mono', monospace; }
-.report-table td:first-child, .report-table th:first-child { font-family: 'DM Sans', sans-serif; }
-.report-table tr:last-child td { border-bottom: none; }
+.report-back { background: white; color: var(--primary); border: 2px solid var(--primary-bdr); margin-bottom: 20px; font-weight: 700; }
+.report-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.report-table th, .report-table td { padding: 14px 12px; border-bottom: 1px solid var(--primary-bdr); text-align: left; }
+.report-table th { background: var(--primary-soft); color: var(--primary); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.report-table td { color: var(--text-main); font-weight: 500; }
 .table-responsive { overflow-x: auto; }
 
-/* CONFIRM MODAL */
-.confirm-box { text-align: center; }
-.confirm-icon { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
-.confirm-icon svg { width: 20px; height: 20px; stroke-width: 2; fill: none; }
-.confirm-box h4 { text-align: center; }
-.confirm-msg { font-size: 13px; color: var(--text-mid); margin: 0 0 18px; line-height: 1.55; }
-.confirm-hint { font-size: 10.5px; color: var(--text-low); margin: -10px 0 14px; letter-spacing: 0.2px; }
-#confirm-field { text-align: center; }
-
-.confirm-pdf .modal-box { border-color: var(--emerald-bdr); }
-.confirm-pdf .confirm-icon { background: var(--emerald-soft); }
-.confirm-pdf .confirm-icon svg { stroke: var(--emerald); }
-.confirm-pdf #confirm-field:focus { border-color: var(--emerald); }
-.confirm-pdf #confirm-ok { background: var(--emerald); border-color: transparent; color: #062018; }
-.confirm-pdf #confirm-ok:hover { opacity: 0.9; background: var(--emerald); }
-.confirm-danger .modal-box { border-color: var(--danger-bdr); }
-.confirm-danger .confirm-icon { background: var(--danger-soft); }
-.confirm-danger .confirm-icon svg { stroke: var(--danger); }
-.confirm-danger #confirm-field:focus { border-color: var(--danger); }
-.confirm-danger #confirm-ok { background: var(--danger); border-color: transparent; color: #2a0a06; }
-.confirm-danger #confirm-ok:hover { opacity: 0.9; background: var(--danger); }
+.reset-link-wrap { text-align: center; margin: 32px 0 40px; }
+.reset-link { background: none; color: var(--text-muted); height: auto; text-decoration: underline; font-size: 13px; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -393,15 +270,15 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
   <div id="login-page">
     <div class="login-seal">SB</div>
     <h2>Operations Ledger</h2>
-    <p>SBI Bank — secure branch access</p>
-    <button class="btn-primary" onclick="doLogin()">Enter ledger</button>
+    <p>Secure branch access</p>
+    <button class="btn-primary" style="max-width: 260px; margin: 0 auto;" onclick="doLogin()">Enter Ledger</button>
   </div>
 
   <!-- MAIN DASHBOARD -->
   <div id="dashboard" class="hidden">
 
     <!-- SIGNATURE SEAL PROGRESS CARD -->
-    <div class="seal-card">
+    <div class="card">
       <div class="seal-row">
         <div class="seal-ring-wrap">
           <svg viewBox="0 0 100 100">
@@ -410,38 +287,38 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
           </svg>
           <div class="seal-center">
             <span class="seal-pct" id="seal-pct">0%</span>
-            <span class="seal-frac" id="seal-frac">0 / 50</span>
+            <span class="seal-frac mono" id="seal-frac">0 / 50</span>
           </div>
         </div>
         <div class="seal-meta">
-          <div class="seal-meta-title">Today's entries</div>
+          <div class="seal-meta-title">Today's Entries</div>
           <div class="seal-meta-line"><span>Logged in</span><span id="login-ts">—</span></div>
-          <div class="seal-meta-line"><span>Branch</span><span>KOMTALPETA · 17978</span></div>
+          <div class="seal-meta-line"><span>Branch</span><span>KOMTALPETA</span></div>
         </div>
       </div>
     </div>
 
-    <!-- NEW: EXCEL SIGN IN / OUT CARD -->
-    <div class="excel-card">
+    <!-- EXCEL TRACKER CARD -->
+    <div class="card">
       <div class="excel-controls-row">
-        <button id="excel-btn-main" class="btn-primary" onclick="handleExcelMain()">Excel sign in</button>
-        <button id="excel-btn-logout" class="btn-danger hidden" onclick="handleExcelLogOut()">Log out</button>
+        <button id="excel-btn-main" class="btn-primary" onclick="handleExcelMain()">Excel Sign In</button>
+        <button id="excel-btn-logout" class="btn-danger hidden" onclick="handleExcelLogOut()">Log Out</button>
       </div>
       <div id="excel-times-container" class="hidden excel-times-row">
         <span id="ex-status">Status: Active</span>
       </div>
     </div>
 
-    <div class="divider">Target ledger</div>
+    <div class="divider">Target Ledger</div>
 
-    <div class="ledger">
+    <div class="card" style="padding: 0 24px;">
       <div class="ledger-row" id="card-nps">
         <div class="ledger-row-main">
           <div class="ledger-label-row"><span class="ledger-name">NPS</span><span class="ledger-target mono">Target 10</span></div>
           <div class="ledger-track"><div class="ledger-fill" id="pb-nps"></div></div>
         </div>
         <div class="ledger-value">
-          <span class="ledger-count" id="c-nps">0</span>
+          <span class="ledger-count mono" id="c-nps">0</span>
           <button id="btn-nps" class="ledger-btn" onclick="addSimple('NPS')">+1</button>
         </div>
       </div>
@@ -452,7 +329,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
           <div class="ledger-track"><div class="ledger-fill" id="pb-wa"></div></div>
         </div>
         <div class="ledger-value">
-          <span class="ledger-count" id="c-wa">0</span>
+          <span class="ledger-count mono" id="c-wa">0</span>
           <button id="btn-wa" class="ledger-btn" onclick="openModal('WhatsApp')">Log</button>
         </div>
       </div>
@@ -463,18 +340,18 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
           <div class="ledger-track"><div class="ledger-fill" id="pb-yono"></div></div>
         </div>
         <div class="ledger-value">
-          <span class="ledger-count" id="c-yono">0</span>
+          <span class="ledger-count mono" id="c-yono">0</span>
           <button id="btn-yono" class="ledger-btn" onclick="openModal('Yono SBI')">Log</button>
         </div>
       </div>
 
       <div class="ledger-row" id="card-contact">
         <div class="ledger-row-main">
-          <div class="ledger-label-row"><span class="ledger-name">Contact centre</span><span class="ledger-target mono">Target 10</span></div>
+          <div class="ledger-label-row"><span class="ledger-name">Contact Centre</span><span class="ledger-target mono">Target 10</span></div>
           <div class="ledger-track"><div class="ledger-fill" id="pb-contact"></div></div>
         </div>
         <div class="ledger-value">
-          <span class="ledger-count" id="c-contact">0</span>
+          <span class="ledger-count mono" id="c-contact">0</span>
           <button id="btn-contact" class="ledger-btn" onclick="openModal('Contact Centre')">Log</button>
         </div>
       </div>
@@ -485,41 +362,41 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
           <div class="ledger-track"><div class="ledger-fill" id="pb-cm"></div></div>
         </div>
         <div class="ledger-value">
-          <span class="ledger-count" id="c-cm">0</span>
+          <span class="ledger-count mono" id="c-cm">0</span>
           <button id="btn-cm" class="ledger-btn" onclick="addSimple('Re-KYC')">+1</button>
         </div>
       </div>
     </div>
 
-    <div class="divider">Actions</div>
+    <div class="reset-link-wrap"><button class="reset-link" onclick="resetApp()">Reset all entries for today</button></div>
 
-    <div class="actions-strip">
-      <button id="btn-undo" class="action-btn" onclick="undoLast()">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg> Undo
+    <!-- FLOATING ACTION BAR -->
+    <div class="floating-action-bar">
+      <button id="btn-undo" class="fab-btn" onclick="undoLast()" title="Undo">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
       </button>
-      <button class="action-btn" onclick="showReport()">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"/><path d="M9 12h6M9 16h6M9 8h2"/></svg> Report
+      <button class="fab-btn" onclick="showReport()" title="Report">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h8l4 4v14H7z"/><path d="M9 12h6M9 16h6M9 8h2"/></svg>
       </button>
-      <button class="action-btn" onclick="generatePDF()">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg> PDF
+      <button class="fab-btn" onclick="generatePDF()" title="PDF">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
       </button>
-      <button class="action-btn" onclick="shareWA()">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> Share
+      <button class="fab-btn" onclick="shareWA()" title="Share">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
       </button>
     </div>
 
-    <div class="reset-link-wrap"><button class="reset-link" onclick="resetApp()">Reset all entries</button></div>
   </div>
 
   <!-- REPORT PAGE -->
   <div id="report-page" class="hidden">
-    <button class="report-back" onclick="hideReport()">← Back to ledger</button>
-    <div class="report-card">
-      <h3>Summary</h3>
+    <button class="report-back" onclick="hideReport()">← Back to Ledger</button>
+    <div class="card" style="padding: 0;">
+      <h4 style="padding: 24px 24px 0; margin: 0; font-weight: 700; color: var(--primary);">Summary</h4>
       <table class="report-table" id="summary-table"></table>
     </div>
-    <div class="report-card">
-      <h3>Detailed logs</h3>
+    <div class="card" style="padding: 0;">
+      <h4 style="padding: 24px 24px 0; margin: 0; font-weight: 700; color: var(--primary);">Detailed Logs</h4>
       <div class="table-responsive">
         <table class="report-table" id="logs-table"></table>
       </div>
@@ -528,9 +405,9 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 
 </div>
 
-<!-- INPUT MODAL -->
-<div id="modal" class="modal hidden">
-  <div class="modal-box">
+<!-- BOTTOM SHEET: INPUT MODAL -->
+<div id="modal-overlay" class="overlay" onclick="closeModal(event)">
+  <div class="bottom-sheet" id="modal-sheet" onclick="event.stopPropagation()">
     <h4 id="modal-title">Entry details</h4>
     <div class="toggle-wrap">
       <button id="t-acc" class="toggle-btn active" onclick="setType('Account Number')">Account</button>
@@ -541,20 +418,19 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
       <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.7 3.86a2 2 0 0 0-3.4 0z"/></svg>
       <span id="dup-warning-text"></span>
     </div>
-    <button class="btn-primary" id="save-btn" onclick="saveEntry()">Save entry</button>
+    <button class="btn-primary" id="save-btn" onclick="saveEntry()">Save Entry</button>
     <button class="btn-cancel"  onclick="closeModal()">Cancel</button>
   </div>
 </div>
 
-<!-- CONFIRMATION MODAL -->
-<div id="confirm-modal" class="modal hidden">
-  <div class="modal-box confirm-box">
+<!-- BOTTOM SHEET: CONFIRMATION MODAL -->
+<div id="confirm-overlay" class="overlay" onclick="closeConfirmModal(event)">
+  <div class="bottom-sheet" id="confirm-sheet" onclick="event.stopPropagation()">
     <div class="confirm-icon" id="confirm-icon"></div>
-    <h4 id="confirm-title">Confirm action</h4>
+    <h4 id="confirm-title">Confirm Action</h4>
     <p class="confirm-msg" id="confirm-msg">Are you sure you want to continue?</p>
-    <p class="confirm-hint">Type <strong>yes</strong> below to proceed</p>
-    <input type="text" id="confirm-field" placeholder="Type yes to confirm" autocomplete="off">
-    <button class="btn-primary" id="confirm-ok" onclick="handleConfirmSubmit()">Confirm</button>
+    <input type="text" id="confirm-field" placeholder="Type YES to confirm" autocomplete="off">
+    <button class="btn-primary" id="confirm-ok" onclick="handleConfirmSubmit()">Confirm Action</button>
     <button class="btn-cancel" onclick="closeConfirmModal()">Cancel</button>
   </div>
 </div>
@@ -573,12 +449,11 @@ const MAP = [
   { key:'Re-KYC',         id:'cm'      }
 ];
 
-// Added new variables for pausing and resuming
-let state = JSON.parse(localStorage.getItem('sbi_v14')) || {
+let state = JSON.parse(localStorage.getItem('sbi_v16_green')) || {
   counts: { NPS:0, WhatsApp:0, 'Yono SBI':0, 'Contact Centre':0, 'Other Forms':0, 'Re-KYC':0 },
   logs: [], loginTime: null,
   excelSignIn: null, excelLogOut: null,
-  excelBreaks: [], // Stores an array of { start: 'time', end: 'time' }
+  excelBreaks: [],
   excelIsPaused: false,
   brName:'SBI KOMTALPETA', brCode:'17978', userName:'ASHUTOSH PATTNAIK'
 };
@@ -610,18 +485,13 @@ function doLogin() {
 /* ============ EXCEL PAUSE / PLAY LOGIC ============ */
 function handleExcelMain() {
   const now = new Date().toLocaleTimeString();
-  
   if (!state.excelSignIn) {
-    // 1. Initial Sign In
     state.excelSignIn = now;
   } else if (!state.excelIsPaused) {
-    // 2. Clicked Pause
     state.excelIsPaused = true;
     state.excelBreaks.push({ start: now, end: null });
   } else {
-    // 3. Clicked Resume
     state.excelIsPaused = false;
-    // Mark the end time on the most recent break
     if (state.excelBreaks.length > 0) {
       state.excelBreaks[state.excelBreaks.length - 1].end = now;
     }
@@ -631,13 +501,10 @@ function handleExcelMain() {
 
 function handleExcelLogOut() {
   const now = new Date().toLocaleTimeString();
-  
-  // If they click log out while on a break, close the break automatically
   if (state.excelIsPaused && state.excelBreaks.length > 0) {
     state.excelBreaks[state.excelBreaks.length - 1].end = now;
     state.excelIsPaused = false;
   }
-  
   state.excelLogOut = now;
   save();
 }
@@ -648,7 +515,7 @@ function addSimple(cat) {
   save();
 }
 
-/* ============ DUPLICATE-ENTRY WARNING ============ */
+/* ============ MODAL LOGIC ============ */
 let dupConfirmed = false;
 
 function findDuplicate(val, category) {
@@ -658,18 +525,19 @@ function findDuplicate(val, category) {
 function resetDupWarning() {
   dupConfirmed = false;
   $('dup-warning').classList.add('hidden');
-  $('save-btn').textContent = 'Save entry';
+  $('save-btn').textContent = 'Save Entry';
   $('save-btn').classList.remove('dup-pending');
 }
 
 function openModal(cat) {
   activeCat = cat;
-  $('modal-title').textContent = cat + ' entry';
+  $('modal-title').textContent = cat + ' Entry';
   $('val-field').value = '';
   setType('Account Number');
   resetDupWarning();
-  $('modal').classList.remove('hidden');
-  setTimeout(() => $('val-field').focus(), 100);
+  
+  $('modal-overlay').classList.add('show');
+  setTimeout(() => $('val-field').focus(), 150);
 }
 
 function setType(type) {
@@ -688,9 +556,9 @@ function saveEntry() {
   const dup = findDuplicate(val, activeCat);
   if (dup && !dupConfirmed) {
     dupConfirmed = true;
-    $('dup-warning-text').innerHTML = `Already logged as <strong>${dup.cat}</strong> at ${dup.time}. Tap Save again to log it anyway.`;
+    $('dup-warning-text').innerHTML = `Already logged as <strong>${dup.cat}</strong> at ${dup.time}. Tap Save again to ignore.`;
     $('dup-warning').classList.remove('hidden');
-    $('save-btn').textContent = 'Save anyway';
+    $('save-btn').textContent = 'Save Anyway';
     $('save-btn').classList.add('dup-pending');
     return;
   }
@@ -708,13 +576,14 @@ function undoLast() {
   save();
 }
 
-function closeModal() {
-  $('modal').classList.add('hidden');
+function closeModal(e) {
+  if (e && e.target !== $('modal-overlay')) return; 
+  $('modal-overlay').classList.remove('show');
   resetDupWarning();
 }
 
 function save() {
-  localStorage.setItem('sbi_v14', JSON.stringify(state));
+  localStorage.setItem('sbi_v16_green', JSON.stringify(state));
   refreshUI();
 }
 
@@ -730,7 +599,12 @@ function refreshUI() {
     e.pb.style.width = Math.min(100, Math.round(count / TARGETS[key] * 100)) + '%';
     const met = count >= TARGETS[key];
     e.btn.classList.toggle('met', met);
-    e.card.classList.toggle('met', met);
+    
+    if (met) {
+      e.btn.closest('.ledger-row').classList.add('met');
+    } else {
+      e.btn.closest('.ledger-row').classList.remove('met');
+    }
   });
 
   const pct = Math.min(100, Math.round((totalCount / TOTAL_TARGET) * 100));
@@ -746,10 +620,11 @@ function refreshUI() {
   const exContainer = $('excel-times-container');
   
   if (state.excelLogOut) {
-    btnMain.textContent = 'Excel logged out';
+    btnMain.textContent = 'Excel Logged Out';
     btnMain.disabled = true;
-    btnMain.style.background = 'var(--bg-raised)';
-    btnMain.style.color = 'var(--text-low)';
+    btnMain.style.background = 'var(--bg-page)';
+    btnMain.style.color = 'var(--text-muted)';
+    btnMain.style.boxShadow = 'none';
     btnLogout.classList.add('hidden');
     exContainer.classList.remove('hidden');
     exStatus.textContent = 'Session complete.';
@@ -758,21 +633,26 @@ function refreshUI() {
     exContainer.classList.remove('hidden');
     
     if (state.excelIsPaused) {
-      btnMain.textContent = 'Resume';
-      btnMain.style.background = 'var(--amber)';
-      btnMain.style.color = '#1a1305';
-      exStatus.textContent = 'Status: Paused';
+      btnMain.textContent = 'Resume Work';
+      btnMain.style.background = 'var(--warning)';
+      btnMain.style.color = '#111827';
+      btnMain.style.boxShadow = '0 6px 16px rgba(245, 158, 11, 0.25)';
+      exStatus.textContent = 'Status: On Break ⏸';
+      exStatus.style.color = 'var(--warning)';
     } else {
-      btnMain.textContent = 'Pause';
-      btnMain.style.background = 'var(--gold)';
-      btnMain.style.color = '#1a1305';
-      exStatus.textContent = 'Status: Active';
+      btnMain.textContent = 'Take a Break';
+      btnMain.style.background = 'var(--primary)';
+      btnMain.style.color = '#ffffff';
+      btnMain.style.boxShadow = '0 6px 16px rgba(5, 150, 105, 0.25)';
+      exStatus.textContent = 'Status: Active Session ▶';
+      exStatus.style.color = 'var(--primary)';
     }
   } else {
-    btnMain.textContent = 'Excel sign in';
+    btnMain.textContent = 'Excel Sign In';
     btnMain.disabled = false;
-    btnMain.style.background = 'var(--gold)';
-    btnMain.style.color = '#1a1305';
+    btnMain.style.background = 'var(--primary)';
+    btnMain.style.color = '#ffffff';
+    btnMain.style.boxShadow = '0 6px 16px rgba(5, 150, 105, 0.25)';
     btnLogout.classList.add('hidden');
     exContainer.classList.add('hidden');
   }
@@ -782,13 +662,13 @@ function showReport() {
   $('dashboard').classList.add('hidden');
   $('report-page').classList.remove('hidden');
   let summaryHTML = '<tr><th>Category</th><th>Count</th><th>Target</th></tr>';
-  MAP.forEach(({ key }) => { summaryHTML += `<tr><td>${key}</td><td><b>${state.counts[key]}</b></td><td>${TARGETS[key]}</td></tr>`; });
+  MAP.forEach(({ key }) => { summaryHTML += `<tr><td>${key}</td><td class="mono"><b>${state.counts[key]}</b></td><td class="mono">${TARGETS[key]}</td></tr>`; });
   $('summary-table').innerHTML = summaryHTML;
   let logsHTML = '<tr><th>#</th><th>Category</th><th>Details</th><th>Time</th></tr>';
   if (state.logs.length === 0) {
-    logsHTML += '<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-low); font-family:\'DM Sans\',sans-serif;">No entries recorded yet.</td></tr>';
+    logsHTML += '<tr><td colspan="4" style="text-align:center; padding: 30px; color: var(--text-muted);">No entries recorded yet.</td></tr>';
   } else {
-    state.logs.forEach((log, i) => { logsHTML += `<tr><td>${i+1}</td><td>${log.cat}</td><td>${log.val}</td><td>${log.time}</td></tr>`; });
+    state.logs.forEach((log, i) => { logsHTML += `<tr><td>${i+1}</td><td>${log.cat}</td><td class="mono">${log.val}</td><td class="mono">${log.time}</td></tr>`; });
   }
   $('logs-table').innerHTML = logsHTML;
   window.scrollTo(0,0);
@@ -802,31 +682,36 @@ function hideReport() {
 
 /* ============ CONFIRMATION MODAL LOGIC ============ */
 let pendingAction = null;
-
 const ICONS = {
   pdf: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>',
   reset: '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L14.7 3.86a2 2 0 0 0-3.4 0z"/></svg>'
 };
-
 const CONFIRM_CONFIG = {
-  pdf: { variant: 'confirm-pdf', icon: ICONS.pdf, title: 'Download PDF report', msg: 'This will generate and download the PDF summary, then clear all saved data and return you to the main menu.' },
-  reset: { variant: 'confirm-danger', icon: ICONS.reset, title: 'Reset all entries', msg: 'This will permanently wipe all recorded data for this session. This action cannot be undone.' }
+  pdf: { variant: 'confirm-pdf', icon: ICONS.pdf, title: 'Download PDF Report', msg: 'This will generate the PDF summary and then clear all saved data for this session.' },
+  reset: { variant: 'confirm-danger', icon: ICONS.reset, title: 'Reset All Entries', msg: 'This will permanently wipe all recorded data for today. This action cannot be undone.' }
 };
 
 function openConfirmModal(type, action) {
   const cfg = CONFIRM_CONFIG[type];
   pendingAction = action;
-  const modal = $('confirm-modal');
-  modal.classList.remove('hidden', 'confirm-pdf', 'confirm-danger');
-  modal.classList.add(cfg.variant);
+  
+  $('confirm-overlay').classList.remove('confirm-pdf', 'confirm-danger');
+  $('confirm-overlay').classList.add(cfg.variant);
   $('confirm-icon').innerHTML = cfg.icon;
   $('confirm-title').textContent = cfg.title;
   $('confirm-msg').textContent = cfg.msg;
   $('confirm-field').value = '';
-  setTimeout(() => $('confirm-field').focus(), 100);
+  
+  $('confirm-overlay').classList.add('show');
+  setTimeout(() => $('confirm-field').focus(), 150);
 }
 
-function closeConfirmModal() { $('confirm-modal').classList.add('hidden'); $('confirm-field').value = ''; pendingAction = null; }
+function closeConfirmModal(e) {
+  if (e && e.target !== $('confirm-overlay')) return;
+  $('confirm-overlay').classList.remove('show');
+  $('confirm-field').value = ''; 
+  pendingAction = null; 
+}
 
 function handleConfirmSubmit() {
   const typed = $('confirm-field').value.trim().toLowerCase();
@@ -848,17 +733,17 @@ function doGeneratePDF() {
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-GB');
   
-  doc.setFontSize(16); doc.setTextColor(0,51,102);
-  doc.text('SBI Bank Summary Report', 14, 15);
+  doc.setFontSize(18); doc.setTextColor(5, 150, 105); // Forest Green Match
+  doc.text('SBI Bank Summary Report', 14, 16);
   
-  doc.setFontSize(10); doc.setTextColor(100);
-  doc.text(`Login Time: ${state.loginTime || 'N/A'}`, 14, 22);
-  doc.text(`Date: ${dateStr}`, 80, 22);
+  doc.setFontSize(10); doc.setTextColor(71, 85, 105); // Slate
+  doc.text(`Login Time: ${state.loginTime || 'N/A'}`, 14, 24);
+  doc.text(`Date: ${dateStr}`, 80, 24);
   
   // ---> Start Green Text for Timeline <---
-  doc.setTextColor(34, 139, 34); 
+  doc.setTextColor(16, 185, 129); // Bright Emerald Green
   
-  let currentY = 28;
+  let currentY = 32;
   
   if (state.excelSignIn) {
     doc.text(`Sign In: ${state.excelSignIn}`, 14, currentY);
@@ -877,36 +762,35 @@ function doGeneratePDF() {
     doc.text(`Log Out: ${state.excelLogOut}`, 14, currentY);
     currentY += 6;
   }
-  // ---> End Green Text <---
   
-  // Set Text Color back to standard Dark Navy for the tables
-  doc.setTextColor(0, 51, 102); 
+  // Reset text color for tables
+  doc.setTextColor(6, 78, 59); // Deep Green
   
   doc.autoTable({
     startY: currentY + 4,
     head: [['Category','Count','Target']],
     body: MAP.map(({ key }) => [key, state.counts[key], TARGETS[key]]),
-    headStyles: { fillColor: [0,51,102] },
+    headStyles: { fillColor: [5, 150, 105] },
     theme: 'grid'
   });
   
-  const afterSummary = doc.lastAutoTable.finalY + 8;
-  doc.setFontSize(12); doc.setTextColor(0,51,102);
-  doc.text('Detailed log', 14, afterSummary);
+  const afterSummary = doc.lastAutoTable.finalY + 10;
+  doc.setFontSize(14); doc.setTextColor(5, 150, 105);
+  doc.text('Detailed Logs', 14, afterSummary);
   
   doc.autoTable({
-    startY: afterSummary + 4,
-    head: [['S.No','Details (action time)','Value / Action']],
+    startY: afterSummary + 5,
+    head: [['S.No','Details (Action Time)','Value / Action']],
     body: state.logs.map((l, i) => [i+1, `${l.cat} [${l.time}]`, l.val]),
-    headStyles: { fillColor: [0,51,102] },
+    headStyles: { fillColor: [5, 150, 105] },
     theme: 'grid'
   });
   
   doc.save(`SB_${dateStr.replace(/\//g,'_')}.pdf`);
   setTimeout(() => {
     localStorage.clear();
-    alert('Report saved. Returning to main menu.');
-    window.location.href = 'index.html'; 
+    alert('Report generated successfully. Returning to main menu.');
+    window.location.reload(); 
   }, 1500);
 }
 
@@ -931,7 +815,7 @@ function resetApp() { openConfirmModal('reset', doResetApp); }
 
 function doResetApp() {
   localStorage.clear();
-  window.location.href = 'index.html'; 
+  window.location.reload(); 
 }
 
 window.onload = () => {
