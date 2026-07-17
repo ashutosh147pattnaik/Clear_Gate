@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- Configured to scale perfectly to the device's native dimensions -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>SBI Bank Ops - Target Ledger</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -10,28 +9,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* SBI Corporate Theme */
-  --sbi-blue:        #004b87;
-  --sbi-blue-light:  #e6f0fa;
-  --sbi-blue-hover:  #003366;
+  /* Midnight Obsidian & Electric Blue Theme (Dark Mode) */
+  --sbi-blue:        #3b82f6; /* Vibrant Electric Blue */
+  --sbi-blue-light:  rgba(59, 130, 246, 0.15);
+  --sbi-blue-hover:  #2563eb;
   
-  --bg-main:         #f1f5f9;
-  --surface:         #ffffff;
+  --bg-main:         #0f172a; /* Deep Slate Background */
+  --surface:         #1e293b; /* Elevated Slate Surface */
   
-  --text-main:       #0f172a;
-  --text-muted:      #64748b;
-  --border:          #cbd5e1;
+  --text-main:       #f8fafc; /* Crisp White Text */
+  --text-muted:      #94a3b8; /* Soft Gray Blue Text */
+  --border:          #334155; /* Subtle Dark Borders */
 
-  --success:         #059669;
-  --success-light:   #d1fae5;
-  --danger:          #e11d48;
-  --danger-light:    #ffe4e6;
-  --warning:         #d97706;
+  --success:         #10b981; /* Glowing Emerald */
+  --success-light:   rgba(16, 185, 129, 0.15);
+  --danger:          #f43f5e; /* Vibrant Rose */
+  --danger-light:    rgba(244, 63, 94, 0.15);
+  --warning:         #f59e0b; /* Bright Amber */
+  --warning-light:   rgba(245, 158, 11, 0.15);
 
   --radius-sm:  clamp(8px, 2vw, 12px);
   --radius-md:  clamp(12px, 3vw, 20px);
   
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -55,11 +55,11 @@ body {
 
 /* HEADER */
 header {
-  background: var(--sbi-blue);
-  color: white;
+  background: var(--surface);
+  color: var(--text-main);
   padding: max(16px, env(safe-area-inset-top)) 20px 16px;
   display: flex; justify-content: space-between; align-items: center;
-  box-shadow: 0 2px 8px rgba(0,75,135,0.2);
+  border-bottom: 1px solid var(--border);
   z-index: 10;
   flex-shrink: 0;
 }
@@ -67,29 +67,30 @@ header {
 .brand-seal {
   width: clamp(32px, 8vw, 40px); 
   height: clamp(32px, 8vw, 40px); 
-  border-radius: 6px;
-  background: white; color: var(--sbi-blue);
+  border-radius: 8px;
+  background: var(--sbi-blue); color: white;
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: clamp(14px, 4vw, 18px);
 }
 .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
 .brand-name { font-weight: 600; font-size: clamp(14px, 4vw, 17px); letter-spacing: 0.5px;}
-.brand-sub { font-size: clamp(10px, 2.5vw, 12px); color: #94a3b8; text-transform: uppercase; }
+.brand-sub { font-size: clamp(10px, 2.5vw, 12px); color: var(--sbi-blue); text-transform: uppercase; font-weight: 600;}
 
 #live-clock {
-  font-size: clamp(12px, 3.5vw, 14px); font-weight: 600; background: rgba(0,0,0,0.2);
+  font-size: clamp(12px, 3.5vw, 14px); font-weight: 600; 
+  background: var(--sbi-blue-light); color: var(--sbi-blue);
   padding: 6px 12px; border-radius: 6px;
 }
 
 /* LOGIN */
 #login-page { 
   height: 100%; display: flex; flex-direction: column; 
-  align-items: center; justify-content: center; background: white;
+  align-items: center; justify-content: center; background: var(--bg-main);
 }
 .login-seal {
   width: clamp(80px, 20vw, 120px); 
   height: clamp(80px, 20vw, 120px); 
-  margin-bottom: 24px; border-radius: 20px;
+  margin-bottom: 24px; border-radius: 24px;
   background: var(--sbi-blue-light); color: var(--sbi-blue);
   display: flex; align-items: center; justify-content: center;
   font-size: clamp(32px, 8vw, 48px); font-weight: 700; box-shadow: var(--shadow);
@@ -156,7 +157,7 @@ header {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius-md); padding: clamp(12px, 3vw, 20px);
   display: flex; flex-direction: column; justify-content: space-between;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: border-color 0.3s;
+  box-shadow: var(--shadow); transition: border-color 0.3s;
 }
 .widget.met { border-color: var(--success); background: var(--success-light); }
 
@@ -164,7 +165,7 @@ header {
 .w-title { font-size: clamp(13px, 3.5vw, 16px); font-weight: 600; color: var(--text-muted); }
 .w-target { font-size: clamp(10px, 2.5vw, 12px); background: var(--sbi-blue-light); color: var(--sbi-blue); padding: 4px 8px; border-radius: 6px; font-weight: 600; }
 .widget.met .w-title { color: var(--success); }
-.widget.met .w-target { background: white; color: var(--success); }
+.widget.met .w-target { background: var(--success); color: white; }
 
 /* Centered Body for Tall Screens */
 .w-body { 
@@ -205,7 +206,7 @@ header {
 
 /* MODALS / OVERLAYS */
 .overlay {
-  position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(6px);
   opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 1000;
 }
 .overlay.show { opacity: 1; pointer-events: auto; }
@@ -214,35 +215,36 @@ header {
   padding: 30px 24px max(30px, env(safe-area-inset-bottom)); border-radius: 24px 24px 0 0;
   transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   z-index: 1001; max-width: 600px; margin: auto;
+  border-top: 1px solid var(--border);
 }
 .overlay.show .bottom-sheet { transform: translateY(0); }
-.bottom-sheet h4 { font-size: clamp(1.1rem, 4vw, 1.4rem); font-weight: 600; margin: 0 0 20px; color: var(--sbi-blue); }
+.bottom-sheet h4 { font-size: clamp(1.1rem, 4vw, 1.4rem); font-weight: 600; margin: 0 0 20px; color: var(--text-main); }
 
-.toggle-wrap { display: flex; background: var(--bg-main); padding: 6px; border-radius: var(--radius-sm); margin-bottom: 20px; }
+.toggle-wrap { display: flex; background: var(--bg-main); padding: 6px; border-radius: var(--radius-sm); margin-bottom: 20px; border: 1px solid var(--border); }
 .toggle-btn { flex: 1; height: clamp(40px, 6vh, 50px); border: none; border-radius: var(--radius-sm); background: transparent; color: var(--text-muted); font-weight: 600; font-size: clamp(14px, 3.5vw, 16px);}
-.toggle-btn.active { background: white; color: var(--sbi-blue); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.toggle-btn.active { background: var(--border); color: var(--text-main); }
 
 .input-field {
   width: 100%; height: clamp(50px, 7vh, 60px); padding: 0 20px; margin-bottom: 20px;
   border: 1px solid var(--border); border-radius: var(--radius-sm);
   font-size: clamp(1.1rem, 4vw, 1.3rem); font-family: 'Roboto Mono', monospace;
-  background: var(--bg-main); outline: none; text-align: center;
+  background: var(--bg-main); outline: none; text-align: center; color: var(--text-main);
 }
-.input-field:focus { border-color: var(--sbi-blue); background: white; }
+.input-field:focus { border-color: var(--sbi-blue); }
 
 .modal-btn {
   width: 100%; height: clamp(48px, 6vh, 56px); border: none; border-radius: var(--radius-sm);
   font-size: clamp(14px, 4vw, 16px); font-weight: 600; cursor: pointer; margin-bottom: 12px;
 }
 .modal-btn.primary { background: var(--sbi-blue); color: white; }
-.modal-btn.cancel { background: var(--bg-main); color: var(--text-main); }
+.modal-btn.cancel { background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border);}
 .modal-btn.danger { background: var(--danger); color: white; }
 
 /* DUPLICATE WARNING */
 .dup-warning {
-  display: flex; gap: 10px; background: #fffbeb; border: 1px solid #fde68a;
+  display: flex; gap: 10px; background: var(--warning-light); border: 1px solid var(--warning);
   border-radius: var(--radius-sm); padding: 14px; margin-top: -8px; margin-bottom: 20px;
-  font-size: clamp(12px, 3vw, 14px); color: #b45309; text-align: left;
+  font-size: clamp(12px, 3vw, 14px); color: var(--warning); text-align: left;
 }
 .dup-warning svg { width: 20px; height: 20px; stroke: currentColor; flex-shrink: 0; }
 
@@ -258,9 +260,9 @@ header {
 .confirm-msg { text-align: center; font-size: clamp(13px, 3.5vw, 15px); color: var(--text-muted); margin-bottom: 24px; }
 
 /* REPORT PAGE */
-#report-page { overflow-y: auto; height: 100%; padding: clamp(12px, 3vw, 20px); background: var(--surface); max-width: 800px; margin: 0 auto; width: 100%;}
-.report-back { background: var(--sbi-blue-light); color: var(--sbi-blue); border: none; height: clamp(44px, 6vh, 50px); border-radius: var(--radius-sm); font-weight: 600; margin-bottom: 20px; width: 100%; cursor: pointer;}
-.report-section { border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 20px; overflow: hidden; }
+#report-page { overflow-y: auto; height: 100%; padding: clamp(12px, 3vw, 20px); background: var(--bg-main); max-width: 800px; margin: 0 auto; width: 100%;}
+.report-back { background: var(--surface); color: var(--text-main); border: 1px solid var(--border); height: clamp(44px, 6vh, 50px); border-radius: var(--radius-sm); font-weight: 600; margin-bottom: 20px; width: 100%; cursor: pointer;}
+.report-section { border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 20px; overflow: hidden; background: var(--surface); }
 .report-section h4 { background: var(--bg-main); margin: 0; padding: 16px; font-size: clamp(13px, 3.5vw, 15px); font-weight: 700; color: var(--sbi-blue); border-bottom: 1px solid var(--border); }
 .report-table { width: 100%; border-collapse: collapse; font-size: clamp(12px, 3vw, 14px); }
 .report-table th, .report-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); text-align: left; }
@@ -404,7 +406,6 @@ header {
     Share
   </button>
   
-  <!-- NEW RESET ALL BUTTON -->
   <button class="nav-item danger-icon" onclick="resetApp()">
     <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
     Reset All
@@ -471,7 +472,7 @@ const MAP = [
   { key:'Re-KYC',         id:'cm'      }
 ];
 
-let state = JSON.parse(localStorage.getItem('sbi_v19_blue')) || {
+let state = JSON.parse(localStorage.getItem('sbi_v20_dark')) || {
   counts: { NPS:0, WhatsApp:0, 'Yono SBI':0, 'Contact Centre':0, 'Other Forms':0, 'Re-KYC':0 },
   logs: [], loginTime: null,
   excelSignIn: null, excelLogOut: null,
@@ -599,7 +600,7 @@ function closeModal(e) {
 }
 
 function save() {
-  localStorage.setItem('sbi_v19_blue', JSON.stringify(state));
+  localStorage.setItem('sbi_v20_dark', JSON.stringify(state));
   refreshUI();
 }
 
@@ -636,7 +637,7 @@ function refreshUI() {
   
   if (state.excelLogOut) {
     btnMain.textContent = 'Logged Out';
-    btnMain.disabled = true; btnMain.style.background = 'var(--bg-main)'; btnMain.style.color = 'var(--text-muted)';
+    btnMain.disabled = true; btnMain.style.background = 'var(--border)'; btnMain.style.color = 'var(--text-muted)';
     btnLogout.classList.add('hidden'); exStatus.classList.remove('hidden'); exStatus.textContent = 'Session Closed';
   } else if (state.excelSignIn) {
     btnLogout.classList.remove('hidden'); exStatus.classList.remove('hidden');
@@ -706,6 +707,7 @@ $('confirm-field').addEventListener('keydown', (e) => { if (e.key === 'Enter') {
 function generatePDF() { openConfirmModal('pdf', doGeneratePDF); }
 function doGeneratePDF() {
   const doc = new jsPDF(); const dateStr = new Date().toLocaleDateString('en-GB');
+  // I kept the PDF colors light and traditional so it's readable if printed.
   doc.setFontSize(18); doc.setTextColor(0, 75, 135); doc.text('SBI Ops Ledger Report', 14, 16);
   doc.setFontSize(10); doc.setTextColor(100, 116, 139); doc.text(`Login: ${state.loginTime || '-'} | Date: ${dateStr}`, 14, 24);
   
