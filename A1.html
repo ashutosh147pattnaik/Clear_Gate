@@ -145,13 +145,15 @@ header {
 .ex-btn-out { background: var(--danger); flex: 0.5; }
 #ex-status { font-size: clamp(10px, 2vw, 12px); font-weight: 600; color: var(--text-muted); margin-top: 6px; text-align: center; }
 
-/* GRID LAYOUT FOR WIDGETS - STRETCHES TO FILL TALL SCREENS */
+/* GRID LAYOUT FOR WIDGETS */
 .widgets-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(3, 1fr); 
+  grid-auto-rows: minmax(110px, 1fr); 
   gap: clamp(8px, 1.5vh, 16px); 
   flex: 1; min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 10px;
 }
 .widget {
   background: var(--surface); border: 1px solid var(--border);
@@ -162,18 +164,17 @@ header {
 .widget.met { border-color: var(--success); background: var(--success-light); }
 
 .w-header { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-.w-title { font-size: clamp(12px, 3vw, 15px); font-weight: 600; color: var(--text-muted); }
+.w-title { font-size: clamp(11px, 3vw, 13px); font-weight: 600; color: var(--text-muted); }
 .w-target { font-size: clamp(9px, 2vw, 11px); background: var(--sbi-blue-light); color: var(--sbi-blue); padding: 4px 6px; border-radius: 4px; font-weight: 600; }
 .widget.met .w-title { color: var(--success); }
 .widget.met .w-target { background: var(--success); color: white; }
 
-/* Centered Body for Tall Screens */
 .w-body { 
   display: flex; flex-direction: column; justify-content: center; align-items: center; 
-  flex: 1; min-height: 0;
+  flex: 1; min-height: 0; margin: 4px 0;
 }
 .w-count { 
-  font-size: clamp(2rem, 6vh, 4rem); 
+  font-size: clamp(1.8rem, 5vh, 3.5rem); 
   font-weight: 700; line-height: 1; color: var(--text-main); 
 }
 .widget.met .w-count { color: var(--success); }
@@ -209,10 +210,10 @@ header {
   header { padding: max(8px, env(safe-area-inset-top)) 12px 8px; }
   #dashboard { padding: 8px; gap: 8px; }
   .top-dashboard-row { gap: 8px; }
-  .widgets-grid { gap: 8px; }
+  .widgets-grid { gap: 8px; grid-auto-rows: minmax(100px, 1fr); }
   .widget, .summary-card, .excel-card { padding: 8px; }
   .w-btn, .ex-btn { height: 32px; font-size: 11px; }
-  .w-count { font-size: 1.8rem; }
+  .w-count { font-size: 1.6rem; }
   .seal-ring-wrap { width: 40px; height: 40px; }
   .bottom-nav { padding: 8px 0 max(8px, env(safe-area-inset-bottom)); }
 }
@@ -321,7 +322,7 @@ header {
       </div>
       <div class="summary-meta">
         <div class="summary-title">Progress</div>
-        <div class="summary-frac mono" id="seal-frac">0 / 50</div>
+        <div class="summary-frac mono" id="seal-frac">0 / 40</div>
       </div>
     </div>
 
@@ -334,67 +335,200 @@ header {
     </div>
   </div>
 
-  <!-- WIDGET GRID (Adapts to fill space) -->
+  <!-- WIDGET GRID (Scrolling setup) -->
   <div class="widgets-grid">
     
-    <!-- Widget: NPS -->
-    <div class="widget ledger-row" id="card-nps">
+    <!-- 1. Yono SBI -->
+    <div class="widget ledger-row" id="card-yono">
       <div class="w-header">
-        <span class="w-title">NPS</span>
-        <span class="w-target mono">T:10</span>
+        <span class="w-title">Yono Registration</span>
+        <span class="w-target mono">T:5</span>
       </div>
-      <div class="w-body">
-        <span class="w-count mono" id="c-nps">0</span>
-      </div>
-      <button id="btn-nps" class="w-btn" onclick="addSimple('NPS')">+ 1</button>
+      <div class="w-body"><span class="w-count mono" id="c-yono">0</span></div>
+      <button id="btn-yono" class="w-btn" onclick="openModal('Yono SBI')">LOG</button>
     </div>
 
-    <!-- Widget: WhatsApp -->
+    <!-- 2. WhatsApp -->
     <div class="widget ledger-row" id="card-wa">
       <div class="w-header">
         <span class="w-title">WhatsApp</span>
         <span class="w-target mono">T:15</span>
       </div>
-      <div class="w-body">
-        <span class="w-count mono" id="c-wa">0</span>
-      </div>
+      <div class="w-body"><span class="w-count mono" id="c-wa">0</span></div>
       <button id="btn-wa" class="w-btn" onclick="openModal('WhatsApp')">LOG</button>
     </div>
 
-    <!-- Widget: Yono SBI -->
-    <div class="widget ledger-row" id="card-yono">
-      <div class="w-header">
-        <span class="w-title">Yono SBI</span>
-        <span class="w-target mono">T:5</span>
-      </div>
-      <div class="w-body">
-        <span class="w-count mono" id="c-yono">0</span>
-      </div>
-      <button id="btn-yono" class="w-btn" onclick="openModal('Yono SBI')">LOG</button>
-    </div>
-
-    <!-- Widget: Contact Centre -->
+    <!-- 3. Contact Centre -->
     <div class="widget ledger-row" id="card-contact">
       <div class="w-header">
-        <span class="w-title">Contact Ctr</span>
+        <span class="w-title">Contact Ctr Migration</span>
         <span class="w-target mono">T:10</span>
       </div>
-      <div class="w-body">
-        <span class="w-count mono" id="c-contact">0</span>
-      </div>
+      <div class="w-body"><span class="w-count mono" id="c-contact">0</span></div>
       <button id="btn-contact" class="w-btn" onclick="openModal('Contact Centre')">LOG</button>
     </div>
 
-    <!-- Widget: Re-KYC (Spans 2 columns structurally) -->
-    <div class="widget ledger-row" id="card-cm" style="grid-column: 1 / -1;">
+    <!-- 4. NPS -->
+    <div class="widget ledger-row" id="card-nps">
       <div class="w-header">
-        <span class="w-title">Re-KYC</span>
+        <span class="w-title">NPS (Feedback)</span>
         <span class="w-target mono">T:10</span>
       </div>
-      <div class="w-body">
-        <span class="w-count mono" id="c-cm">0</span>
+      <div class="w-body"><span class="w-count mono" id="c-nps">0</span></div>
+      <button id="btn-nps" class="w-btn" onclick="addSimple('NPS')">+ 1</button>
+    </div>
+
+    <!-- 5. FORM 15 G/H Submission -->
+    <div class="widget ledger-row" id="card-form15">
+      <div class="w-header">
+        <span class="w-title">Form 15 G/H</span>
       </div>
+      <div class="w-body"><span class="w-count mono" id="c-form15">0</span></div>
+      <button id="btn-form15" class="w-btn" onclick="addSimple('FORM 15 G/H Submission')">+ 1</button>
+    </div>
+
+    <!-- 6. ATM Card Issuance -->
+    <div class="widget ledger-row" id="card-atm">
+      <div class="w-header">
+        <span class="w-title">ATM Card Issuance</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-atm">0</span></div>
+      <button id="btn-atm" class="w-btn" onclick="addSimple('ATM Card Issuance')">+ 1</button>
+    </div>
+
+    <!-- 7. Cheque Book Request -->
+    <div class="widget ledger-row" id="card-cheque">
+      <div class="w-header">
+        <span class="w-title">Cheque Book Req</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-cheque">0</span></div>
+      <button id="btn-cheque" class="w-btn" onclick="addSimple('Cheque Book Request')">+ 1</button>
+    </div>
+
+    <!-- 8. Re-KYC update -->
+    <div class="widget ledger-row" id="card-cm">
+      <div class="w-header">
+        <span class="w-title">RE-KYC update</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-cm">0</span></div>
       <button id="btn-cm" class="w-btn" onclick="addSimple('Re-KYC')">+ 1</button>
+    </div>
+
+    <!-- 9. Nominee update -->
+    <div class="widget ledger-row" id="card-nominee">
+      <div class="w-header">
+        <span class="w-title">Nominee update</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-nominee">0</span></div>
+      <button id="btn-nominee" class="w-btn" onclick="addSimple('Nominee update')">+ 1</button>
+    </div>
+
+    <!-- 10. Statement & Enquiry -->
+    <div class="widget ledger-row" id="card-stmt">
+      <div class="w-header">
+        <span class="w-title">Statement & Enquiry</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-stmt">0</span></div>
+      <button id="btn-stmt" class="w-btn" onclick="addSimple('Statement & Enquiry')">+ 1</button>
+    </div>
+
+    <!-- 11. FINANCIAL TRANSACTION -->
+    <div class="widget ledger-row" id="card-fin">
+      <div class="w-header">
+        <span class="w-title">FINANCIAL TXN</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-fin">0</span></div>
+      <button id="btn-fin" class="w-btn" onclick="addSimple('FINANCIAL TRANSACTION')">+ 1</button>
+    </div>
+
+    <!-- 12. NON FINANCIAL -->
+    <div class="widget ledger-row" id="card-nonfin">
+      <div class="w-header">
+        <span class="w-title">NON FINANCIAL</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-nonfin">0</span></div>
+      <button id="btn-nonfin" class="w-btn" onclick="addSimple('NON FINANCIAL')">+ 1</button>
+    </div>
+
+    <!-- 13. SB Account opening/Funding -->
+    <div class="widget ledger-row" id="card-sbac">
+      <div class="w-header">
+        <span class="w-title">SB Acc Open/Fund</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-sbac">0</span></div>
+      <button id="btn-sbac" class="w-btn" onclick="addSimple('SB Account opening/Funding')">+ 1</button>
+    </div>
+
+    <!-- 14. CBDC -->
+    <div class="widget ledger-row" id="card-cbdc">
+      <div class="w-header">
+        <span class="w-title">CBDC</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-cbdc">0</span></div>
+      <button id="btn-cbdc" class="w-btn" onclick="addSimple('CBDC')">+ 1</button>
+    </div>
+
+    <!-- 15. PAI -->
+    <div class="widget ledger-row" id="card-pai">
+      <div class="w-header">
+        <span class="w-title">PAI</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-pai">0</span></div>
+      <button id="btn-pai" class="w-btn" onclick="addSimple('PAI')">+ 1</button>
+    </div>
+
+    <!-- 16. FD Through yono -->
+    <div class="widget ledger-row" id="card-fd">
+      <div class="w-header">
+        <span class="w-title">FD Through Yono</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-fd">0</span></div>
+      <button id="btn-fd" class="w-btn" onclick="addSimple('FD Through yono')">+ 1</button>
+    </div>
+
+    <!-- 17. Yono Reset Old -->
+    <div class="widget ledger-row" id="card-resetold">
+      <div class="w-header">
+        <span class="w-title">Yono Reset Old</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-resetold">0</span></div>
+      <button id="btn-resetold" class="w-btn" onclick="addSimple('Yono Reset Old')">+ 1</button>
+    </div>
+
+    <!-- 18. Upto 40000 Deposit -->
+    <div class="widget ledger-row" id="card-dep40">
+      <div class="w-header">
+        <span class="w-title">Upto 40k Deposit</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-dep40">0</span></div>
+      <button id="btn-dep40" class="w-btn" onclick="addSimple('Upto 40000 Deposit')">+ 1</button>
+    </div>
+
+    <!-- 19. Upto 40000 Widrawl -->
+    <div class="widget ledger-row" id="card-wd40">
+      <div class="w-header">
+        <span class="w-title">Upto 40k Withdraw</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-wd40">0</span></div>
+      <button id="btn-wd40" class="w-btn" onclick="addSimple('Upto 40000 Widrawl')">+ 1</button>
+    </div>
+
+    <!-- 20. Upto 40000 Transfer -->
+    <div class="widget ledger-row" id="card-tr40">
+      <div class="w-header">
+        <span class="w-title">Upto 40k Transfer</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-tr40">0</span></div>
+      <button id="btn-tr40" class="w-btn" onclick="addSimple('Upto 40000 Transfer')">+ 1</button>
+    </div>
+
+    <!-- 21. Above 40000 Transfer -->
+    <div class="widget ledger-row" id="card-trabove40" style="grid-column: 1 / -1;">
+      <div class="w-header">
+        <span class="w-title">Above 40k Transfer</span>
+      </div>
+      <div class="w-body"><span class="w-count mono" id="c-trabove40">0</span></div>
+      <button id="btn-trabove40" class="w-btn" onclick="addSimple('Above 40000 Transfer')">+ 1</button>
     </div>
 
   </div>
@@ -474,26 +608,47 @@ header {
 <script>
 const { jsPDF } = window.jspdf;
 
-const TARGETS = { NPS: 10, WhatsApp: 15, 'Yono SBI': 5, 'Contact Centre': 10, 'Re-KYC': 10 };
+// Only the original 4 have targets now.
+const TARGETS = { 'Yono SBI': 5, WhatsApp: 15, 'Contact Centre': 10, NPS: 10 };
 const TOTAL_TARGET = Object.values(TARGETS).reduce((a,b) => a+b, 0);
 
 const MAP = [
-  { key:'NPS',            id:'nps'     },
-  { key:'WhatsApp',       id:'wa'      },
-  { key:'Yono SBI',       id:'yono'    },
-  { key:'Contact Centre', id:'contact' },
-  { key:'Re-KYC',         id:'cm'      }
+  { key: 'Yono SBI', id: 'yono' },
+  { key: 'WhatsApp', id: 'wa' },
+  { key: 'Contact Centre', id: 'contact' },
+  { key: 'NPS', id: 'nps' },
+  { key: 'FORM 15 G/H Submission', id: 'form15' },
+  { key: 'ATM Card Issuance', id: 'atm' },
+  { key: 'Cheque Book Request', id: 'cheque' },
+  { key: 'Re-KYC', id: 'cm' },
+  { key: 'Nominee update', id: 'nominee' },
+  { key: 'Statement & Enquiry', id: 'stmt' },
+  { key: 'FINANCIAL TRANSACTION', id: 'fin' },
+  { key: 'NON FINANCIAL', id: 'nonfin' },
+  { key: 'SB Account opening/Funding', id: 'sbac' },
+  { key: 'CBDC', id: 'cbdc' },
+  { key: 'PAI', id: 'pai' },
+  { key: 'FD Through yono', id: 'fd' },
+  { key: 'Yono Reset Old', id: 'resetold' },
+  { key: 'Upto 40000 Deposit', id: 'dep40' },
+  { key: 'Upto 40000 Widrawl', id: 'wd40' },
+  { key: 'Upto 40000 Transfer', id: 'tr40' },
+  { key: 'Above 40000 Transfer', id: 'trabove40' }
 ];
 
-let state = JSON.parse(localStorage.getItem('sbi_v20_dark')) || {
-  counts: { NPS:0, WhatsApp:0, 'Yono SBI':0, 'Contact Centre':0, 'Other Forms':0, 'Re-KYC':0 },
+let state = JSON.parse(localStorage.getItem('sbi_v20_dark_v3')) || {
+  counts: {},
   logs: [], loginTime: null,
   excelSignIn: null, excelLogOut: null,
   excelBreaks: [],
   excelIsPaused: false,
-  brName:'SBI KOMTALPETA', brCode:'17978', userName:'ASHUTOSH PATTNAIK'
+  brName:'Komtalpeta', brCode:'17978', userName:'Ashutosh Pattnaik'
 };
-if (state.counts['Re-KYC'] === undefined) state.counts['Re-KYC'] = 0;
+
+// Ensure all categories exist in state
+MAP.forEach(({ key }) => {
+  if (state.counts[key] === undefined) state.counts[key] = 0;
+});
 if (state.excelBreaks === undefined) state.excelBreaks = [];
 
 let activeCat = '', selType = 'Account Number';
@@ -613,34 +768,39 @@ function closeModal(e) {
 }
 
 function save() {
-  localStorage.setItem('sbi_v20_dark', JSON.stringify(state));
+  localStorage.setItem('sbi_v20_dark_v3', JSON.stringify(state));
   refreshUI();
 }
 
 function refreshUI() {
   $('btn-undo').disabled = state.logs.length === 0;
 
-  let totalCount = 0;
+  let totalTargetCount = 0;
   MAP.forEach(({ key }) => {
     const count = state.counts[key];
-    totalCount += count;
     const e = els[key];
     e.count.textContent = count;
-    const met = count >= TARGETS[key];
     
-    if (met) {
-      e.card.classList.add('met');
-      e.btn.textContent = 'DONE';
+    if (TARGETS[key]) {
+      totalTargetCount += count;
+      const met = count >= TARGETS[key];
+      if (met) {
+        e.card.classList.add('met');
+        e.btn.textContent = 'DONE';
+      } else {
+        e.card.classList.remove('met');
+        e.btn.textContent = key === 'NPS' ? '+ 1' : 'LOG';
+      }
     } else {
       e.card.classList.remove('met');
-      e.btn.textContent = key === 'NPS' || key === 'Re-KYC' ? '+ 1' : 'LOG';
+      e.btn.textContent = '+ 1';
     }
   });
 
-  const pct = Math.min(100, Math.round((totalCount / TOTAL_TARGET) * 100));
+  const pct = Math.min(100, Math.round((totalTargetCount / TOTAL_TARGET) * 100));
   $('seal-pct').textContent = pct + '%';
-  $('seal-frac').textContent = `${totalCount} / ${TOTAL_TARGET}`;
-  const offset = SEAL_CIRC - (Math.min(1, totalCount / TOTAL_TARGET) * SEAL_CIRC);
+  $('seal-frac').textContent = `${totalTargetCount} / ${TOTAL_TARGET}`;
+  const offset = SEAL_CIRC - (Math.min(1, totalTargetCount / TOTAL_TARGET) * SEAL_CIRC);
   $('seal-ring-fill').style.strokeDashoffset = offset;
 
   // Excel UI
@@ -671,7 +831,7 @@ function showReport() {
   $('dashboard').classList.add('hidden'); $('bottom-nav').classList.add('hidden');
   $('report-page').classList.remove('hidden');
   let sumHTML = '<tr><th>Category</th><th>Count</th><th>Target</th></tr>';
-  MAP.forEach(({ key }) => { sumHTML += `<tr><td>${key}</td><td class="mono"><b>${state.counts[key]}</b></td><td class="mono">${TARGETS[key]}</td></tr>`; });
+  MAP.forEach(({ key }) => { sumHTML += `<tr><td>${key}</td><td class="mono"><b>${state.counts[key]}</b></td><td class="mono">${TARGETS[key] || '-'}</td></tr>`; });
   $('summary-table').innerHTML = sumHTML;
   let logHTML = '<tr><th>#</th><th>Log Details</th><th>Value</th><th>Time</th></tr>';
   if (state.logs.length === 0) logHTML += '<tr><td colspan="4" style="text-align:center; padding: 20px;">No entries</td></tr>';
@@ -728,7 +888,7 @@ function doGeneratePDF() {
   state.excelBreaks.forEach(b => { doc.text(`Break: ${b.start} to ${b.end || 'Ongoing'}`, 14, currentY); currentY += 6; });
   if (state.excelLogOut) { doc.text(`Log Out: ${state.excelLogOut}`, 14, currentY); currentY += 6; }
   
-  doc.autoTable({ startY: currentY + 4, head: [['Category','Count','Target']], body: MAP.map(({ key }) => [key, state.counts[key], TARGETS[key]]), headStyles: { fillColor: [0, 75, 135] }, theme: 'grid' });
+  doc.autoTable({ startY: currentY + 4, head: [['Category','Count','Target']], body: MAP.map(({ key }) => [key, state.counts[key], TARGETS[key] || '-']), headStyles: { fillColor: [0, 75, 135] }, theme: 'grid' });
   const afterSum = doc.lastAutoTable.finalY + 10;
   doc.setFontSize(14); doc.setTextColor(0, 75, 135); doc.text('Detailed Logs', 14, afterSum);
   doc.autoTable({ startY: afterSum + 5, head: [['#','Details','Value']], body: state.logs.map((l, i) => [i+1, `${l.cat} [${l.time}]`, l.val]), headStyles: { fillColor: [0, 75, 135] }, theme: 'grid' });
@@ -739,7 +899,8 @@ function doGeneratePDF() {
 
 function shareWA() {
   const c = state.counts;
-  const msg = `*Date:* ${new Date().toLocaleDateString()}\n*Branch:* ${state.brName} (${state.brCode})\n*Agent:* ${state.userName}\n\nNPS: ${c.NPS}\nWhatsApp: ${c.WhatsApp}\nYono SBI: ${c['Yono SBI']}\nContact Ctr: ${c['Contact Centre']}\nRe-KYC: ${c['Re-KYC']}`;
+  const msg = `*DAILY REPORTING OF DATA*\nName- ${state.userName}\nBranch -${state.brName}\n*Date* ${new Date().toLocaleDateString('en-GB')}\n➡️ 1. YONO Registration - ${c['Yono SBI']}\n➡️ 2. What's app Registration - ${c['WhatsApp']}\n➡️ 3. Contact centre Migration - ${c['Contact Centre']}\n➡️ 4. NPS (FeedBack) - ${c['NPS']}\n➡️ 5. FORM 15 G/H Submission : ${c['FORM 15 G/H Submission']}\n➡️ 6. ATM Card Issuance : ${c['ATM Card Issuance']}\n➡️ 7. Cheque Book Request: ${c['Cheque Book Request']}\n➡️ 8. RE-KYC update: ${c['Re-KYC']}\n➡️ 9. Nominee update: ${c['Nominee update']}\n➡️ 10. Statement & Enquiry : ${c['Statement & Enquiry']}\n➡️ 11. FINANCIAL TRANSACTION - ${c['FINANCIAL TRANSACTION']}\n➡️ 12. NON FINANCIAL - ${c['NON FINANCIAL']}\n➡️ 13. SB Account opening/Funding - ${c['SB Account opening/Funding']}\n➡️ 14. CBDC - ${c['CBDC']}\n➡️ 15. PAI - ${c['PAI']}\n➡️ 16. FD Through yono - ${c['FD Through yono']}\n➡️ 17. Yono Reset Old - ${c['Yono Reset Old']}\n➡️ 18. Upto 40000 Deposit - ${c['Upto 40000 Deposit']}\n➡️ 19. Upto 40000 Widrawl - ${c['Upto 40000 Widrawl']}\n➡️ 20. Upto 40000 Transfer - ${c['Upto 40000 Transfer']}\n➡️ 21. Above 40000 Transfer - ${c['Above 40000 Transfer']}`;
+  
   window.open('https://wa.me/?text=' + encodeURIComponent(msg));
 }
 
