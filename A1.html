@@ -161,13 +161,23 @@ header {
   display: flex; flex-direction: column; justify-content: space-between;
   box-shadow: var(--shadow); transition: border-color 0.3s;
 }
+
+/* Original Success (Green) State for target met */
 .widget.met { border-color: var(--success); background: var(--success-light); }
+.widget.met .w-title { color: var(--success); }
+.widget.met .w-target { background: var(--success); color: white; }
+.widget.met .w-count { color: var(--success); }
+.widget.met .w-btn { background: var(--success); color: white; }
+
+/* New Danger (Red) State for > 5 on new cards */
+.widget.danger-met { border-color: var(--danger); background: var(--danger-light); }
+.widget.danger-met .w-title { color: var(--danger); }
+.widget.danger-met .w-count { color: var(--danger); }
+.widget.danger-met .w-btn { background: var(--danger); color: white; }
 
 .w-header { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
 .w-title { font-size: clamp(11px, 3vw, 13px); font-weight: 600; color: var(--text-muted); }
 .w-target { font-size: clamp(9px, 2vw, 11px); background: var(--sbi-blue-light); color: var(--sbi-blue); padding: 4px 6px; border-radius: 4px; font-weight: 600; }
-.widget.met .w-title { color: var(--success); }
-.widget.met .w-target { background: var(--success); color: white; }
 
 .w-body { 
   display: flex; flex-direction: column; justify-content: center; align-items: center; 
@@ -177,7 +187,6 @@ header {
   font-size: clamp(1.8rem, 5vh, 3.5rem); 
   font-weight: 700; line-height: 1; color: var(--text-main); 
 }
-.widget.met .w-count { color: var(--success); }
 
 /* WIDGET BUTTONS */
 .w-btn {
@@ -187,7 +196,6 @@ header {
   background: var(--sbi-blue-light); color: var(--sbi-blue); transition: all 0.2s;
 }
 .w-btn:active { transform: scale(0.96); }
-.widget.met .w-btn { background: var(--success); color: white; }
 
 /* BOTTOM NAVIGATION BAR */
 .bottom-nav {
@@ -781,6 +789,9 @@ function refreshUI() {
     const e = els[key];
     e.count.textContent = count;
     
+    // Clear previously set dynamic classes
+    e.card.classList.remove('met', 'danger-met');
+    
     if (TARGETS[key]) {
       totalTargetCount += count;
       const met = count >= TARGETS[key];
@@ -788,11 +799,13 @@ function refreshUI() {
         e.card.classList.add('met');
         e.btn.textContent = 'DONE';
       } else {
-        e.card.classList.remove('met');
         e.btn.textContent = key === 'NPS' ? '+ 1' : 'LOG';
       }
     } else {
-      e.card.classList.remove('met');
+      // The rest of the "metals"/buttons - turn red at 5+
+      if (count >= 5) {
+        e.card.classList.add('danger-met');
+      }
       e.btn.textContent = '+ 1';
     }
   });
