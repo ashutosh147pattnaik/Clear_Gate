@@ -461,7 +461,7 @@ header {
     <!-- 13. SB Account opening/Funding -->
     <div class="widget ledger-row" id="card-sbac">
       <div class="w-header">
-        <span class="w-title">SB Acc Open/Fund</span>
+        <span class="w-title">SB Acc Open</span>
       </div>
       <div class="w-body"><span class="w-count mono" id="c-sbac">0</span></div>
       <button id="btn-sbac" class="w-btn" onclick="addSimple('SB Account opening/Funding')">+ 1</button>
@@ -912,7 +912,7 @@ function doGeneratePDF() {
 
 function shareWA() {
   const c = state.counts;
-  const msg = `*DAILY REPORTING OF DATA*\nName- ${state.userName}\nBranch -${state.brName}\n*Date* ${new Date().toLocaleDateString('en-GB')}\n➡️ 1. YONO Registration - ${c['Yono SBI']}\n➡️ 2. What's app Registration - ${c['WhatsApp']}\n➡️ 3. Contact centre Migration - ${c['Contact Centre']}\n➡️ 4. NPS (FeedBack) - ${c['NPS']}\n➡️ 5. FORM 15 G/H Submission : ${c['FORM 15 G/H Submission']}\n➡️ 6. ATM Card Issuance : ${c['ATM Card Issuance']}\n➡️ 7. Cheque Book Request: ${c['Cheque Book Request']}\n➡️ 8. RE-KYC update: ${c['Re-KYC']}\n➡️ 9. Nominee update: ${c['Nominee update']}\n➡️ 10. Statement & Enquiry : ${c['Statement & Enquiry']}\n➡️ 11. FINANCIAL TRANSACTION - ${c['FINANCIAL TRANSACTION']}\n➡️ 12. NON FINANCIAL - ${c['NON FINANCIAL']}\n➡️ 13. SB Account opening/Funding - ${c['SB Account opening/Funding']}\n➡️ 14. CBDC - ${c['CBDC']}\n➡️ 15. PAI - ${c['PAI']}\n➡️ 16. FD Through yono - ${c['FD Through yono']}\n➡️ 17. Yono Reset Old - ${c['Yono Reset Old']}\n➡️ 18. Upto 40000 Deposit - ${c['Upto 40000 Deposit']}\n➡️ 19. Upto 40000 Widrawl - ${c['Upto 40000 Widrawl']}\n➡️ 20. Upto 40000 Transfer - ${c['Upto 40000 Transfer']}\n➡️ 21. Above 40000 Transfer - ${c['Above 40000 Transfer']}`;
+  const msg = `*DAILY REPORTING OF DATA*\nName- ${state.userName}\nBranch -${state.brName}\n*Date* ${new Date().toLocaleDateString('en-GB')}\n➡️ 1. YONO Registration - ${c['Yono SBI']}\n➡️ 2. What's app Registration - ${c['WhatsApp']}\n➡️ 3. Contact centre Migration - ${c['Contact Centre']}\n➡️ 4. NPS (FeedBack) - ${c['NPS']}\n➡️ 5. FORM 15 G/H Submission : ${c['FORM 15 G/H Submission']}\n➡️ 6. ATM Card Issuance : ${c['ATM Card Issuance']}\n➡️ 7. Cheque Book Request: ${c['Cheque Book Request']}\n➡️ 8. RE-KYC update: ${c['Re-KYC']}\n➡️ 9. Nominee update: ${c['Nominee update']}\n➡️ 10. Statement & Enquiry : ${c['Statement & Enquiry']}\n➡️ 11. FINANCIAL TRANSACTION - ${c['FINANCIAL TRANSACTION']}\n➡️ 12. NON FINANCIAL - ${c['NON FINANCIAL']}\n➡️ 13. SB Account opening - ${c['SB Account opening/Funding']}\n➡️ 14. CBDC - ${c['CBDC']}\n➡️ 15. PAI - ${c['PAI']}\n➡️ 16. FD Through yono - ${c['FD Through yono']}\n➡️ 17. Yono Reset Old - ${c['Yono Reset Old']}\n➡️ 18. Upto 40000 Deposit - ${c['Upto 40000 Deposit']}\n➡️ 19. Upto 40000 Widrawl - ${c['Upto 40000 Widrawl']}\n➡️ 20. Upto 40000 Transfer - ${c['Upto 40000 Transfer']}\n➡️ 21. Above 40000 Transfer - ${c['Above 40000 Transfer']}`;
   
   window.open('https://wa.me/?text=' + encodeURIComponent(msg));
 }
