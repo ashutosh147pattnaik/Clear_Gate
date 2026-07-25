@@ -144,7 +144,7 @@
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 
             /* minmax(0, 1fr) is critical here: it forces rows to shrink and fit the screen without overlapping bottom buttons */
-            grid-template-rows: repeat(4, minmax(0, 1fr)); 
+            grid-template-rows: repeat(5, minmax(0, 1fr)); 
             gap: clamp(6px, 1.2vh, 16px);
             flex: 1; min-height: 0; 
         }
@@ -359,6 +359,22 @@
                 <div class="cb-count" id="rekyc">0</div>
                 <div class="pb-wrap"><div class="pb-fill" id="pb-rekyc"></div></div>
             </div>
+
+            <div class="counter-btn" id="btn-whatsappUsage" onclick="increment('whatsappUsage')">
+                <span class="cb-icon">📲</span>
+                <span class="cb-name">WhatsApp Usage</span>
+                <span class="cb-target">Target: 20</span>
+                <div class="cb-count" id="whatsappUsage">0</div>
+                <div class="pb-wrap"><div class="pb-fill" id="pb-whatsappUsage"></div></div>
+            </div>
+
+            <div class="counter-btn" id="btn-yonoUsage" onclick="increment('yonoUsage')">
+                <span class="cb-icon">📱</span>
+                <span class="cb-name">Yono Usage</span>
+                <span class="cb-target">Target: 15</span>
+                <div class="cb-count" id="yonoUsage">0</div>
+                <div class="pb-wrap"><div class="pb-fill" id="pb-yonoUsage"></div></div>
+            </div>
         </div>
 
         <!-- FAB ACTIONS -->
@@ -390,7 +406,8 @@
     const TARGETS = {
         nps: 15, whatsapp: 25, yonoRegistration: 10,
         contactCentre: 40, cbdc: 5, channelMigration: 12,
-        yonoReregistration: 10, rekyc: 20
+        yonoReregistration: 10, rekyc: 20,
+        whatsappUsage: 20, yonoUsage: 15
     };
 
     const FIELDS = Object.keys(TARGETS);
@@ -490,7 +507,9 @@
             `Contact Centre: ${d.contactCentre}\n` +
             `CBDC: ${d.cbdc}\n` +
             `Channel Migration: ${d.channelMigration}\n` +
-            `Re-KYC: ${d.rekyc}`;
+            `Re-KYC: ${d.rekyc}\n` +
+            `WhatsApp Usage: ${d.whatsappUsage}\n` +
+            `Yono Usage: ${d.yonoUsage}`;
         window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
     }
 
