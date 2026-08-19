@@ -197,6 +197,13 @@ header {
 }
 .w-btn:active { transform: scale(0.96); }
 
+.w-btn-row { display: flex; gap: 6px; width: 100%; }
+.w-btn-row .w-btn { flex: 1; }
+.w-btn-sub {
+  font-size: clamp(10px, 2.5vw, 12px);
+  padding: 0 4px;
+}
+
 /* BOTTOM NAVIGATION BAR */
 .bottom-nav {
   background: var(--surface); border-top: 1px solid var(--border);
@@ -363,7 +370,10 @@ header {
         <span class="w-target mono">T:15</span>
       </div>
       <div class="w-body"><span class="w-count mono" id="c-wa">0</span></div>
-      <button id="btn-wa" class="w-btn" onclick="openModal('WhatsApp')">LOG</button>
+      <div class="w-btn-row">
+        <button id="btn-wa" class="w-btn" onclick="openModal('WhatsApp')">LOG</button>
+        <button id="btn-wa-backfill" class="w-btn w-btn-sub" onclick="openBackfillModal('WhatsApp')" title="Add multiple entries you logged offline">+N</button>
+      </div>
     </div>
 
     <!-- 3. Contact Centre -->
@@ -601,6 +611,17 @@ header {
   </div>
 </div>
 
+<!-- BACKFILL MODAL -->
+<div id="backfill-overlay" class="overlay" onclick="closeBackfillModal(event)">
+  <div class="bottom-sheet" id="backfill-sheet" onclick="event.stopPropagation()">
+    <h4 id="backfill-title">Backfill Entries</h4>
+    <p class="confirm-msg" style="margin-top:-8px;">How many <span id="backfill-cat-label"></span> entries do you want to add? These will be logged as offline/backfilled entries with the current time.</p>
+    <input type="number" id="backfill-count-field" class="input-field" placeholder="Enter number of entries" min="1" step="1">
+    <button class="modal-btn primary" id="backfill-save-btn" onclick="saveBackfill()">Add Entries</button>
+    <button class="modal-btn cancel" onclick="closeBackfillModal()">Cancel</button>
+  </div>
+</div>
+
 <!-- CONFIRM MODAL -->
 <div id="confirm-overlay" class="overlay" onclick="closeConfirmModal(event)">
   <div class="bottom-sheet" id="confirm-sheet" onclick="event.stopPropagation()">
@@ -759,6 +780,38 @@ function saveEntry() {
   state.counts[activeCat]++;
   state.logs.push({ id: state.logs.length+1, cat:`${activeCat} (${selType})`, val, time: new Date().toLocaleTimeString() });
   save(); closeModal();
+}
+
+/* ---- BACKFILL FLOW (batch-log entries done offline) ---- */
+let backfillCat = '';
+
+function openBackfillModal(cat) {
+  backfillCat = cat;
+  $('backfill-cat-label').textContent = cat;
+  $('backfill-count-field').value = '';
+  $('backfill-overlay').classList.add('show');
+  setTimeout(() => $('backfill-count-field').focus(), 150);
+}
+
+function closeBackfillModal(e) {
+  if (e && e.target !== $('backfill-overlay')) return;
+  $('backfill-overlay').classList.remove('show');
+  $('backfill-count-field').value = '';
+}
+
+function saveBackfill() {
+  const raw = $('backfill-count-field').value.trim();
+  const n = parseInt(raw, 10);
+  if (!raw || isNaN(n) || n <= 0) return alert('Please enter a valid number of entries (1 or more).');
+  if (n > 200) return alert('That seems too high for a single backfill. Please double-check the number.');
+
+  const now = new Date().toLocaleTimeString();
+  for (let i = 0; i < n; i++) {
+    state.counts[backfillCat]++;
+    state.logs.push({ id: state.logs.length+1, cat: `${backfillCat} (Backfill)`, val: 'Offline entry', time: now });
+  }
+  save();
+  closeBackfillModal();
 }
 
 function undoLast() {
