@@ -144,9 +144,10 @@
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 
             /* minmax(0, 1fr) is critical here: it forces rows to shrink and fit the screen without overlapping bottom buttons */
-            grid-template-rows: repeat(5, minmax(0, 1fr)); 
+            grid-template-rows: repeat(6, minmax(0, 1fr)); 
             gap: clamp(6px, 1.2vh, 16px);
             flex: 1; min-height: 0; 
+            overflow-y: auto;
         }
 
         .counter-btn {
@@ -200,7 +201,7 @@
         /* ── INLINE ACTION BAR (Aligned to Columns) ── */
         .fixed-actions {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr;
             gap: clamp(6px, 1.2vh, 16px);
             width: 100%;
             flex-shrink: 0; 
@@ -299,7 +300,7 @@
             <div class="counter-btn" id="btn-nps" onclick="increment('nps')">
                 <span class="cb-icon">😊</span>
                 <span class="cb-name">NPS</span>
-                <span class="cb-target">Target: 15</span>
+                <span class="cb-target">Target: 20</span>
                 <div class="cb-count" id="nps">0</div>
                 <div class="pb-wrap"><div class="pb-fill" id="pb-nps"></div></div>
             </div>
@@ -315,7 +316,7 @@
             <div class="counter-btn" id="btn-yonoRegistration" onclick="increment('yonoRegistration')">
                 <span class="cb-icon">📝</span>
                 <span class="cb-name">Yono Reg.</span>
-                <span class="cb-target">Target: 10</span>
+                <span class="cb-target">Target: 20</span>
                 <div class="cb-count" id="yonoRegistration">0</div>
                 <div class="pb-wrap"><div class="pb-fill" id="pb-yonoRegistration"></div></div>
             </div>
@@ -344,14 +345,6 @@
                 <div class="pb-wrap"><div class="pb-fill" id="pb-channelMigration"></div></div>
             </div>
 
-            <div class="counter-btn" id="btn-yonoReregistration" onclick="increment('yonoReregistration')">
-                <span class="cb-icon">🔐</span>
-                <span class="cb-name">Yono Re-Reg</span>
-                <span class="cb-target">Target: 10</span>
-                <div class="cb-count" id="yonoReregistration">0</div>
-                <div class="pb-wrap"><div class="pb-fill" id="pb-yonoReregistration"></div></div>
-            </div>
-
             <div class="counter-btn" id="btn-rekyc" onclick="increment('rekyc')">
                 <span class="cb-icon">🪪</span>
                 <span class="cb-name">Re-KYC</span>
@@ -375,13 +368,26 @@
                 <div class="cb-count" id="whatsappUsage">0</div>
                 <div class="pb-wrap"><div class="pb-fill" id="pb-whatsappUsage"></div></div>
             </div>
+
+            <div class="counter-btn" id="btn-atmCardIssuance" onclick="increment('atmCardIssuance')">
+                <span class="cb-icon">💳</span>
+                <span class="cb-name">ATM Card Issuance</span>
+                <span class="cb-target">Target: 10</span>
+                <div class="cb-count" id="atmCardIssuance">0</div>
+                <div class="pb-wrap"><div class="pb-fill" id="pb-atmCardIssuance"></div></div>
+            </div>
+
+            <div class="counter-btn" id="btn-chequeBookIssuance" onclick="increment('chequeBookIssuance')">
+                <span class="cb-icon">📘</span>
+                <span class="cb-name">Cheque Book Issuance</span>
+                <span class="cb-target">Target: 10</span>
+                <div class="cb-count" id="chequeBookIssuance">0</div>
+                <div class="pb-wrap"><div class="pb-fill" id="pb-chequeBookIssuance"></div></div>
+            </div>
         </div>
 
         <!-- FAB ACTIONS -->
         <div class="fixed-actions">
-            <button class="action-btn reset" onclick="openConfirm('reset')">
-                ↺ Reset
-            </button>
             <button class="action-btn send" onclick="exportToWhatsApp()">
                 📱 Send Report
             </button>
@@ -404,10 +410,10 @@
 
 <script>
     const TARGETS = {
-        nps: 15, whatsapp: 25, yonoRegistration: 10,
+        nps: 20, whatsapp: 25, yonoRegistration: 20,
         contactCentre: 40, cbdc: 5, channelMigration: 12,
-        yonoReregistration: 10, rekyc: 20,
-        whatsappUsage: 20, yonoUsage: 15
+        rekyc: 20, whatsappUsage: 20, yonoUsage: 15,
+        atmCardIssuance: 10, chequeBookIssuance: 10
     };
 
     const FIELDS = Object.keys(TARGETS);
@@ -503,23 +509,15 @@
             `NPS: ${d.nps}\n` +
             `WhatsApp: ${d.whatsapp}\n` +
             `Yono Registration: ${d.yonoRegistration}\n` +
-            `Yono Re-Registration: ${d.yonoReregistration}\n` +
             `Contact Centre: ${d.contactCentre}\n` +
             `CBDC: ${d.cbdc}\n` +
             `Channel Migration: ${d.channelMigration}\n` +
             `Re-KYC: ${d.rekyc}\n` +
             `WhatsApp Usage: ${d.whatsappUsage}\n` +
-            `Yono Usage: ${d.yonoUsage}`;
+            `Yono Usage: ${d.yonoUsage}\n` +
+            `ATM Card Issuance: ${d.atmCardIssuance}\n` +
+            `Cheque Book Issuance: ${d.chequeBookIssuance}`;
         window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
-    }
-
-    function doReset() {
-        FIELDS.forEach(f => {
-            document.getElementById(f).textContent = '0';
-            updateUI(f);
-        });
-        localStorage.removeItem('sbi_a1_data');
-        showToast("All targets have been reset.");
     }
 
     /* ============ CUSTOM BOTTOM SHEET ============ */
@@ -535,14 +533,7 @@
 
         overlay.classList.remove('confirm-danger', 'confirm-logout');
 
-        if (type === 'reset') {
-            overlay.classList.add('confirm-danger');
-            icon.textContent = '🗑️';
-            title.textContent = 'Reset Data?';
-            msg.textContent = 'This will permanently erase all counts for today. This action cannot be undone.';
-            btn.className = 'sheet-btn sheet-btn-danger';
-            btn.textContent = 'Yes, erase data';
-        } else if (type === 'logout') {
+        if (type === 'logout') {
             overlay.classList.add('confirm-logout');
             icon.textContent = '👋';
             title.textContent = 'Log Out?';
@@ -560,8 +551,7 @@
     }
 
     function executeConfirm() {
-        if (pendingConfirmAction === 'reset') doReset();
-        else if (pendingConfirmAction === 'logout') doLogout();
+        if (pendingConfirmAction === 'logout') doLogout();
         closeConfirm();
     }
 
