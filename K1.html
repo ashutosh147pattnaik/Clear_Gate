@@ -201,7 +201,7 @@
         /* ── INLINE ACTION BAR (Aligned to Columns) ── */
         .fixed-actions {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: clamp(6px, 1.2vh, 16px);
             width: 100%;
             flex-shrink: 0; 
@@ -388,6 +388,9 @@
 
         <!-- FAB ACTIONS -->
         <div class="fixed-actions">
+            <button class="action-btn reset" onclick="openConfirm('reset')">
+                ↺ Reset
+            </button>
             <button class="action-btn send" onclick="exportToWhatsApp()">
                 📱 Send Report
             </button>
@@ -520,6 +523,15 @@
         window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
     }
 
+    function doReset() {
+        FIELDS.forEach(f => {
+            document.getElementById(f).textContent = '0';
+            updateUI(f);
+        });
+        localStorage.removeItem('sbi_a1_data');
+        showToast("All targets have been reset.");
+    }
+
     /* ============ CUSTOM BOTTOM SHEET ============ */
     let pendingConfirmAction = null;
 
@@ -533,7 +545,14 @@
 
         overlay.classList.remove('confirm-danger', 'confirm-logout');
 
-        if (type === 'logout') {
+        if (type === 'reset') {
+            overlay.classList.add('confirm-danger');
+            icon.textContent = '🗑️';
+            title.textContent = 'Reset Data?';
+            msg.textContent = 'This will permanently erase all counts for today. This action cannot be undone.';
+            btn.className = 'sheet-btn sheet-btn-danger';
+            btn.textContent = 'Yes, erase data';
+        } else if (type === 'logout') {
             overlay.classList.add('confirm-logout');
             icon.textContent = '👋';
             title.textContent = 'Log Out?';
@@ -551,7 +570,8 @@
     }
 
     function executeConfirm() {
-        if (pendingConfirmAction === 'logout') doLogout();
+        if (pendingConfirmAction === 'reset') doReset();
+        else if (pendingConfirmAction === 'logout') doLogout();
         closeConfirm();
     }
 
