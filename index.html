@@ -7,26 +7,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Premium Fintech Palette */
-            --bg-base:        #06080F;
-            --bg-surface:     rgba(17, 24, 39, 0.7);
-            --bg-surface-hover: rgba(31, 41, 55, 0.8);
-            
-            --accent-main:    #0ea5e9; /* Sleek Cyan/Blue */
-            --accent-glow:    rgba(14, 165, 233, 0.4);
-            --accent-subtle:  rgba(14, 165, 233, 0.1);
-            
-            --border-light:   rgba(255, 255, 255, 0.08);
-            --border-highlight: rgba(255, 255, 255, 0.15);
-            
-            --text-primary:   #f8fafc;
-            --text-secondary: #94a3b8;
-            --text-tertiary:  #475569;
+            /* Original Theme Preserved */
+            --ink:          #0a0e17;
+            --ink-2:        #0f1522;
+            --panel:        #10182a;
+            --panel-border: rgba(45, 212, 191, 0.2);
+            --line:         rgba(148, 197, 255, 0.08);
 
-            --radius-card:    16px;
-            --radius-btn:     12px;
-            
-            --transition:     all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --teal:         #2dd4bf;
+            --teal-glow:    rgba(45, 212, 191, 0.4);
+            --teal-dim:     rgba(45, 212, 191, 0.08);
+            --amber:        #f5a623;
+
+            --text-main:    #eaf1fb;
+            --text-muted:   #8a9bb8;
+            --text-dim:     #4b5872;
+
+            --r-card:       2px; /* Sharper corners for a futuristic look */
+            --r-btn:        2px;
         }
 
         *, *::before, *::after {
@@ -36,157 +34,194 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body, html {
-            height: 100%;
-            width: 100%;
-            font-family: 'Space Grotesk', sans-serif;
-            background-color: var(--bg-base);
-            color: var(--text-primary);
-            overflow: hidden;
-            display: grid;
-            place-items: center;
-            position: relative;
-        }
-
-        /* Ambient Background Glow */
-        body::before, body::after {
-            content: "";
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.15;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        body::before {
-            background: #0ea5e9;
-            top: -200px;
-            left: -100px;
-        }
-
-        body::after {
-            background: #3b82f6;
-            bottom: -200px;
-            right: -100px;
-        }
-
-        /* --- Animations --- */
-        @keyframes floatUp {
+        @keyframes fadeUp {
             0% { opacity: 0; transform: translateY(20px) scale(0.98); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        @keyframes pulseDot {
-            0% { box-shadow: 0 0 0 0 var(--accent-glow); }
-            70% { box-shadow: 0 0 0 6px rgba(14, 165, 233, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+        @keyframes blink {
+            0%, 100% { opacity: 1; text-shadow: 0 0 8px var(--teal); }
+            50% { opacity: 0.3; text-shadow: none; }
         }
 
-        /* --- Top status strip --- */
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(200%); }
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.4; }
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--ink);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        body {
+            display: grid;
+            place-items: center;
+            position: relative;
+            background-image:
+                linear-gradient(var(--line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--line) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center;
+            animation: gridPulse 8s ease-in-out infinite;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(45, 212, 191, 0.05), transparent 60%),
+                        radial-gradient(circle at 50% 100%, rgba(10, 14, 23, 0.95), var(--ink) 80%);
+            pointer-events: none;
+        }
+
+        /* --- Top status strip (HUD Style) --- */
         .status-strip {
-            position: absolute;
-            top: 24px;
-            left: 50%;
-            transform: translateX(-50%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            gap: 16px;
-            padding: 8px 20px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--border-light);
-            border-radius: 30px;
-            backdrop-filter: blur(8px);
+            padding: 12px 24px;
             font-family: 'IBM Plex Mono', monospace;
             font-size: 0.7rem;
-            letter-spacing: 0.08em;
-            color: var(--text-secondary);
+            letter-spacing: 0.15em;
+            color: var(--text-dim);
             text-transform: uppercase;
             z-index: 5;
+            background: linear-gradient(180deg, rgba(10, 14, 23, 0.8), transparent);
+            border-bottom: 1px solid rgba(45, 212, 191, 0.1);
         }
-
-        .status-wrapper { display: flex; align-items: center; gap: 8px; }
 
         .status-strip .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent-main);
-            animation: pulseDot 2s infinite;
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: var(--teal);
+            margin-right: 10px;
+            box-shadow: 0 0 10px var(--teal);
+            animation: blink 2s ease-in-out infinite;
         }
 
-        .status-strip .divider {
-            width: 1px;
-            height: 12px;
-            background: var(--border-light);
-        }
+        .status-strip .sys-time { color: var(--text-muted); }
+        .status-strip span.id { color: var(--teal); }
 
-        .status-strip span.id { color: var(--text-tertiary); }
-
-        /* --- Gateway Card (Glassmorphism) --- */
+        /* --- Gateway Card --- */
         .gateway-container {
             position: relative;
-            background: var(--bg-surface);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border-light);
-            border-top: 1px solid rgba(255,255,255,0.12);
-            border-radius: var(--radius-card);
-            padding: 3rem 2.5rem;
+            background: rgba(16, 24, 42, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--r-card);
+            padding: 3rem 2.5rem 2.5rem;
             width: 90%;
             max-width: 420px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 
-                        inset 0 0 0 1px rgba(255, 255, 255, 0.02);
-            animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            text-align: left;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 
+                        inset 0 0 20px rgba(45, 212, 191, 0.05);
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            overflow: hidden;
         }
 
-        .header-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--accent-subtle), transparent);
-            border: 1px solid var(--border-light);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            color: var(--accent-main);
-            font-size: 1.2rem;
+        /* Futuristic HUD Corner Brackets */
+        .gateway-container::before,
+        .gateway-container::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--teal);
+            opacity: 0.8;
+            box-shadow: 0 0 10px var(--teal-glow);
+        }
+        .gateway-container::before { top: 0; left: 0; border-right: none; border-bottom: none; }
+        .gateway-container::after  { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+        .scan-line {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, transparent, rgba(45, 212, 191, 0.1), transparent);
+            animation: scan 4s linear infinite;
+            pointer-events: none;
+            z-index: 10;
         }
 
         .eyebrow {
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
-            color: var(--accent-main);
-            margin-bottom: 8px;
+            color: var(--teal);
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 24px;
+            height: 1px;
+            background: var(--teal);
+            box-shadow: 0 0 5px var(--teal);
         }
 
         h1 {
-            font-size: 1.75rem;
+            font-size: 1.6rem;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--text-main);
             margin-bottom: 8px;
-            letter-spacing: -0.02em;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
         }
 
         #dynamic-wish {
-            font-size: 0.95rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem;
             font-weight: 400;
-            color: var(--text-secondary);
-            min-height: 24px;
+            color: var(--text-muted);
+            min-height: 20px;
             margin-bottom: 2rem;
-            transition: opacity 0.5s ease;
+            display: flex;
+            align-items: center;
         }
 
-        /* --- Buttons --- */
+        #dynamic-wish::before {
+            content: ">";
+            color: var(--teal);
+            margin-right: 8px;
+            animation: blink 1s infinite;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1.2em;
+            background-color: var(--teal);
+            margin-left: 4px;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px dashed rgba(45, 212, 191, 0.2);
+            margin: 0 0 1.5rem;
+        }
+
+        /* --- Futuristic Buttons --- */
         .btn-group {
             display: flex;
             flex-direction: column;
@@ -196,187 +231,217 @@
         .nav-btn {
             display: flex;
             align-items: center;
-            padding: 16px;
-            border-radius: var(--radius-btn);
-            border: 1px solid var(--border-light);
-            background: rgba(255, 255, 255, 0.02);
+            gap: 16px;
+            padding: 14px 18px;
+            border-radius: var(--r-btn);
+            border: 1px solid rgba(148, 197, 255, 0.1);
+            background: rgba(148, 197, 255, 0.02);
+            color: var(--text-main);
             text-decoration: none;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        /* Subtle button hover glow */
+        /* Hover left accent bar */
         .nav-btn::before {
             content: "";
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, var(--accent-subtle), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.6s ease;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: var(--teal);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--teal-glow);
         }
 
         .nav-btn:hover {
-            background: var(--bg-surface-hover);
-            border-color: var(--border-highlight);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.4);
+            background: var(--teal-dim);
+            border-color: rgba(45, 212, 191, 0.4);
+            transform: translateX(4px);
         }
 
-        .nav-btn:hover::before { transform: translateX(100%); }
-        .nav-btn:active { transform: translateY(0); }
-
-        .btn-icon-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-light);
-            margin-right: 16px;
-            transition: var(--transition);
+        .nav-btn:hover::before {
+            width: 3px; /* Expands on hover */
         }
 
-        .nav-btn:hover .btn-icon-wrapper {
-            border-color: var(--accent-main);
-            color: var(--accent-main);
+        .nav-btn:active {
+            transform: translateX(4px) scale(0.98);
         }
 
         .btn-index {
             font-family: 'IBM Plex Mono', monospace;
             font-size: 0.75rem;
-            color: var(--text-secondary);
+            color: var(--text-dim);
+            background: rgba(0,0,0,0.4);
+            padding: 4px 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
         }
 
-        .btn-text { flex: 1; min-width: 0; }
+        .nav-btn:hover .btn-index { 
+            color: var(--ink); 
+            background: var(--teal);
+            border-color: var(--teal);
+            box-shadow: 0 0 8px var(--teal-glow);
+        }
+
+        .btn-text { flex: 1; min-width: 0; z-index: 1; }
 
         .btn-label {
             display: block;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 500;
-            color: var(--text-primary);
+            color: var(--text-main);
+            letter-spacing: 0.05em;
         }
 
         .btn-sub {
             display: block;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
             margin-top: 4px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-btn:hover .btn-sub {
+            color: var(--teal);
         }
 
         .btn-arrow {
-            color: var(--text-tertiary);
-            font-size: 1.2rem;
-            transition: var(--transition);
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--text-dim);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            opacity: 0.5;
         }
 
         .nav-btn:hover .btn-arrow {
-            transform: translateX(4px);
-            color: var(--accent-main);
+            color: var(--teal);
+            opacity: 1;
+            content: "[ ENTR ]";
         }
+        
+        /* Swap arrow for tech text on hover */
+        .nav-btn .btn-arrow::after { content: "→"; }
+        .nav-btn:hover .btn-arrow::after { content: " [EXEC]"; font-size: 0.65rem; letter-spacing: 0.1em; }
 
         /* --- Footer --- */
         .footer-text {
             margin-top: 2.5rem;
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.7rem;
-            color: var(--text-tertiary);
+            font-size: 0.65rem;
+            font-weight: 400;
+            color: var(--text-dim);
+            letter-spacing: 0.1em;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
+            justify-content: space-between;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
-        .footer-text svg {
-            width: 12px;
-            height: 12px;
-            fill: var(--text-tertiary);
+        .footer-text .lock { 
+            color: var(--amber); /* Changed to amber for a system warning/security vibe */
+            font-size: 0.8rem;
         }
 
         @media (prefers-reduced-motion: reduce) {
+            .status-strip .dot, .scan-line, .cursor { animation: none; }
             .gateway-container { animation: none; }
-            .nav-btn { transition: none; }
-            .status-strip .dot { animation: none; }
         }
     </style>
 </head>
 <body>
 
     <div class="status-strip">
-        <div class="status-wrapper">
+        <div>
             <span class="dot"></span>
-            <span>System Online</span>
+            <span>UPLINK ESTABLISHED</span>
         </div>
-        <div class="divider"></div>
+        <span class="sys-time" id="clock">00:00:00</span>
         <span class="id">GW-SBI-04</span>
     </div>
 
     <div class="gateway-container">
+        <div class="scan-line"></div>
+
+        <div class="eyebrow">Secure Auth // 256-Bit</div>
+        <h1>Operations Gateway</h1>
         
-        <div class="header-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
+        <!-- The text here will be typed out by JS -->
+        <div id="dynamic-wish-container">
+            <span id="dynamic-wish"></span><span class="cursor"></span>
         </div>
 
-        <div class="eyebrow">Secure Session Active</div>
-        <h1>Operations Gateway</h1>
-        <p id="dynamic-wish">Loading workspace...</p>
+        <hr class="divider">
 
         <div class="btn-group">
             <a href="K1.html" class="nav-btn btn-target">
-                <div class="btn-icon-wrapper">
-                    <span class="btn-index">01</span>
-                </div>
+                <span class="btn-index">01</span>
                 <span class="btn-text">
-                    <span class="btn-label">Target Portal</span>
-                    <span class="btn-sub">Elipoma Branch</span>
+                    <span class="btn-label">TARGET PORTAL</span>
+                    <span class="btn-sub">Node: Elipoma</span>
                 </span>
-                <span class="btn-arrow">→</span>
+                <span class="btn-arrow"></span>
             </a>
-            
             <a href="A1.html" class="nav-btn btn-report">
-                <div class="btn-icon-wrapper">
-                    <span class="btn-index">02</span>
-                </div>
+                <span class="btn-index">02</span>
                 <span class="btn-text">
-                    <span class="btn-label">Daily Report</span>
-                    <span class="btn-sub">Ashutosh Workspace</span>
+                    <span class="btn-label">DAILY REPORT</span>
+                    <span class="btn-sub">User: Ashutosh</span>
                 </span>
-                <span class="btn-arrow">→</span>
+                <span class="btn-arrow"></span>
             </a>
         </div>
 
-        <p class="footer-text">
-            <svg viewBox="0 0 24 24"><path d="M12 2C9.243 2 7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5zm6 10v8H6v-8h12zm-9-2V7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9z"/></svg>
-            End-to-End Encrypted &copy; 2026
-        </p>
+        <div class="footer-text">
+            <span><span class="lock">&#128274;</span> SECURE BRANCH ACCESS</span>
+            <span>&copy; 2026</span>
+        </div>
     </div>
 
     <script>
+        // Futuristic Typewriter Effect
         const wishes = [
-            "Good to see you. Have a productive shift.",
-            "Workspace initialized successfully.",
-            "All systems normal. Ready when you are.",
-            "Daily metrics updated. Keep up the great work.",
-            "Secure connection established.",
-            "Welcome back. Let's hit today's targets."
+            "Decrypting workspace...",
+            "Welcome back. Systems nominal.",
+            "Initializing secure protocols.",
+            "Loading daily target matrix...",
+            "Connection verified. Proceed.",
+            "Awaiting operator input..."
         ];
 
         window.onload = () => {
             const wishEl = document.getElementById('dynamic-wish');
-            wishEl.style.opacity = 0;
+            const targetText = wishes[Math.floor(Math.random() * wishes.length)];
+            let i = 0;
+            
+            // Clear initially
+            wishEl.textContent = "";
+            
+            function typeWriter() {
+                if (i < targetText.length) {
+                    wishEl.textContent += targetText.charAt(i);
+                    i++;
+                    // Randomize typing speed slightly for realism
+                    setTimeout(typeWriter, Math.random() * 50 + 30);
+                }
+            }
+            
+            // Start typing after a short delay
+            setTimeout(typeWriter, 600);
 
-            setTimeout(() => {
-                wishEl.textContent = wishes[Math.floor(Math.random() * wishes.length)];
-                wishEl.style.opacity = 1;
-            }, 400);
+            // Simple Clock for the Status Strip
+            const clockEl = document.getElementById('clock');
+            setInterval(() => {
+                const now = new Date();
+                clockEl.textContent = now.toLocaleTimeString('en-US', { hour12: false });
+            }, 1000);
         };
     </script>
 
