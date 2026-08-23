@@ -7,38 +7,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Secure Terminal Theme — matches the Operations Gateway */
-            --bg-page:       #0a0e17;
-            --bg-surface:    #10182a;
-
-            --primary:       #2dd4bf; /* Teal Accent */
-            --primary-hover: #14b8a6;
-            --primary-soft:  rgba(45, 212, 191, 0.14);
-            --primary-bdr:   rgba(45, 212, 191, 0.4);
-
-            --success:       #34d399; /* Target-met Accent */
-            --success-soft:  rgba(52, 211, 153, 0.12);
-            --success-bdr:   rgba(52, 211, 153, 0.4);
-
-            --danger:        #fb7185;
-            --danger-soft:   rgba(251, 113, 133, 0.12);
-            --danger-bdr:    rgba(251, 113, 133, 0.4);
-
-            --warning:       #f5a623;
-            --warning-soft:  rgba(245, 166, 35, 0.12);
-            --warning-bdr:   rgba(245, 166, 35, 0.4);
-
-            --text-main:     #eaf1fb;
-            --text-muted:    #7c8aa3;
-            --line:          rgba(148, 197, 255, 0.14);
-
-            --r-sm:  4px;
-            --r-lg:  6px;
-            --r-pill: 4px;
+            /* Tactical Terminal Theme */
+            --bg-base:       #060913;
+            --bg-panel:      #0d1326;
+            --bg-panel-hover:#131c36;
             
-            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.45);
-            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.55);
-            --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.65);
+            --teal:          #2dd4bf; 
+            --teal-dim:      rgba(45, 212, 191, 0.15);
+            
+            --amber:         #f5a623;
+            --amber-dim:     rgba(245, 166, 35, 0.15);
+            
+            --green:         #34d399;
+            --green-dim:     rgba(52, 211, 153, 0.15);
+            
+            --danger:        #fb7185;
+            --danger-dim:    rgba(251, 113, 133, 0.15);
+
+            --text-main:     #f8fafc;
+            --text-muted:    #8b9bb4;
+            --border:        rgba(148, 197, 255, 0.1);
+
+            --r-sm:          4px;
+            --r-md:          8px;
         }
 
         *, *::before, *::after {
@@ -47,21 +38,16 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html { -webkit-font-smoothing: antialiased; }
-
         body {
             font-family: 'Space Grotesk', sans-serif;
-            height: 100vh;
-            height: 100dvh;
-            background: var(--bg-page);
-            background-image:
-                linear-gradient(rgba(148, 197, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(148, 197, 255, 0.05) 1px, transparent 1px);
-            background-size: 42px 42px;
+            background: var(--bg-base);
             color: var(--text-main);
-            overflow: hidden; /* Prevent scrolling */
-            display: flex;
-            flex-direction: column;
+            height: 100vh; height: 100dvh;
+            overflow: hidden; 
+            display: flex; flex-direction: column;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-position: center top;
         }
 
         .mono { font-family: 'IBM Plex Mono', monospace; }
@@ -69,209 +55,195 @@
 
         /* ── HEADER ── */
         header {
-            background: rgba(10, 14, 23, 0.92);
-            backdrop-filter: blur(12px);
-            padding: max(8px, env(safe-area-inset-top)) 16px 8px;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: max(12px, env(safe-area-inset-top)) 16px 12px;
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--line);
             z-index: 100;
-            flex-shrink: 0;
         }
 
-        .brand { display: flex; align-items: center; gap: clamp(8px, 2vw, 12px); }
+        .brand { display: flex; align-items: center; gap: 10px; }
         .brand-icon {
-            width: clamp(28px, 5vw, 36px); height: clamp(28px, 5vw, 36px); border-radius: 4px;
-            background: var(--bg-page); color: var(--primary);
-            border: 1px solid var(--primary);
+            width: 32px; height: 32px; border-radius: var(--r-sm);
+            background: var(--teal-dim); color: var(--teal);
+            border: 1px solid var(--teal);
             display: flex; align-items: center; justify-content: center;
-            font-family: 'IBM Plex Mono', monospace; font-size: clamp(12px, 3vw, 14px); font-weight: 700;
+            font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 14px;
         }
-        .brand-text { display: flex; flex-direction: column; line-height: 1.2; }
-        .brand-name { font-weight: 600; font-size: clamp(13px, 3.5vw, 16px); color: var(--text-main); }
-        .brand-sub  { font-family: 'IBM Plex Mono', monospace; font-size: clamp(9px, 2vw, 11px); font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.06em; }
+        .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+        .brand-name { font-weight: 600; font-size: 14px; letter-spacing: 0.02em; }
+        .brand-sub  { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px;}
 
-        .header-right { display: flex; align-items: center; gap: clamp(8px, 2vw, 12px); }
-        #live-date { font-family: 'IBM Plex Mono', monospace; font-size: clamp(11px, 2.5vw, 13px); font-weight: 600; color: var(--text-muted); }
-        
-        .logout-btn {
-            background: var(--danger-soft); color: var(--danger);
-            border: 1px solid var(--danger-bdr); padding: 6px 12px; border-radius: var(--r-pill);
-            font-size: clamp(10px, 2vw, 12px); font-weight: 600; cursor: pointer;
-            transition: transform 0.15s, background 0.2s;
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        #live-date { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; color: var(--teal); }
+        .btn-exit {
+            background: transparent; border: 1px solid var(--danger); color: var(--danger);
+            padding: 4px 10px; border-radius: var(--r-sm); font-size: 10px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: 0.2s;
         }
-        .logout-btn:active { transform: scale(0.94); }
+        .btn-exit:active { background: var(--danger-dim); transform: scale(0.95); }
 
-        /* ── MAIN CONTENT ── */
-        #main-content { 
+        /* ── WORKSPACE AREA ── */
+        #main-content {
             display: flex; flex-direction: column; flex: 1; min-height: 0;
-            padding: clamp(8px, 1.5vh, 16px) 16px max(8px, env(safe-area-inset-bottom)); 
             max-width: 500px; width: 100%; margin: 0 auto;
-        }
-
-        /* ── LOGIN ── */
-        #login-page {
-            background: linear-gradient(180deg, var(--bg-surface), var(--bg-page)); border: 1px solid var(--line);
-            border-radius: var(--r-lg); padding: clamp(24px, 5vh, 48px) 24px; text-align: center;
-            margin: auto; box-shadow: var(--shadow-md); width: 100%;
             position: relative;
         }
-        .logo-mark {
-            width: clamp(60px, 12vh, 80px); height: clamp(60px, 12vh, 80px); margin: 0 auto 20px; border-radius: 12px;
-            background: var(--primary-soft); color: var(--primary);
-            border: 1px solid var(--primary);
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'IBM Plex Mono', monospace; font-size: clamp(24px, 5vh, 32px); font-weight: 700;
-            box-shadow: 0 0 40px rgba(45, 212, 191, 0.15);
+
+        /* ── LOGIN SCREEN ── */
+        #login-wrapper {
+            height: 100%; display: flex; align-items: center; justify-content: center; padding: 20px;
         }
-        #login-page h1 { font-size: clamp(1.4rem, 4vh, 1.8rem); font-weight: 600; margin-bottom: 6px; color: var(--text-main); letter-spacing: -0.01em; }
-        #login-page p { font-family: 'IBM Plex Mono', monospace; color: var(--text-muted); font-size: clamp(0.8rem, 1.8vh, 0.95rem); margin-bottom: clamp(20px, 4vh, 36px); }
+        #login-page {
+            background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: var(--r-md); padding: 40px 24px; text-align: center;
+            width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            position: relative; overflow: hidden;
+        }
+        /* Scanner line effect */
+        #login-page::after {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: var(--teal); box-shadow: 0 0 10px var(--teal);
+            animation: scan 3s linear infinite; opacity: 0.5;
+        }
+        @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
+
+        .auth-icon {
+            width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 12px;
+            background: var(--teal-dim); color: var(--teal); border: 1px solid var(--teal);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; box-shadow: 0 0 20px var(--teal-dim);
+        }
+        #login-page h1 { font-size: 1.4rem; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.02em; }
+        #login-page p { font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 30px; }
         
         .btn-main {
-            width: 100%; height: clamp(46px, 7vh, 56px); border-radius: var(--r-pill);
-            background: var(--primary); color: var(--bg-page); border: none;
-            font-size: clamp(14px, 2.5vh, 16px); font-weight: 600; font-family: 'Space Grotesk', sans-serif;
-            cursor: pointer; transition: transform 0.15s, box-shadow 0.2s;
-            box-shadow: 0 6px 20px rgba(45, 212, 191, 0.25);
+            width: 100%; height: 48px; border-radius: var(--r-sm);
+            background: var(--teal); color: var(--bg-base); border: none;
+            font-size: 14px; font-weight: 600; font-family: 'IBM Plex Mono', monospace;
+            text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: 0.1s;
         }
-        .btn-main:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(45, 212, 191, 0.15); }
+        .btn-main:active { transform: scale(0.97); }
 
-        /* ── DASHBOARD ── */
+        /* ── DASHBOARD GRID ── */
         #dashboard { 
-            display: flex; flex-direction: column; flex: 1; min-height: 0; height: 100%;
-        }
-
-        .section-label {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: clamp(10px, 1.8vh, 12px); font-weight: 600; color: var(--primary);
-            text-transform: uppercase; letter-spacing: 0.08em; 
-            margin-bottom: clamp(6px, 1vh, 16px); flex-shrink: 0;
-        }
-
-        /* ── COUNTER GRID ── */
-        .grid {
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            /* minmax(0, 1fr) is critical here: it forces rows to shrink and fit the screen without overlapping bottom buttons */
-            grid-template-rows: repeat(6, minmax(0, 1fr)); 
-            gap: clamp(6px, 1.2vh, 16px);
-            flex: 1; min-height: 0; 
-            overflow-y: auto;
-        }
-
-        .counter-btn {
-            background: linear-gradient(180deg, var(--bg-surface), var(--bg-page));
-            border: 1px solid var(--line);
-            border-radius: var(--r-lg);
-            padding: clamp(4px, 1vh, 16px); cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-sm); gap: clamp(2px, 0.5vh, 6px);
-            user-select: none; -webkit-user-select: none;
-            min-height: 0; /* Allows card to shrink vertically */
-            overflow: hidden; /* Prevents internal text from spilling out */
-        }
-        .counter-btn:active { transform: scale(0.94); }
-
-        .cb-icon {
-            width: clamp(24px, 4.5vh, 42px); height: clamp(24px, 4.5vh, 42px); border-radius: 50%;
-            background: var(--bg-page); display: flex; align-items: center; justify-content: center;
-            font-size: clamp(12px, 2.5vh, 20px); flex-shrink: 0;
-        }
-        .cb-name { font-size: clamp(11px, 1.8vh, 14px); font-weight: 600; color: var(--text-main); }
-        .cb-target { 
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: clamp(9px, 1.2vh, 11px); font-weight: 600; color: var(--text-muted); 
-            background: var(--bg-page); border: 1px solid var(--line); padding: 2px 8px; border-radius: var(--r-pill); 
-            flex-shrink: 0;
-        }
-        .cb-count { 
-            font-size: clamp(1.4rem, 3.5vh, 2.2rem); font-weight: 700; color: var(--primary); 
-            font-family: 'IBM Plex Mono', monospace; line-height: 1;
-        }
-
-        .pb-wrap { width: 100%; height: clamp(4px, 1vh, 6px); background: var(--bg-page); border-radius: var(--r-pill); overflow: hidden; margin-top: auto; flex-shrink: 0; }
-        .pb-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.4s ease, background-color 0.3s; border-radius: var(--r-pill); }
-
-        /* MID STATE (Halfway) */
-        .counter-btn.mid { background: var(--warning-soft); border-color: var(--warning-bdr); }
-        .counter-btn.mid .cb-icon { background: rgba(245, 166, 35, 0.16); }
-        .counter-btn.mid .cb-count { color: var(--warning); }
-        .counter-btn.mid .pb-fill { background: var(--warning); }
-        .counter-btn.mid .cb-target { background: rgba(245, 166, 35, 0.16); color: var(--warning); border-color: var(--warning-bdr); }
-
-        /* MET STATE (Complete) */
-        .counter-btn.met { background: var(--success); border-color: var(--success); box-shadow: 0 8px 24px rgba(52, 211, 153, 0.3); }
-        .counter-btn.met .cb-icon { background: rgba(10, 14, 23, 0.25); }
-        .counter-btn.met .cb-name, .counter-btn.met .cb-count { color: var(--bg-page); }
-        .counter-btn.met .cb-target { background: rgba(10, 14, 23, 0.2); color: var(--bg-page); border-color: transparent; }
-        .counter-btn.met .pb-wrap { background: rgba(10, 14, 23, 0.25); }
-        .counter-btn.met .pb-fill { background: var(--bg-page); }
-
-        /* ── INLINE ACTION BAR (Aligned to Columns) ── */
-        .fixed-actions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: clamp(6px, 1.2vh, 16px);
-            width: 100%;
-            flex-shrink: 0; 
-            margin-top: clamp(6px, 1.2vh, 16px);
+            display: flex; flex-direction: column; flex: 1; min-height: 0;
         }
         
+        .scroll-area {
+            flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
+            padding: 16px; display: flex; flex-direction: column; gap: 16px;
+        }
+
+        .section-header {
+            font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; 
+            color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .section-header::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+        .grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+        }
+        /* Make the last odd item span both columns to balance the grid */
+        .grid > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
+
+        /* ── TACTICAL CARDS ── */
+        .stat-card {
+            background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: var(--r-sm); padding: 12px; cursor: pointer;
+            position: relative; transition: all 0.2s ease;
+            display: flex; flex-direction: column; gap: 8px;
+            user-select: none; -webkit-user-select: none;
+        }
+        /* Active State Line */
+        .stat-card::before {
+            content: ""; position: absolute; left: -1px; top: -1px; bottom: -1px; width: 3px;
+            background: var(--teal); border-radius: var(--r-sm) 0 0 var(--r-sm);
+            transition: background 0.3s;
+        }
+        .stat-card:active { transform: scale(0.96); background: var(--bg-panel-hover); }
+
+        .card-head { display: flex; justify-content: space-between; align-items: flex-start; }
+        .card-icon { font-size: 16px; }
+        .card-target { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-muted); background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 4px; }
+        
+        .card-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.2; }
+        
+        .card-body { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; }
+        .card-count { font-family: 'IBM Plex Mono', monospace; font-size: 2rem; font-weight: 700; color: var(--text-main); line-height: 1; }
+        
+        .progress-track { width: 100%; height: 2px; background: rgba(255,255,255,0.05); margin-top: 4px; border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--teal); width: 0%; transition: 0.4s ease; }
+
+        /* Status Colors */
+        .stat-card.mid::before { background: var(--amber); }
+        .stat-card.mid .progress-fill { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+        .stat-card.mid .card-count { color: var(--amber); }
+
+        .stat-card.met::before { background: var(--green); }
+        .stat-card.met .progress-fill { background: var(--green); box-shadow: 0 0 8px var(--green); }
+        .stat-card.met .card-count { color: var(--green); }
+        .stat-card.met { border-color: var(--green-dim); background: rgba(52, 211, 153, 0.05); }
+
+        /* ── FIXED BOTTOM ACTIONS ── */
+        .bottom-actions {
+            background: var(--bg-panel); border-top: 1px solid var(--border);
+            padding: 12px 16px max(12px, env(safe-area-inset-bottom));
+            display: flex; gap: 12px; z-index: 10;
+        }
         .action-btn {
-            width: 100%; height: clamp(40px, 6.5vh, 56px); 
-            border-radius: var(--r-lg); border: 1px solid var(--line);
-            font-size: clamp(12px, 1.8vh, 15px); font-weight: 600; font-family: 'Space Grotesk', sans-serif;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-            cursor: pointer; transition: transform 0.15s, box-shadow 0.2s;
+            flex: 1; height: 44px; border-radius: var(--r-sm); border: none;
+            font-size: 12px; font-weight: 600; font-family: 'IBM Plex Mono', monospace;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            cursor: pointer; transition: 0.15s;
         }
         .action-btn:active { transform: scale(0.96); }
-        .action-btn.send { background: var(--primary); color: var(--bg-page); border-color: var(--primary); box-shadow: 0 4px 16px rgba(45, 212, 191, 0.25); }
-        .action-btn.reset { background: var(--danger-soft); color: var(--danger); border-color: var(--danger-bdr); }
+        .action-btn.send { background: var(--teal); color: var(--bg-base); }
+        .action-btn.reset { background: transparent; border: 1px solid var(--danger); color: var(--danger); flex: 0.6; }
 
         /* ── TOAST ── */
         #toast {
-            position: fixed; top: -80px; left: 50%; transform: translateX(-50%);
-            background: var(--primary); color: var(--bg-page);
-            padding: 12px 20px; border-radius: var(--r-pill);
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: clamp(11px, 1.8vh, 13px); font-weight: 600; white-space: nowrap; z-index: 9999;
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: var(--teal); color: var(--bg-base);
+            padding: 10px 20px; border-radius: var(--r-sm);
+            font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; 
+            white-space: nowrap; z-index: 9999;
             transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 24px rgba(45, 212, 191, 0.3);
+            box-shadow: 0 4px 15px var(--teal-dim);
         }
         #toast.show { top: max(16px, env(safe-area-inset-top)); }
 
-        /* ── BOTTOM SHEET CONFIRM ── */
+        /* ── CONFIRM MODAL ── */
         .overlay {
-            position: fixed; inset: 0; background: rgba(10, 14, 23, 0.75); backdrop-filter: blur(4px);
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 2000;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(3px);
+            opacity: 0; pointer-events: none; transition: 0.2s ease; z-index: 2000;
+            display: flex; align-items: center; justify-content: center; padding: 20px;
         }
         .overlay.show { opacity: 1; pointer-events: auto; }
-        .bottom-sheet {
-            position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-surface);
-            padding: 24px 20px max(24px, env(safe-area-inset-bottom)); border-radius: 14px 14px 0 0;
-            transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-            z-index: 2001; box-shadow: var(--shadow-lg); max-width: 500px; margin: auto;
-            border-top: 1px solid var(--primary); text-align: center;
-        }
-        .overlay.show .bottom-sheet { transform: translateY(0); }
         
-        .confirm-icon {
-            width: clamp(48px, 10vh, 64px); height: clamp(48px, 10vh, 64px); border-radius: 50%; margin: 0 auto 16px;
-            display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 4vh, 28px);
+        .modal-box {
+            background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--r-md);
+            padding: 24px; width: 100%; max-width: 320px; text-align: center;
+            transform: scale(0.95); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
-        #confirm-title { font-size: clamp(1.1rem, 3vh, 1.3rem); font-weight: 600; margin-bottom: 8px; color: var(--text-main); letter-spacing: -0.01em; }
-        #confirm-msg { font-family: 'IBM Plex Mono', monospace; font-size: clamp(12px, 1.8vh, 14px); color: var(--text-muted); margin-bottom: 24px; font-weight: 400; }
+        .overlay.show .modal-box { transform: scale(1); }
         
-        .sheet-btn {
-            width: 100%; height: clamp(46px, 7vh, 56px); border-radius: var(--r-pill); border: none; margin-bottom: 10px;
-            font-size: clamp(14px, 2.5vh, 16px); font-weight: 600; font-family: 'Space Grotesk', sans-serif; cursor: pointer;
+        #modal-icon { font-size: 32px; margin-bottom: 12px; }
+        #modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+        #modal-msg { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); margin-bottom: 24px; }
+        
+        .modal-btn {
+            width: 100%; height: 44px; border-radius: var(--r-sm); border: none; margin-bottom: 10px;
+            font-size: 13px; font-weight: 600; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase;
+            cursor: pointer; transition: 0.2s;
         }
-        .sheet-btn-primary { background: var(--primary); color: var(--bg-page); }
-        .sheet-btn-danger { background: var(--danger); color: var(--bg-page); box-shadow: 0 6px 16px rgba(251, 113, 133, 0.25); }
-        .sheet-btn-cancel { background: var(--bg-page); color: var(--text-main); border: 1px solid var(--line); }
-        
-        .confirm-danger .confirm-icon { background: var(--danger-soft); color: var(--danger); }
-        .confirm-logout .confirm-icon { background: var(--primary-soft); color: var(--primary); }
+        .modal-btn-primary { background: var(--teal); color: var(--bg-base); }
+        .modal-btn-danger { background: var(--danger); color: var(--bg-base); }
+        .modal-btn-cancel { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+        .modal-btn:active { transform: scale(0.96); }
 
     </style>
 </head>
@@ -282,145 +254,180 @@
     <div class="brand">
         <div class="brand-icon">SB</div>
         <div class="brand-text">
-            <span class="brand-name">Daily Report</span>
-            <span class="brand-sub">Koraput Branch</span>
+            <span class="brand-name">Ops Ledger</span>
+            <span class="brand-sub">Koraput Node</span>
         </div>
     </div>
-    <div class="header-right">
+    <div class="header-actions">
         <span id="live-date"></span>
-        <button class="logout-btn" onclick="openConfirm('logout')">Logout</button>
+        <button class="btn-exit" onclick="openConfirm('logout')">Exit</button>
     </div>
 </header>
 
 <div id="main-content">
-
+    
     <!-- LOGIN -->
-    <div id="login-page">
-        <div class="logo-mark">SB</div>
-        <h1>Daily Workbook</h1>
-        <p>Field operations report tracker</p>
-        <button class="btn-main" onclick="login()">Access Workspace</button>
+    <div id="login-wrapper">
+        <div id="login-page">
+            <div class="auth-icon">🔐</div>
+            <h1>Secure Uplink</h1>
+            <p>Field Operations Terminal</p>
+            <button class="btn-main" onclick="login()">Initialize</button>
+        </div>
     </div>
 
     <!-- DASHBOARD -->
     <div id="dashboard" class="hidden">
-        <p class="section-label">Today's Targets</p>
+        
+        <div class="scroll-area">
+            <div class="section-header">Live Metrics</div>
+            
+            <div class="grid">
+                <!-- 1. NPS -->
+                <div class="stat-card" id="btn-nps" onclick="increment('nps')">
+                    <div class="card-head">
+                        <span class="card-icon">😊</span>
+                        <span class="card-target">T:20</span>
+                    </div>
+                    <div class="card-title">NPS Feedback</div>
+                    <div class="card-body"><span class="card-count" id="nps">0</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="pb-nps"></div></div>
+                </div>
 
-        <div class="grid">
-            <div class="counter-btn" id="btn-nps" onclick="increment('nps')">
-                <span class="cb-icon">😊</span>
-                <span class="cb-name">NPS</span>
-                <span class="cb-target">Target: 20</span>
-                <div class="cb-count" id="nps">0</div>
-                <div class="pb-wrap"><div class="pb-fill" id="pb-nps"></div></div>
-            </div>
+                <!-- 2. WhatsApp -->
+                <div class="stat-card" id="btn-whatsapp" onclick="increment('whatsapp')">
+                    <div class="card-head">
+                        <span class="card-icon">💬</span>
+                        <span class="card-target">T:25</span>
+                    </div>
+                    <div class="card-title">WhatsApp Reg</div>
+                    <div class="card-body"><span class="card-count" id="whatsapp">0</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="pb-whatsapp"></div></div>
+                </div>
 
-            <div class="counter-btn" id="btn-whatsapp" onclick="increment('whatsapp')">
-                <span class="cb-icon">💬</span>
-                <span class="cb-name">WhatsApp</span>
-                <span class="cb-target">Target: 25</span>
-                <div class="cb-count" id="whatsapp">0</div>
-                <div class="pb-wrap"><div class="pb-fill" id="pb-whatsapp"></div></div>
-            </div>
+                <!-- 3. Yono Reg -->
+                <div class="stat-card" id="btn-yonoRegistration" onclick="increment('yonoRegistration')">
+                    <div class="card-head">
+                        <span class="card-icon">📝</span>
+                        <span class="card-target">T:20</span>
+                    </div>
+                    <div class="card-title">Yono Reg</div>
+                    <div class="card-body"><span class="card-count" id="yonoRegistration">0</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="pb-yonoRegistration"></div></div>
+                </div>
 
-            <div class="counter-btn" id="btn-yonoRegistration" onclick="increment('yonoRegistration')">
-                <span class="cb-icon">📝</span>
-                <span class="cb-name">Yono Reg.</span>
-                <span class="cb-target">Target: 20</span>
-                <div class="cb-count" id="yonoRegistration">0</div>
-                <div class="pb-wrap"><div class="pb-fill" id="pb-yonoRegistration"></div></div>
-            </div>
+                <!-- 4. Contact Centre -->
+                <div class="stat-card" id="btn-contactCentre" onclick="increment('contactCentre')">
+                    <div class="card-head">
+                        <span class="card-icon">☎️</span>
+                        <span class="card-target">T:40</span>
+                    </div>
+                    <div class="card-title">Contact Ctr</div>
+                    <div class="card-body"><span class="card-count" id="contactCentre">0</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="pb-contactCentre"></div></div>
+                </div>
 
-            <div class="counter-btn" id="btn-contactCentre" onclick="increment('contactCentre')">
-                <span class="cb-icon">☎️</span>
-                <span class="cb-name">Contact Centre</span>
-                <span class="cb-target">Target: 40</span>
-                <div class="cb-count" id="contactCentre">0</div>
-                <div class="pb-wrap"><div class="pb-fill" id="pb-contactCentre"></div></div>
-            </div>
+                <!-- 5. CBDC -->
+                <div class="stat-card" id="btn-cbdc" onclick="increment('cbdc')">
+                    <div class="card-head">
+                        <span class="card-icon">💳</span>
+                        <span class="card-target">T:5</span>
+                    </div>
+                    <div class="card-title">CBDC</div>
+                    <div class="card-body"><span class="card-count" id="cbdc">0</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="pb-cbdc"></div></div>
+                </div>
 
-            <div class="counter-btn" id="btn-cbdc" onclick="increment('cbdc')">
-                <span class="cb-icon">💳</span>
-                <span class="cb-name">CBDC</span>
-                <span class="cb-target">Target: 5</span>
-                <div class="cb-count" id="cbdc">0</div>
-                <div class="pb-wrap"><div class="pb-fill" id="pb-cbdc"></div></div>
-            </div>
+                <!-- 6. Migration -->
+                <div class="stat-card" id="btn-channelMigration" onclick="increment('channelMigration')">
+                    <div class="card-head">
+                        <span class="card-icon">🔄</span>
+                        <span class="card-target">T:12</span>
+                    </div>
+                    <div class="card-title">Migration</div>
+                    <div class="card-body"><span class="card-count" id="channelMigration">0</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="pb-channelMigration"></div></div>
+                </div>
 
-            <div class="counter-btn" id="btn-channelMigration" onclick="increment('channelMigration')">
-                <span class="cb-icon">🔄</span>
-                <span class="cb-name">Migration</span>
-                <span class="cb-target">Target: 12</span>
-                <div class="cb-count" id="channelMigration">0</div>
-                <div class="pb-wrap"><div class="pb-fill" id="pb-channelMigration"></div></div>
-            </div>
+                <!-- 7. Re-KYC -->
+                <div class="stat-card" id="btn-rekyc" onclick="increment('rekyc')">
+                    <div class="card-head">
+                        <span class="card-icon">🪪</span>
+                        <span class="card-target">T:20</span>
+                    </div>
+                    <div class="card-title">Re-KYC</div>
+                    <div class="card-body"><span class="card-count" id="rekyc">0</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="pb-rekyc"></div></div>
+                </div>
 
-            <div class="counter-btn" id="btn-rekyc" onclick="increment('rekyc')">
-                <span class="cb-icon">🪪</span>
-                <span class="cb-name">Re-KYC</span>
-                <span class="cb-target">Target: 20</span>
-                <div class="cb-count" id="rekyc">0</div>
-                <div class="pb-wrap"><div class="pb-fill" id="pb-rekyc"></div></div>
-            </div>
+                <!-- 8. Yono Usage -->
+                <div class="stat-card" id="btn-yonoUsage" onclick="increment('yonoUsage')">
+                    <div class="card-head">
+                        <span class="card-icon">📱</span>
+                        <span class="card-target">T:15</span>
+                    </div>
+                    <div class="card-title">Yono Usage</div>
+                    <div class="card-body"><span class="card-count" id="yonoUsage">0</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="pb-yonoUsage"></div></div>
+                </div>
 
-            <div class="counter-btn" id="btn-yonoUsage" onclick="increment('yonoUsage')">
-                <span class="cb-icon">📱</span>
-                <span class="cb-name">Yono Usage</span>
-                <span class="cb-target">Target: 15</span>
-                <div class="cb-count" id="yonoUsage">0</div>
-                <div class="pb-wrap"><div class="pb-fill" id="pb-yonoUsage"></div></div>
-            </div>
+                <!-- 9. WA Usage -->
+                <div class="stat-card" id="btn-whatsappUsage" onclick="increment('whatsappUsage')">
+                    <div class="card-head">
+                        <span class="card-icon">📲</span>
+                        <span class="card-target">T:20</span>
+                    </div>
+                    <div class="card-title">WA Usage</div>
+                    <div class="card-body"><span class="card-count" id="whatsappUsage">0</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="pb-whatsappUsage"></div></div>
+                </div>
 
-            <div class="counter-btn" id="btn-whatsappUsage" onclick="increment('whatsappUsage')">
-                <span class="cb-icon">📲</span>
-                <span class="cb-name">WhatsApp Usage</span>
-                <span class="cb-target">Target: 20</span>
-                <div class="cb-count" id="whatsappUsage">0</div>
-                <div class="pb-wrap"><div class="pb-fill" id="pb-whatsappUsage"></div></div>
-            </div>
+                <!-- 10. ATM Card -->
+                <div class="stat-card" id="btn-atmCardIssuance" onclick="increment('atmCardIssuance')">
+                    <div class="card-head">
+                        <span class="card-icon">🏧</span>
+                        <span class="card-target">T:10</span>
+                    </div>
+                    <div class="card-title">ATM Card Issue</div>
+                    <div class="card-body"><span class="card-count" id="atmCardIssuance">0</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="pb-atmCardIssuance"></div></div>
+                </div>
 
-            <div class="counter-btn" id="btn-atmCardIssuance" onclick="increment('atmCardIssuance')">
-                <span class="cb-icon">💳</span>
-                <span class="cb-name">ATM Card Issuance</span>
-                <span class="cb-target">Target: 10</span>
-                <div class="cb-count" id="atmCardIssuance">0</div>
-                <div class="pb-wrap"><div class="pb-fill" id="pb-atmCardIssuance"></div></div>
-            </div>
-
-            <div class="counter-btn" id="btn-chequeBookIssuance" onclick="increment('chequeBookIssuance')">
-                <span class="cb-icon">📘</span>
-                <span class="cb-name">Cheque Book Issuance</span>
-                <span class="cb-target">Target: 10</span>
-                <div class="cb-count" id="chequeBookIssuance">0</div>
-                <div class="pb-wrap"><div class="pb-fill" id="pb-chequeBookIssuance"></div></div>
+                <!-- 11. Cheque Book -->
+                <div class="stat-card" id="btn-chequeBookIssuance" onclick="increment('chequeBookIssuance')">
+                    <div class="card-head">
+                        <span class="card-icon">📘</span>
+                        <span class="card-target">T:10</span>
+                    </div>
+                    <div class="card-title">Cheque Book</div>
+                    <div class="card-body"><span class="card-count" id="chequeBookIssuance">0</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="pb-chequeBookIssuance"></div></div>
+                </div>
             </div>
         </div>
 
-        <!-- FAB ACTIONS -->
-        <div class="fixed-actions">
-            <button class="action-btn reset" onclick="openConfirm('reset')">
-                ↺ Reset
-            </button>
-            <button class="action-btn send" onclick="exportToWhatsApp()">
-                📱 Send Report
-            </button>
+        <!-- FIXED BOTTOM ACTIONS -->
+        <div class="bottom-actions">
+            <button class="action-btn reset" onclick="openConfirm('reset')">Wipe</button>
+            <button class="action-btn send" onclick="exportToWhatsApp()">📱 Transmit Report</button>
         </div>
     </div>
 </div>
 
 <div id="toast"></div>
 
-<!-- BOTTOM SHEET CONFIRM MODAL -->
+<!-- CENTER MODAL -->
 <div id="confirm-overlay" class="overlay" onclick="closeConfirm()">
-    <div class="bottom-sheet" id="confirm-sheet" onclick="event.stopPropagation()">
-        <div class="confirm-icon" id="confirm-icon"></div>
-        <div id="confirm-title">Confirm</div>
-        <div id="confirm-msg">Message</div>
-        <button class="sheet-btn" id="confirm-action-btn" onclick="executeConfirm()">Yes, proceed</button>
-        <button class="sheet-btn sheet-btn-cancel" onclick="closeConfirm()">Cancel</button>
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div id="modal-icon">⚠️</div>
+        <div id="modal-title">Confirm Action</div>
+        <div id="modal-msg">Are you sure?</div>
+        <button class="modal-btn" id="confirm-action-btn" onclick="executeConfirm()">Proceed</button>
+        <button class="modal-btn modal-btn-cancel" onclick="closeConfirm()">Cancel</button>
     </div>
 </div>
 
+<!-- JS PRESERVED 100% -->
 <script>
     const TARGETS = {
         nps: 20, whatsapp: 25, yonoRegistration: 20,
@@ -452,14 +459,17 @@
 
     function login() {
         localStorage.setItem('sbi_a1_loggedIn', 'true');
+        document.getElementById('login-wrapper').classList.add('hidden');
         showDashboard();
         const h = new Date().getHours();
-        const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-        showToast(`${greet}, Pummy! Have a great day.`);
+        const greet = h < 12 ? 'SYS UP: Good morning' : h < 17 ? 'SYS UP: Good afternoon' : 'SYS UP: Good evening';
+        showToast(`${greet}, Pummy.`);
     }
 
     function showDashboard() {
-        document.getElementById('login-page').classList.add('hidden');
+        const loginWrapper = document.getElementById('login-wrapper');
+        if(loginWrapper) loginWrapper.classList.add('hidden');
+        
         document.getElementById('app-header').classList.remove('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
         setDate();
@@ -539,36 +549,34 @@
             updateUI(f);
         });
         localStorage.removeItem('sbi_a1_data');
-        showToast("All targets have been reset.");
+        showToast("System purged. All targets reset.");
     }
 
-    /* ============ CUSTOM BOTTOM SHEET ============ */
+    /* ============ CUSTOM MODAL ============ */
     let pendingConfirmAction = null;
 
     function openConfirm(type) {
         pendingConfirmAction = type;
         const overlay = document.getElementById('confirm-overlay');
-        const icon = document.getElementById('confirm-icon');
-        const title = document.getElementById('confirm-title');
-        const msg = document.getElementById('confirm-msg');
+        const icon = document.getElementById('modal-icon');
+        const title = document.getElementById('modal-title');
+        const msg = document.getElementById('modal-msg');
         const btn = document.getElementById('confirm-action-btn');
 
-        overlay.classList.remove('confirm-danger', 'confirm-logout');
-
         if (type === 'reset') {
-            overlay.classList.add('confirm-danger');
             icon.textContent = '🗑️';
-            title.textContent = 'Reset Data?';
-            msg.textContent = 'This will permanently erase all counts for today. This action cannot be undone.';
-            btn.className = 'sheet-btn sheet-btn-danger';
-            btn.textContent = 'Yes, erase data';
+            icon.style.color = 'var(--danger)';
+            title.textContent = 'Wipe Data?';
+            msg.textContent = 'This will permanently erase all counts for today. Cannot be undone.';
+            btn.className = 'modal-btn modal-btn-danger';
+            btn.textContent = 'Execute Wipe';
         } else if (type === 'logout') {
-            overlay.classList.add('confirm-logout');
-            icon.textContent = '👋';
-            title.textContent = 'Log Out?';
-            msg.textContent = 'Are you sure you want to exit your workspace?';
-            btn.className = 'sheet-btn sheet-btn-primary';
-            btn.textContent = 'Yes, log out';
+            icon.textContent = '🔒';
+            icon.style.color = 'var(--teal)';
+            title.textContent = 'End Session?';
+            msg.textContent = 'Are you sure you want to lock the terminal and exit?';
+            btn.className = 'modal-btn modal-btn-primary';
+            btn.textContent = 'Lock Terminal';
         }
         
         overlay.classList.add('show');
@@ -586,7 +594,10 @@
     }
 
     window.onload = () => {
-        if (localStorage.getItem('sbi_a1_loggedIn') === 'true') showDashboard();
+        if (localStorage.getItem('sbi_a1_loggedIn') === 'true') {
+            document.getElementById('login-wrapper').classList.add('hidden');
+            showDashboard();
+        }
     };
 </script>
 </body>
