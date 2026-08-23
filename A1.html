@@ -114,10 +114,24 @@ header {
 #dashboard {
   display: flex; flex-direction: column; height: 100%;
   flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
-  padding: 16px; gap: 24px;
+  padding: 16px; gap: 20px;
   max-width: 600px; width: 100%; margin: 0 auto;
   padding-bottom: 100px; /* Space for dock */
 }
+
+/* EXTERNAL LINK BANNER */
+.quick-link-banner {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--surface); border: 1px solid var(--border-active);
+  border-radius: var(--radius-md); padding: 14px 16px;
+  color: var(--text-main); text-decoration: none; font-weight: 600;
+  font-size: 13px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.quick-link-banner:active { transform: scale(0.98); background: var(--sbi-blue-light); }
+.quick-link-icon-wrapper { display: flex; align-items: center; gap: 10px; }
+.quick-link-icon { color: var(--sbi-blue); display: flex; }
+.quick-link-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+.quick-link-arrow { color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; }
 
 /* COMMAND MODULE (Progress + Excel) */
 .command-module {
@@ -315,6 +329,17 @@ header {
 </div>
 
 <div id="dashboard" class="hidden">
+
+  <!-- QUICK LINK BANNER -->
+  <a href="https://yonoretail.sbi.bank.in/accounts/re-kyc/kyc-entry?srcChn=RINB" target="_blank" class="quick-link-banner">
+    <div class="quick-link-icon-wrapper">
+      <span class="quick-link-icon">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </span>
+      <span>SBI Re-KYC Portal <span style="font-size: 10px; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; margin-left: 4px;">[EXTERNAL]</span></span>
+    </div>
+    <span class="quick-link-arrow">→</span>
+  </a>
   
   <!-- COMMAND MODULE (Top Metrics & Excel) -->
   <div class="command-module">
@@ -370,14 +395,17 @@ header {
         </div>
       </div>
 
-      <!-- 3. Contact Centre -->
+      <!-- 3. Contact Centre (with +N logic) -->
       <div class="widget ledger-row" id="card-contact">
         <div class="w-header">
           <span class="w-title">Contact Ctr</span>
           <span class="w-target mono">T:10</span>
         </div>
         <div class="w-body"><span class="w-count mono" id="c-contact">0</span></div>
-        <button id="btn-contact" class="w-btn" onclick="openModal('Contact Centre')">LOG</button>
+        <div class="w-btn-row">
+          <button id="btn-contact" class="w-btn" onclick="openModal('Contact Centre')">LOG</button>
+          <button id="btn-contact-backfill" class="w-btn w-btn-sub" onclick="openBackfillModal('Contact Centre')">+N</button>
+        </div>
       </div>
 
       <!-- 4. NPS -->
@@ -392,7 +420,7 @@ header {
     </div>
   </div>
 
-  <!-- SECTION 2: SERVICES & UPDATES (Moved Above Financials) -->
+  <!-- SECTION 2: SERVICES & UPDATES -->
   <div>
     <div class="section-title">Service Requests</div>
     <div class="compact-list">
