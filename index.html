@@ -7,22 +7,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --ink:          #0a0e17;
-            --ink-2:        #0f1522;
-            --panel:        #10182a;
-            --panel-border: rgba(148, 197, 255, 0.14);
-            --line:         rgba(148, 197, 255, 0.08);
+            /* Premium Fintech Palette */
+            --bg-base:        #06080F;
+            --bg-surface:     rgba(17, 24, 39, 0.7);
+            --bg-surface-hover: rgba(31, 41, 55, 0.8);
+            
+            --accent-main:    #0ea5e9; /* Sleek Cyan/Blue */
+            --accent-glow:    rgba(14, 165, 233, 0.4);
+            --accent-subtle:  rgba(14, 165, 233, 0.1);
+            
+            --border-light:   rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(255, 255, 255, 0.15);
+            
+            --text-primary:   #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-tertiary:  #475569;
 
-            --teal:         #2dd4bf;
-            --teal-dim:     rgba(45, 212, 191, 0.16);
-            --amber:        #f5a623;
-
-            --text-main:    #eaf1fb;
-            --text-muted:   #7c8aa3;
-            --text-dim:     #4b5872;
-
-            --r-card: 6px;
-            --r-btn: 3px;
+            --radius-card:    16px;
+            --radius-btn:     12px;
+            
+            --transition:     all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         *, *::before, *::after {
@@ -32,306 +36,337 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        @keyframes fadeUp {
-            0% { opacity: 0; transform: translateY(14px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        @keyframes scan {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
-
         body, html {
             height: 100%;
             width: 100%;
             font-family: 'Space Grotesk', sans-serif;
-            background: var(--ink);
-            color: var(--text-main);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
             overflow: hidden;
-        }
-
-        body {
             display: grid;
             place-items: center;
             position: relative;
-            background-image:
-                linear-gradient(var(--line) 1px, transparent 1px),
-                linear-gradient(90deg, var(--line) 1px, transparent 1px);
-            background-size: 42px 42px;
-            background-position: center;
         }
 
-        /* radial ink pooling to keep the grid from feeling flat */
-        body::before {
+        /* Ambient Background Glow */
+        body::before, body::after {
             content: "";
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(ellipse at 50% 20%, rgba(45, 212, 191, 0.07), transparent 55%),
-                        radial-gradient(ellipse at 50% 100%, rgba(10, 14, 23, 0.9), var(--ink) 70%);
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            z-index: -1;
             pointer-events: none;
+        }
+
+        body::before {
+            background: #0ea5e9;
+            top: -200px;
+            left: -100px;
+        }
+
+        body::after {
+            background: #3b82f6;
+            bottom: -200px;
+            right: -100px;
+        }
+
+        /* --- Animations --- */
+        @keyframes floatUp {
+            0% { opacity: 0; transform: translateY(20px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes pulseDot {
+            0% { box-shadow: 0 0 0 0 var(--accent-glow); }
+            70% { box-shadow: 0 0 0 6px rgba(14, 165, 233, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
         }
 
         /* --- Top status strip --- */
         .status-strip {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            padding: 14px 22px;
+            gap: 16px;
+            padding: 8px 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-light);
+            border-radius: 30px;
+            backdrop-filter: blur(8px);
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.68rem;
+            font-size: 0.7rem;
             letter-spacing: 0.08em;
-            color: var(--text-dim);
+            color: var(--text-secondary);
             text-transform: uppercase;
             z-index: 5;
         }
 
+        .status-wrapper { display: flex; align-items: center; gap: 8px; }
+
         .status-strip .dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            background: var(--teal);
-            margin-right: 8px;
-            box-shadow: 0 0 8px var(--teal);
-            animation: blink 2.2s ease-in-out infinite;
+            background: var(--accent-main);
+            animation: pulseDot 2s infinite;
         }
 
-        .status-strip span.id { color: var(--text-muted); }
+        .status-strip .divider {
+            width: 1px;
+            height: 12px;
+            background: var(--border-light);
+        }
 
-        /* --- Gateway Card --- */
+        .status-strip span.id { color: var(--text-tertiary); }
+
+        /* --- Gateway Card (Glassmorphism) --- */
         .gateway-container {
             position: relative;
-            background: linear-gradient(180deg, var(--panel), var(--ink-2));
-            border: 1px solid var(--panel-border);
-            border-radius: var(--r-card);
-            padding: 2.75rem 2.25rem 2rem;
+            background: var(--bg-surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-light);
+            border-top: 1px solid rgba(255,255,255,0.12);
+            border-radius: var(--radius-card);
+            padding: 3rem 2.5rem;
             width: 90%;
-            max-width: 380px;
-            text-align: left;
-            box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
-            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            overflow: hidden;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 
+                        inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+            animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* corner ticks — instrumentation detail, not decoration */
-        .gateway-container::before,
-        .gateway-container::after {
-            content: "";
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            border: 1px solid var(--teal);
-            opacity: 0.55;
-        }
-        .gateway-container::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
-        .gateway-container::after  { bottom: -1px; right: -1px; border-left: none; border-top: none; }
-
-        .scan-line {
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 60%;
-            background: linear-gradient(180deg, transparent, rgba(45, 212, 191, 0.05), transparent);
-            animation: scan 6s linear infinite;
-            pointer-events: none;
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-subtle), transparent);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--accent-main);
+            font-size: 1.2rem;
         }
 
         .eyebrow {
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.68rem;
-            letter-spacing: 0.14em;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: var(--teal);
-            margin-bottom: 14px;
+            color: var(--accent-main);
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .eyebrow::before {
-            content: "";
-            width: 18px;
-            height: 1px;
-            background: var(--teal);
-        }
-
         h1 {
-            font-size: 1.55rem;
+            font-size: 1.75rem;
             font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 6px;
-            letter-spacing: -0.01em;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
         }
 
         #dynamic-wish {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.8rem;
+            font-size: 0.95rem;
             font-weight: 400;
-            color: var(--text-muted);
-            min-height: 18px;
-            margin-bottom: 1.75rem;
+            color: var(--text-secondary);
+            min-height: 24px;
+            margin-bottom: 2rem;
             transition: opacity 0.5s ease;
-        }
-
-        #dynamic-wish::before {
-            content: "> ";
-            color: var(--teal);
-        }
-
-        .divider {
-            border: none;
-            border-top: 1px solid var(--line);
-            margin: 0 0 1.5rem;
         }
 
         /* --- Buttons --- */
         .btn-group {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .nav-btn {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 14px 16px;
-            border-radius: var(--r-btn);
-            border: 1px solid var(--panel-border);
-            background: rgba(148, 197, 255, 0.03);
-            color: var(--text-main);
+            padding: 16px;
+            border-radius: var(--radius-btn);
+            border: 1px solid var(--border-light);
+            background: rgba(255, 255, 255, 0.02);
             text-decoration: none;
             cursor: pointer;
-            transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+            transition: var(--transition);
             position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle button hover glow */
+        .nav-btn::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent-subtle), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
         }
 
         .nav-btn:hover {
-            background: var(--teal-dim);
-            border-color: var(--teal);
-            transform: translateX(2px);
+            background: var(--bg-surface-hover);
+            border-color: var(--border-highlight);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.4);
         }
 
-        .nav-btn:active {
-            transform: translateX(2px) scale(0.985);
+        .nav-btn:hover::before { transform: translateX(100%); }
+        .nav-btn:active { transform: translateY(0); }
+
+        .btn-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-light);
+            margin-right: 16px;
+            transition: var(--transition);
+        }
+
+        .nav-btn:hover .btn-icon-wrapper {
+            border-color: var(--accent-main);
+            color: var(--accent-main);
         }
 
         .btn-index {
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.7rem;
-            color: var(--text-dim);
-            width: 20px;
-            flex-shrink: 0;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
         }
-
-        .nav-btn:hover .btn-index { color: var(--teal); }
 
         .btn-text { flex: 1; min-width: 0; }
 
         .btn-label {
             display: block;
-            font-size: 0.94rem;
-            font-weight: 600;
-            color: var(--text-main);
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
         }
 
         .btn-sub {
             display: block;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.68rem;
-            color: var(--text-dim);
-            margin-top: 2px;
-            letter-spacing: 0.03em;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
         }
 
         .btn-arrow {
-            color: var(--text-dim);
-            font-size: 1.1rem;
-            transition: transform 0.25s ease, color 0.25s ease;
+            color: var(--text-tertiary);
+            font-size: 1.2rem;
+            transition: var(--transition);
         }
 
         .nav-btn:hover .btn-arrow {
-            transform: translateX(3px);
-            color: var(--teal);
+            transform: translateX(4px);
+            color: var(--accent-main);
         }
 
         /* --- Footer --- */
         .footer-text {
-            margin-top: 2rem;
+            margin-top: 2.5rem;
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.66rem;
-            font-weight: 400;
-            color: var(--text-dim);
-            letter-spacing: 0.05em;
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .footer-text .lock { color: var(--teal); }
+        .footer-text svg {
+            width: 12px;
+            height: 12px;
+            fill: var(--text-tertiary);
+        }
 
         @media (prefers-reduced-motion: reduce) {
-            .status-strip .dot, .scan-line { animation: none; }
             .gateway-container { animation: none; }
+            .nav-btn { transition: none; }
+            .status-strip .dot { animation: none; }
         }
     </style>
 </head>
 <body>
 
     <div class="status-strip">
-        <span><span class="dot"></span>SYSTEM ONLINE</span>
+        <div class="status-wrapper">
+            <span class="dot"></span>
+            <span>System Online</span>
+        </div>
+        <div class="divider"></div>
         <span class="id">GW-SBI-04</span>
     </div>
 
     <div class="gateway-container">
-        <div class="scan-line"></div>
+        
+        <div class="header-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+        </div>
 
-        <div class="eyebrow">Secure Session</div>
+        <div class="eyebrow">Secure Session Active</div>
         <h1>Operations Gateway</h1>
         <p id="dynamic-wish">Loading workspace...</p>
 
-        <hr class="divider">
-
         <div class="btn-group">
             <a href="K1.html" class="nav-btn btn-target">
-                <span class="btn-index">01</span>
+                <div class="btn-icon-wrapper">
+                    <span class="btn-index">01</span>
+                </div>
                 <span class="btn-text">
                     <span class="btn-label">Target Portal</span>
-                    <span class="btn-sub">Elipoma</span>
+                    <span class="btn-sub">Elipoma Branch</span>
                 </span>
                 <span class="btn-arrow">→</span>
             </a>
+            
             <a href="A1.html" class="nav-btn btn-report">
-                <span class="btn-index">02</span>
+                <div class="btn-icon-wrapper">
+                    <span class="btn-index">02</span>
+                </div>
                 <span class="btn-text">
                     <span class="btn-label">Daily Report</span>
-                    <span class="btn-sub">Ashutosh</span>
+                    <span class="btn-sub">Ashutosh Workspace</span>
                 </span>
                 <span class="btn-arrow">→</span>
             </a>
         </div>
 
-        <p class="footer-text"><span class="lock">&#128274;</span>Secure branch access &copy; 2026</p>
+        <p class="footer-text">
+            <svg viewBox="0 0 24 24"><path d="M12 2C9.243 2 7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5zm6 10v8H6v-8h12zm-9-2V7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9z"/></svg>
+            End-to-End Encrypted &copy; 2026
+        </p>
     </div>
 
     <script>
         const wishes = [
-            "Have a fantastic day ahead",
-            "Keep up the brilliant work",
-            "Stay safe and productive",
-            "Let's crush our targets today",
-            "Welcome back to the dashboard",
-            "Wishing you massive success",
-            "Your hard work is appreciated"
+            "Good to see you. Have a productive shift.",
+            "Workspace initialized successfully.",
+            "All systems normal. Ready when you are.",
+            "Daily metrics updated. Keep up the great work.",
+            "Secure connection established.",
+            "Welcome back. Let's hit today's targets."
         ];
 
         window.onload = () => {
@@ -341,7 +376,7 @@
             setTimeout(() => {
                 wishEl.textContent = wishes[Math.floor(Math.random() * wishes.length)];
                 wishEl.style.opacity = 1;
-            }, 300);
+            }, 400);
         };
     </script>
 
