@@ -604,17 +604,11 @@ header {
     <h4>Share Branch Report</h4>
     <p style="color:var(--text-muted); font-size:13px; margin-top:-10px; margin-bottom: 20px;">Enter values for the quick branch summary.</p>
 
-    <label class="field-label" for="branch-wa">WhatsApp</label>
-    <input type="number" id="branch-wa" class="input-field" placeholder="0" min="0" step="1">
-
     <label class="field-label" for="branch-cc">Contact Centre (CC)</label>
-    <input type="number" id="branch-cc" class="input-field" placeholder="0" min="0" step="1">
-
-    <label class="field-label" for="branch-kyc">Re-KYC</label>
-    <input type="number" id="branch-kyc" class="input-field" placeholder="0" min="0" step="1">
+    <input type="number" id="branch-cc" class="input-field" placeholder="0" step="1">
 
     <label class="field-label" for="branch-nps">NPS (Feedback)</label>
-    <input type="number" id="branch-nps" class="input-field" placeholder="0" min="0" step="1">
+    <input type="number" id="branch-nps" class="input-field" placeholder="0" step="1">
 
     <button class="modal-btn primary" onclick="shareBranchReport()">Send via WhatsApp</button>
     <button class="modal-btn cancel" onclick="closeBranchShareModal()">Cancel</button>
