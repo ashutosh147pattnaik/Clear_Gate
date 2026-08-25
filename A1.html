@@ -605,10 +605,10 @@ header {
     <p style="color:var(--text-muted); font-size:13px; margin-top:-10px; margin-bottom: 20px;">Enter values for the quick branch summary.</p>
 
     <label class="field-label" for="branch-cc">Contact Centre (CC)</label>
-    <input type="number" id="branch-cc" class="input-field" placeholder="0" step="1">
+    <input type="number" id="branch-cc" class="input-field" placeholder="0" min="0" step="1">
 
     <label class="field-label" for="branch-nps">NPS (Feedback)</label>
-    <input type="number" id="branch-nps" class="input-field" placeholder="0" step="1">
+    <input type="number" id="branch-nps" class="input-field" placeholder="0" min="0" step="1">
 
     <button class="modal-btn primary" onclick="shareBranchReport()">Send via WhatsApp</button>
     <button class="modal-btn cancel" onclick="closeBranchShareModal()">Cancel</button>
@@ -626,7 +626,7 @@ header {
   </div>
 </div>
 
-<!-- JS LOGIC - UNCHANGED -->
+<!-- JS LOGIC -->
 <script>
 const { jsPDF } = window.jspdf;
 
@@ -891,24 +891,27 @@ function doGeneratePDF() {
 function shareWA() {
   const c = state.counts;
   const msg = `*DAILY REPORTING OF DATA*\nName- ${state.userName}\nBranch -${state.brName}\n*Date* ${new Date().toLocaleDateString('en-GB')}\n1. YONO Registration - ${c['Yono SBI']}\n2. What's app Registration - ${c['WhatsApp']}\n3. Contact centre Migration - ${c['Contact Centre']}\n4. NPS (FeedBack) - ${c['NPS']}\n5. FORM 15 G/H Submission : ${c['FORM 15 G/H Submission']}\n6. ATM Card Issuance : ${c['ATM Card Issuance']}\n7. Cheque Book Request: ${c['Cheque Book Request']}\n8. RE-KYC update: ${c['Re-KYC']}\n9. Nominee update: ${c['Nominee update']}\n10. Statement & Enquiry : ${c['Statement & Enquiry']}\n11. FINANCIAL TRANSACTION - ${c['FINANCIAL TRANSACTION']}\n12. NON FINANCIAL - ${c['NON FINANCIAL']}\n13. SB Account opening - ${c['SB Account opening/Funding']}\n14. CBDC - ${c['CBDC']}\n15. PAI - ${c['PAI']}\n16. FD Through yono - ${c['FD Through yono']}\n17. Yono Reset Old - ${c['Yono Reset Old']}\n18. Upto 40000 Deposit - ${c['Upto 40000 Deposit']}\n19. Upto 40000 Widrawl - ${c['Upto 40000 Widrawl']}\n20. Upto 40000 Transfer - ${c['Upto 40000 Transfer']}\n21. Above 40000 Transfer - ${c['Above 40000 Transfer']}`;
-  window.open('https://wa.me/?text=' + encodeURIComponent(msg));
-  setTimeout(() => { openBranchShareModal(); }, 600);
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 
 function openBranchShareModal() {
-  $('branch-wa').value = ''; $('branch-cc').value = ''; $('branch-kyc').value = ''; $('branch-nps').value = '';
+  $('branch-cc').value = '';
+  $('branch-nps').value = '';
   $('branch-share-overlay').classList.add('show');
-  setTimeout(() => $('branch-wa').focus(), 150);
+  setTimeout(() => $('branch-cc').focus(), 150);
 }
 function closeBranchShareModal(e) {
   if (e && e.target !== $('branch-share-overlay')) return;
   $('branch-share-overlay').classList.remove('show');
 }
 function shareBranchReport() {
-  const wa = $('branch-wa').value.trim(), cc = $('branch-cc').value.trim(), kyc = $('branch-kyc').value.trim(), nps = $('branch-nps').value.trim();
-  if (wa === '' || cc === '' || kyc === '' || nps === '') return alert('Fill all fields (use 0 if empty).');
+  const ccRaw = $('branch-cc').value.trim();
+  const npsRaw = $('branch-nps').value.trim();
+  const cc = ccRaw === '' ? 0 : parseInt(ccRaw, 10);
+  const nps = npsRaw === '' ? 0 : parseInt(npsRaw, 10);
+  if (isNaN(cc) || isNaN(nps)) return alert('Please enter valid numbers.');
   const msg = `*BRANCH REPORT*\nBranch -${state.brName}\n*Date* ${new Date().toLocaleDateString('en-GB')}\n1. Contact Centre (CC) - ${cc}\n2. NPS (Feedback) - ${nps}`;
-  window.open('https://wa.me/?text=' + encodeURIComponent(msg));
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
   closeBranchShareModal();
 }
 
