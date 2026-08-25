@@ -913,7 +913,7 @@ function closeBranchShareModal(e) {
 function shareBranchReport() {
   const wa = $('branch-wa').value.trim(), cc = $('branch-cc').value.trim(), kyc = $('branch-kyc').value.trim(), nps = $('branch-nps').value.trim();
   if (wa === '' || cc === '' || kyc === '' || nps === '') return alert('Fill all fields (use 0 if empty).');
-  const msg = `*BRANCH REPORT*\nName- ${state.userName}\nBranch -${state.brName}\n*Date* ${new Date().toLocaleDateString('en-GB')}\n1. WhatsApp - ${wa}\n2. Contact Centre (CC) - ${cc}\n3. Re-KYC - ${kyc}\n4. NPS (Feedback) - ${nps}`;
+  const msg = `*BRANCH REPORT*\nBranch -${state.brName}\n*Date* ${new Date().toLocaleDateString('en-GB')}\n1. Contact Centre (CC) - ${cc}\n2. NPS (Feedback) - ${nps}`;
   window.open('https://wa.me/?text=' + encodeURIComponent(msg));
   closeBranchShareModal();
 }
