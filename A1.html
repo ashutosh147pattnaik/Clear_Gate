@@ -133,14 +133,14 @@ header {
 .quick-link-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
 .quick-link-arrow { color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; }
 
-/* COMMAND MODULE (Progress) */
+/* COMMAND MODULE (Progress + Excel) */
 .command-module {
   background: var(--surface); backdrop-filter: blur(8px);
   border: 1px solid var(--border); border-radius: var(--radius-lg);
   padding: 16px; display: flex; gap: 16px; align-items: center;
   box-shadow: var(--shadow);
 }
-.summary-card { display: flex; align-items: center; gap: 12px; flex: 1; }
+.summary-card { display: flex; align-items: center; gap: 12px; flex: 1; border-right: 1px solid var(--border); padding-right: 12px; }
 .seal-ring-wrap { position: relative; width: 56px; height: 56px; flex-shrink: 0; }
 .seal-ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); filter: drop-shadow(0 0 4px var(--sbi-blue)); }
 .seal-track { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 5; }
@@ -150,6 +150,15 @@ header {
 .summary-meta { flex: 1; }
 .summary-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.1em; }
 .summary-frac { font-size: 18px; font-weight: 700; color: var(--text-main); margin-top: 2px;}
+
+.excel-card { display: flex; flex-direction: column; justify-content: center; flex: 1; }
+.excel-controls { display: flex; gap: 8px; width: 100%; }
+.ex-btn {
+  flex: 1; border: 1px solid transparent; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600;
+  height: 36px; color: var(--bg-main); background: var(--sbi-blue); cursor: pointer; transition: all 0.2s;
+}
+.ex-btn-out { background: transparent; border-color: var(--danger); color: var(--danger); flex: 0.6; }
+#ex-status { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-top: 8px; text-align: center; }
 
 /* SECTION HEADERS */
 .section-title {
@@ -332,7 +341,7 @@ header {
     <span class="quick-link-arrow">→</span>
   </a>
   
-  <!-- COMMAND MODULE (Top Metrics) -->
+  <!-- COMMAND MODULE (Top Metrics & Excel) -->
   <div class="command-module">
     <div class="summary-card">
       <div class="seal-ring-wrap">
@@ -348,6 +357,14 @@ header {
         <div class="summary-title">Target Vol.</div>
         <div class="summary-frac mono" id="seal-frac">0 / 40</div>
       </div>
+    </div>
+
+    <div class="excel-card">
+      <div class="excel-controls">
+        <button id="excel-btn-main" class="ex-btn" onclick="handleExcelMain()">SYS LOGIN</button>
+        <button id="excel-btn-logout" class="ex-btn ex-btn-out hidden" onclick="handleExcelLogOut()">OUT</button>
+      </div>
+      <div id="ex-status" class="hidden">Active</div>
     </div>
   </div>
 
@@ -616,16 +633,6 @@ const { jsPDF } = window.jspdf;
 const TARGETS = { 'Yono SBI': 5, WhatsApp: 15, 'Contact Centre': 10, NPS: 10 };
 const TOTAL_TARGET = Object.values(TARGETS).reduce((a,b) => a+b, 0);
 
-const SERVICE_REQUEST_KEYS = [
-  'FORM 15 G/H Submission',
-  'ATM Card Issuance',
-  'Cheque Book Request',
-  'Re-KYC',
-  'Nominee update',
-  'Statement & Enquiry',
-  'Yono Reset Old'
-];
-
 const MAP = [
   { key: 'Yono SBI', id: 'yono' },
   { key: 'WhatsApp', id: 'wa' },
@@ -652,10 +659,12 @@ const MAP = [
 
 let state = JSON.parse(localStorage.getItem('sbi_v20_dark_v4')) || {
   counts: {}, logs: [], loginTime: null,
+  excelSignIn: null, excelLogOut: null, excelBreaks: [], excelIsPaused: false,
   brName:'Komtalpeta', brCode:'17978', userName:'Ashutosh Pattnaik'
 };
 
 MAP.forEach(({ key }) => { if (state.counts[key] === undefined) state.counts[key] = 0; });
+if (state.excelBreaks === undefined) state.excelBreaks = [];
 
 let activeCat = '', selType = 'Account Number';
 
@@ -675,6 +684,20 @@ function doLogin() {
   $('dashboard').classList.remove('hidden');
   $('bottom-nav').classList.remove('hidden');
   save();
+}
+
+function handleExcelMain() {
+  const now = new Date().toLocaleTimeString();
+  if (!state.excelSignIn) { state.excelSignIn = now; } 
+  else if (!state.excelIsPaused) { state.excelIsPaused = true; state.excelBreaks.push({ start: now, end: null }); } 
+  else { state.excelIsPaused = false; if (state.excelBreaks.length > 0) state.excelBreaks[state.excelBreaks.length - 1].end = now; }
+  save();
+}
+
+function handleExcelLogOut() {
+  const now = new Date().toLocaleTimeString();
+  if (state.excelIsPaused && state.excelBreaks.length > 0) { state.excelBreaks[state.excelBreaks.length - 1].end = now; state.excelIsPaused = false; }
+  state.excelLogOut = now; save();
 }
 
 function addSimple(cat) {
@@ -794,6 +817,19 @@ function refreshUI() {
   $('seal-pct').textContent = pct + '%';
   $('seal-frac').textContent = `${totalTargetCount} / ${TOTAL_TARGET}`;
   $('seal-ring-fill').style.strokeDashoffset = SEAL_CIRC - (Math.min(1, totalTargetCount / TOTAL_TARGET) * SEAL_CIRC);
+
+  const btnMain = $('excel-btn-main'); const btnLogout = $('excel-btn-logout'); const exStatus = $('ex-status');
+  if (state.excelLogOut) {
+    btnMain.textContent = 'LOGGED OUT'; btnMain.disabled = true; btnMain.style.background = 'var(--border)'; btnMain.style.color = 'var(--text-muted)';
+    btnLogout.classList.add('hidden'); exStatus.classList.remove('hidden'); exStatus.textContent = 'Session Closed';
+  } else if (state.excelSignIn) {
+    btnLogout.classList.remove('hidden'); exStatus.classList.remove('hidden');
+    if (state.excelIsPaused) { btnMain.textContent = 'RESUME'; btnMain.style.background = 'var(--warning)'; exStatus.textContent = '⏸ Break'; exStatus.style.color = 'var(--warning)'; } 
+    else { btnMain.textContent = 'BREAK'; btnMain.style.background = 'var(--sbi-blue)'; exStatus.textContent = '▶ Active'; exStatus.style.color = 'var(--success)'; }
+  } else {
+    btnMain.textContent = 'SYS LOGIN'; btnMain.disabled = false; btnMain.style.background = 'var(--sbi-blue)';
+    btnLogout.classList.add('hidden'); exStatus.classList.add('hidden');
+  }
 }
 
 function showReport() {
@@ -837,8 +873,13 @@ function doGeneratePDF() {
   const doc = new jsPDF(); const dateStr = new Date().toLocaleDateString('en-GB');
   doc.setFontSize(18); doc.setTextColor(0, 75, 135); doc.text('SBI Ops Ledger Report', 14, 16);
   doc.setFontSize(10); doc.setTextColor(100, 116, 139); doc.text(`Login: ${state.loginTime || '-'} | Date: ${dateStr}`, 14, 24);
-
-  doc.autoTable({ startY: 32, head: [['Category','Count','Target']], body: MAP.map(({ key }) => [key, state.counts[key], TARGETS[key] || '-']), headStyles: { fillColor: [0, 75, 135] }, theme: 'grid' });
+  
+  let currentY = 32; doc.setTextColor(5, 150, 105);
+  if (state.excelSignIn) { doc.text(`Sign In: ${state.excelSignIn}`, 14, currentY); currentY += 6; }
+  state.excelBreaks.forEach(b => { doc.text(`Break: ${b.start} to ${b.end || 'Ongoing'}`, 14, currentY); currentY += 6; });
+  if (state.excelLogOut) { doc.text(`Log Out: ${state.excelLogOut}`, 14, currentY); currentY += 6; }
+  
+  doc.autoTable({ startY: currentY + 4, head: [['Category','Count','Target']], body: MAP.map(({ key }) => [key, state.counts[key], TARGETS[key] || '-']), headStyles: { fillColor: [0, 75, 135] }, theme: 'grid' });
   const afterSum = doc.lastAutoTable.finalY + 10;
   doc.setFontSize(14); doc.setTextColor(0, 75, 135); doc.text('Detailed Logs', 14, afterSum);
   doc.autoTable({ startY: afterSum + 5, head: [['#','Details','Value']], body: state.logs.map((l, i) => [i+1, `${l.cat} [${l.time}]`, l.val]), headStyles: { fillColor: [0, 75, 135] }, theme: 'grid' });
@@ -848,58 +889,9 @@ function doGeneratePDF() {
 }
 
 function shareWA() {
-  try {
-    const c = state.counts;
-
-    const lines = [];
-    lines.push('*DAILY REPORTING OF DATA*');
-    lines.push(`Name- ${state.userName}`);
-    lines.push(`Branch -${state.brName}`);
-    lines.push(`*Date* ${new Date().toLocaleDateString('en-GB')}`);
-    lines.push(`1. YONO Registration - ${c['Yono SBI']}`);
-    lines.push(`2. What's app Registration - ${c['WhatsApp']}`);
-    lines.push(`3. Contact centre Migration - ${c['Contact Centre']}`);
-    lines.push(`4. NPS (FeedBack) - ${c['NPS']}`);
-
-    const serviceLabels = {
-      'FORM 15 G/H Submission': 'FORM 15 G/H Submission',
-      'ATM Card Issuance': 'ATM Card Issuance',
-      'Cheque Book Request': 'Cheque Book Request',
-      'Re-KYC': 'RE-KYC update',
-      'Nominee update': 'Nominee update',
-      'Statement & Enquiry': 'Statement & Enquiry',
-      'Yono Reset Old': 'Yono Reset Old'
-    };
-    let n = 4;
-    SERVICE_REQUEST_KEYS.forEach((key) => {
-      const count = c[key] || 0;
-      if (count > 0) {
-        n++;
-        lines.push(`${n}. ${serviceLabels[key]} : ${count}`);
-      }
-    });
-
-    n++; lines.push(`${n}. FINANCIAL TRANSACTION - ${c['FINANCIAL TRANSACTION']}`);
-    n++; lines.push(`${n}. NON FINANCIAL - ${c['NON FINANCIAL']}`);
-    n++; lines.push(`${n}. SB Account opening - ${c['SB Account opening/Funding']}`);
-    n++; lines.push(`${n}. CBDC - ${c['CBDC']}`);
-    n++; lines.push(`${n}. PAI - ${c['PAI']}`);
-    n++; lines.push(`${n}. FD Through yono - ${c['FD Through yono']}`);
-    n++; lines.push(`${n}. Upto 40000 Deposit - ${c['Upto 40000 Deposit']}`);
-    n++; lines.push(`${n}. Upto 40000 Widrawl - ${c['Upto 40000 Widrawl']}`);
-    n++; lines.push(`${n}. Upto 40000 Transfer - ${c['Upto 40000 Transfer']}`);
-    n++; lines.push(`${n}. Above 40000 Transfer - ${c['Above 40000 Transfer']}`);
-
-    const msg = lines.join('\n');
-    const url = 'https://wa.me/?text=' + encodeURIComponent(msg);
-    const win = window.open(url, '_blank');
-    if (!win) {
-      alert('Your browser blocked the WhatsApp share popup. Please allow popups for this page and try again.');
-    }
-  } catch (err) {
-    console.error('shareWA failed:', err);
-    alert('Could not open WhatsApp share: ' + err.message);
-  }
+  const c = state.counts;
+  const msg = `*DAILY REPORTING OF DATA*\nName- ${state.userName}\nBranch -${state.brName}\n*Date* ${new Date().toLocaleDateString('en-GB')}\n1. YONO Registration - ${c['Yono SBI']}\n2. What's app Registration - ${c['WhatsApp']}\n3. Contact centre Migration - ${c['Contact Centre']}\n4. NPS (FeedBack) - ${c['NPS']}\n5. FORM 15 G/H Submission : ${c['FORM 15 G/H Submission']}\n6. ATM Card Issuance : ${c['ATM Card Issuance']}\n7. Cheque Book Request: ${c['Cheque Book Request']}\n8. RE-KYC update: ${c['Re-KYC']}\n9. Nominee update: ${c['Nominee update']}\n10. Statement & Enquiry : ${c['Statement & Enquiry']}\n11. FINANCIAL TRANSACTION - ${c['FINANCIAL TRANSACTION']}\n12. NON FINANCIAL - ${c['NON FINANCIAL']}\n13. SB Account opening - ${c['SB Account opening/Funding']}\n14. CBDC - ${c['CBDC']}\n15. PAI - ${c['PAI']}\n16. FD Through yono - ${c['FD Through yono']}\n17. Yono Reset Old - ${c['Yono Reset Old']}\n18. Upto 40000 Deposit - ${c['Upto 40000 Deposit']}\n19. Upto 40000 Widrawl - ${c['Upto 40000 Widrawl']}\n20. Upto 40000 Transfer - ${c['Upto 40000 Transfer']}\n21. Above 40000 Transfer - ${c['Above 40000 Transfer']}`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 
 function openBranchShareModal() {
@@ -913,22 +905,14 @@ function closeBranchShareModal(e) {
   $('branch-share-overlay').classList.remove('show');
 }
 function shareBranchReport() {
-  try {
-    const ccRaw = $('branch-cc').value.trim();
-    const npsRaw = $('branch-nps').value.trim();
-    const cc = ccRaw === '' ? 0 : parseInt(ccRaw, 10);
-    const nps = npsRaw === '' ? 0 : parseInt(npsRaw, 10);
-    if (isNaN(cc) || isNaN(nps)) return alert('Please enter valid numbers.');
-    const msg = `*BRANCH REPORT*\nBranch -${state.brName}\n*Date* ${new Date().toLocaleDateString('en-GB')}\n1. Contact Centre (CC) - ${cc}\n2. NPS (Feedback) - ${nps}`;
-    const win = window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
-    if (!win) {
-      alert('Your browser blocked the WhatsApp share popup. Please allow popups for this page and try again.');
-    }
-    closeBranchShareModal();
-  } catch (err) {
-    console.error('shareBranchReport failed:', err);
-    alert('Could not open WhatsApp share: ' + err.message);
-  }
+  const ccRaw = $('branch-cc').value.trim();
+  const npsRaw = $('branch-nps').value.trim();
+  const cc = ccRaw === '' ? 0 : parseInt(ccRaw, 10);
+  const nps = npsRaw === '' ? 0 : parseInt(npsRaw, 10);
+  if (isNaN(cc) || isNaN(nps)) return alert('Please enter valid numbers.');
+  const msg = `*BRANCH REPORT*\nBranch -${state.brName}\n*Date* ${new Date().toLocaleDateString('en-GB')}\n1. Contact Centre (CC) - ${cc}\n2. NPS (Feedback) - ${nps}`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+  closeBranchShareModal();
 }
 
 function resetApp() { openConfirmModal('reset', () => { localStorage.clear(); window.location.reload(); }); }
