@@ -6,91 +6,107 @@
 <title>SBI Bank Ops - Target Ledger</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* Futuristic Terminal / Dashboard Theme */
-  --sbi-blue:        #0ea5e9;
-  --sbi-blue-light:  rgba(14, 165, 233, 0.1);
-  --sbi-glow:        rgba(14, 165, 233, 0.4);
+  /* Steel Vault Theme — Neon Signal */
+  --ink:             #ff2ea6;
+  --ink-light:       rgba(255, 46, 166, 0.14);
+  --stamp:           #ff2ea6;
+  --stamp-light:     rgba(255, 46, 166, 0.14);
 
-  --bg-main:         #06080F;
-  --surface:         rgba(17, 24, 39, 0.7);
-  --surface-hover:   rgba(31, 41, 55, 0.8);
-  
-  --text-main:       #f8fafc;
-  --text-muted:      #94a3b8;
-  --border:          rgba(255, 255, 255, 0.08);
-  --border-active:   rgba(14, 165, 233, 0.3);
+  --bg-main:         #0d0b12;
+  --paper:           #16121c;
+  --paper-hover:     #1e1926;
 
-  --success:         #10b981;
-  --success-light:   rgba(16, 185, 129, 0.1);
-  --danger:          #f43f5e;
-  --danger-light:    rgba(244, 63, 94, 0.1);
-  --warning:         #f59e0b;
-  --warning-light:   rgba(245, 158, 11, 0.1);
+  --text-main:       #f3eefc;
+  --text-muted:      #8a7f96;
+  --border:          rgba(255, 46, 166, 0.2);
+  --border-active:   rgba(255, 46, 166, 0.6);
 
-  --radius-sm:  8px;
-  --radius-md:  12px;
-  --radius-lg:  16px;
+  --success:         #35c6ff;
+  --success-light:   rgba(53, 198, 255, 0.16);
+  --danger:          #ff5468;
+  --danger-light:    rgba(255, 84, 104, 0.12);
+  --warning:         #ff2ea6;
+  --warning-light:   rgba(255, 46, 166, 0.14);
 
-  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --radius-sm:  2px;
+  --radius-md:  2px;
+  --radius-lg:  2px;
+
+  --shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+}
+
+body.light-theme {
+  --bg-main:         #ddd5e1;
+  --paper:           #ebe3ee;
+  --paper-hover:     #e2d9e6;
+  --text-main:       #1c1424;
+  --text-muted:      #75697f;
+  --border:          rgba(210, 20, 130, 0.22);
+  --border-active:   rgba(210, 20, 130, 0.55);
+  --ink:             #d21482;
+  --ink-light:       rgba(210, 20, 130, 0.1);
+  --success:         #0d84c4;
+  --success-light:   rgba(13, 132, 196, 0.1);
+  --shadow: 0 1px 3px rgba(28, 20, 36, 0.08);
 }
 
 *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html { -webkit-font-smoothing: antialiased; }
 
 body {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'IBM Plex Mono', monospace;
   margin: 0; padding: 0; 
   height: 100vh; height: 100dvh;
   overflow: hidden; 
   background: var(--bg-main);
   background-image:
-      radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.08), transparent 50%),
-      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 100% 100%, 30px 30px, 30px 30px;
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px, 24px 24px;
   color: var(--text-main);
   display: flex; flex-direction: column;
 }
+h1, h2, h4, .brand-name, .w-count, .seal-pct { font-family: 'Oswald', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+.w-count, .seal-pct { text-shadow: none; }
 
 .mono { font-family: 'IBM Plex Mono', monospace; }
 .hidden { display: none !important; }
 
 /* HEADER */
 header {
-  background: rgba(6, 8, 15, 0.85);
-  backdrop-filter: blur(12px);
+  background: var(--paper);
   color: var(--text-main);
   padding: max(16px, env(safe-area-inset-top)) 20px 16px;
   display: flex; justify-content: space-between; align-items: center;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid var(--ink);
   z-index: 10; flex-shrink: 0;
 }
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand-seal {
-  width: 36px; height: 36px; 
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--sbi-blue-light), transparent);
-  color: var(--sbi-blue);
-  border: 1px solid var(--border-active);
+  width: 40px; height: 40px; 
+  border-radius: 50%;
+  background: var(--ink-light);
+  color: var(--ink);
+  border: 2px solid var(--ink);
   display: flex; align-items: center; justify-content: center;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Oswald', sans-serif;
   font-weight: 700; font-size: 16px;
-  box-shadow: 0 0 15px var(--sbi-glow);
+  box-shadow: 0 0 10px var(--ink-light);
 }
 .brand-text { display: flex; flex-direction: column; line-height: 1.2; }
-.brand-name { font-weight: 600; font-size: 15px; letter-spacing: 0.02em;}
-.brand-sub { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.1em;}
+.brand-name { font-weight: 600; font-size: 17px; letter-spacing: 0.01em;}
+.brand-sub { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.04em;}
 
 #live-clock {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 12px; font-weight: 600; 
-  color: var(--sbi-blue);
+  color: var(--ink);
   padding: 6px 10px; border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  background: rgba(255,255,255,0.02);
+  background: var(--ink-light);
 }
 
 /* LOGIN */
@@ -99,16 +115,15 @@ header {
   align-items: center; justify-content: center; background: var(--bg-main);
 }
 .login-seal {
-  width: 90px; height: 90px; 
-  margin-bottom: 24px; border-radius: 20px;
-  background: linear-gradient(135deg, var(--sbi-blue-light), transparent);
-  color: var(--sbi-blue); border: 1px solid var(--border-active);
+  width: 84px; height: 84px; 
+  margin-bottom: 24px; border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink); border: 2px solid var(--ink);
   display: flex; align-items: center; justify-content: center;
-  font-family: 'IBM Plex Mono', monospace; font-size: 36px; font-weight: 700; 
-  box-shadow: 0 0 40px var(--sbi-glow);
+  font-family: 'Fraunces', serif; font-size: 30px; font-weight: 700; 
 }
 #login-page h2 { font-size: 1.8rem; font-weight: 600; margin: 0 0 8px; }
-#login-page p { font-family: 'IBM Plex Mono', monospace; color: var(--text-muted); font-size: 1rem; margin-bottom: 40px; }
+#login-page p { font-family: 'IBM Plex Mono', monospace; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 40px; }
 
 /* MAIN DASHBOARD CONTAINER */
 #dashboard {
@@ -122,48 +137,39 @@ header {
 /* EXTERNAL LINK BANNER */
 .quick-link-banner {
   display: flex; justify-content: space-between; align-items: center;
-  background: var(--surface); border: 1px solid var(--border-active);
+  background: var(--paper); border: 1px solid var(--border-active);
   border-radius: var(--radius-md); padding: 14px 16px;
   color: var(--text-main); text-decoration: none; font-weight: 600;
   font-size: 13px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
-.quick-link-banner:active { transform: scale(0.98); background: var(--sbi-blue-light); }
+.quick-link-banner:active { transform: scale(0.98); background: var(--ink-light); }
 .quick-link-icon-wrapper { display: flex; align-items: center; gap: 10px; }
-.quick-link-icon { color: var(--sbi-blue); display: flex; }
+.quick-link-icon { color: var(--ink); display: flex; }
 .quick-link-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
 .quick-link-arrow { color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; }
 
-/* COMMAND MODULE (Progress + Excel) */
+/* COMMAND MODULE (Progress) */
 .command-module {
-  background: var(--surface); backdrop-filter: blur(8px);
-  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--paper);
+  border: 1px solid var(--ink); border-radius: var(--radius-md);
   padding: 16px; display: flex; gap: 16px; align-items: center;
   box-shadow: var(--shadow);
 }
-.summary-card { display: flex; align-items: center; gap: 12px; flex: 1; border-right: 1px solid var(--border); padding-right: 12px; }
+.summary-card { display: flex; align-items: center; gap: 12px; flex: 1; }
 .seal-ring-wrap { position: relative; width: 56px; height: 56px; flex-shrink: 0; }
-.seal-ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); filter: drop-shadow(0 0 4px var(--sbi-blue)); }
-.seal-track { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 5; }
-.seal-fill  { fill: none; stroke: var(--sbi-blue); stroke-width: 5; stroke-linecap: round; transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.seal-ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); filter: drop-shadow(0 0 6px var(--ink-light)); }
+.seal-track { fill: none; stroke: rgba(28,42,74,0.12); stroke-width: 5; }
+.seal-fill  { fill: none; stroke: var(--ink); stroke-width: 5; stroke-linecap: round; transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
 .seal-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .seal-pct { font-size: 13px; font-weight: 700; color: var(--text-main); font-family: 'IBM Plex Mono', monospace; }
 .summary-meta { flex: 1; }
 .summary-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.1em; }
 .summary-frac { font-size: 18px; font-weight: 700; color: var(--text-main); margin-top: 2px;}
 
-.excel-card { display: flex; flex-direction: column; justify-content: center; flex: 1; }
-.excel-controls { display: flex; gap: 8px; width: 100%; }
-.ex-btn {
-  flex: 1; border: 1px solid transparent; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600;
-  height: 36px; color: var(--bg-main); background: var(--sbi-blue); cursor: pointer; transition: all 0.2s;
-}
-.ex-btn-out { background: transparent; border-color: var(--danger); color: var(--danger); flex: 0.6; }
-#ex-status { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-top: 8px; text-align: center; }
-
 /* SECTION HEADERS */
 .section-title {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px; font-weight: 600; color: var(--sbi-blue);
+  font-size: 12px; font-weight: 600; color: var(--ink);
   text-transform: uppercase; letter-spacing: 0.15em;
   margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
 }
@@ -173,20 +179,20 @@ header {
 .target-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
 .widget {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 14px;
+  background: var(--paper); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 14px;
   display: flex; flex-direction: column; justify-content: space-between;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s;
+  box-shadow: var(--shadow); transition: border-color 0.3s, background 0.3s;
 }
-.widget.met { border-color: var(--success); background: rgba(16, 185, 129, 0.05); }
+.widget.met { border-color: var(--success); background: var(--success-light); }
 .widget.met .w-title { color: var(--success); }
 .widget.met .w-target { background: var(--success-light); color: var(--success); border-color: var(--success); }
-.widget.met .w-count { color: var(--success); text-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
-.widget.met .w-btn { background: var(--success); color: var(--bg-main); }
+.widget.met .w-count { color: var(--success); }
+.widget.met .w-btn { background: var(--success); color: var(--paper); border-color: var(--success); }
 
 .w-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.w-title { font-size: 12px; font-weight: 600; color: var(--text-muted); line-height: 1.2; }
-.w-target { font-family: 'IBM Plex Mono', monospace; font-size: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 6px; border-radius: 4px; font-weight: 600; }
+.w-title { font-size: 12px; font-weight: 600; color: var(--text-muted); line-height: 1.2; font-family: 'IBM Plex Mono', monospace; }
+.w-target { font-family: 'IBM Plex Mono', monospace; font-size: 10px; background: var(--ink-light); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 6px; border-radius: 4px; font-weight: 600; }
 
 .w-body { display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
 .w-count { font-family: 'IBM Plex Mono', monospace; font-size: 2.8rem; font-weight: 700; line-height: 1; color: var(--text-main); }
@@ -194,42 +200,39 @@ header {
 .w-btn {
   width: 100%; height: 40px; border: 1px solid var(--border-active); border-radius: var(--radius-sm); 
   font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: 0.05em;
-  background: var(--sbi-blue-light); color: var(--sbi-blue); transition: all 0.2s;
+  background: var(--ink-light); color: var(--ink); transition: all 0.2s;
 }
 .w-btn:active { transform: scale(0.96); }
-.w-btn-row { display: flex; gap: 8px; width: 100%; }
-.w-btn-row .w-btn { flex: 1; }
-.w-btn-sub { flex: 0.4; font-size: 12px; padding: 0; }
 
 /* COMPACT LIST FOR OTHER METRICS */
 .compact-list {
-  display: flex; flex-direction: column; gap: 8px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 8px;
+  display: flex; flex-direction: column;
+  background: var(--paper); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 0 8px;
 }
 .compact-card {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 12px; border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.02); border: 1px solid transparent;
-  transition: all 0.2s;
+  padding: 12px 4px; border-radius: 0;
+  background: transparent; border-bottom: 1px solid var(--border);
 }
-.compact-card:active { background: rgba(255,255,255,0.05); }
+.compact-card:last-child { border-bottom: none; }
+.compact-card:active { background: var(--ink-light); }
 .compact-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .compact-title { font-size: 13px; font-weight: 500; color: var(--text-main); }
-.compact-count { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700; color: var(--sbi-blue); }
+.compact-count { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 700; color: var(--ink); }
 
 .compact-btn {
-  width: 44px; height: 44px; border-radius: var(--radius-sm);
-  background: var(--sbi-blue-light); color: var(--sbi-blue);
-  border: 1px solid var(--border-active); font-size: 20px; font-weight: 400;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--ink); font-size: 18px; font-weight: 400;
   display: flex; align-items: center; justify-content: center; cursor: pointer;
 }
-.compact-btn:active { transform: scale(0.92); }
+.compact-btn:active { background: var(--ink-light); }
 
 /* Danger states for compact cards (>= 5 count) */
-.compact-card.danger-met { border-color: rgba(244, 63, 94, 0.3); background: var(--danger-light); }
-.compact-card.danger-met .compact-count { color: var(--danger); }
-.compact-card.danger-met .compact-btn { background: var(--danger); color: white; border-color: var(--danger); }
+.compact-card.danger-met { border-color: var(--success); background: var(--success-light); }
+.compact-card.danger-met .compact-count { color: var(--success); }
+.compact-card.danger-met .compact-btn { background: var(--success); color: var(--paper); border-color: var(--success); }
 
 /* FLOATING DOCK BOTTOM NAVIGATION */
 .bottom-dock-wrapper {
@@ -237,71 +240,67 @@ header {
   display: flex; justify-content: center; pointer-events: none; z-index: 100;
 }
 .bottom-nav {
-  background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.1); border-radius: 100px;
+  background: var(--paper);
+  border: 1px solid var(--ink); border-radius: 100px;
   display: flex; justify-content: space-between; align-items: center;
   padding: 8px 12px; gap: 4px; width: 92%; max-width: 400px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6); pointer-events: auto;
+  box-shadow: 0 4px 14px rgba(28,42,74,0.18); pointer-events: auto;
 }
 .nav-item {
   background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center;
   color: var(--text-muted); font-size: 9px; font-weight: 600; cursor: pointer; gap: 4px;
   width: 52px; height: 52px; border-radius: 50%; transition: all 0.2s;
-  font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.05em; text-transform: uppercase;
+  font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.04em;
 }
-.nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; transition: all 0.2s; }
-.nav-item:hover, .nav-item:active { color: var(--sbi-blue); background: rgba(255,255,255,0.05); }
+.nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.75; transition: all 0.2s; }
+.nav-item:hover, .nav-item:active { color: var(--ink); background: var(--ink-light); }
 .nav-item:disabled { opacity: 0.3; cursor: not-allowed; }
 .nav-item.danger-icon:hover { color: var(--danger); }
 
-/* MODALS / OVERLAYS (Sleeker design) */
+/* MODALS / OVERLAYS */
 .overlay {
-  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px);
+  position: fixed; inset: 0; background: rgba(28, 42, 74, 0.45);
   opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 1000;
 }
 .overlay.show { opacity: 1; pointer-events: auto; }
 .bottom-sheet {
   position: fixed; bottom: 0; left: 0; right: 0; 
-  background: var(--bg-main);
-  padding: 24px 20px max(24px, env(safe-area-inset-bottom)); border-radius: 20px 20px 0 0;
+  background: var(--paper);
+  padding: 24px 20px max(24px, env(safe-area-inset-bottom)); border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
   z-index: 1001; max-width: 600px; margin: auto;
-  border-top: 1px solid var(--border-active); box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+  border-top: 2px solid var(--ink); box-shadow: 0 -8px 24px rgba(28,42,74,0.2);
 }
 .overlay.show .bottom-sheet { transform: translateY(0); }
 .bottom-sheet h4 { font-size: 1.4rem; font-weight: 600; margin: 0 0 20px; color: var(--text-main); }
-
-.toggle-wrap { display: flex; background: rgba(255,255,255,0.03); padding: 4px; border-radius: var(--radius-sm); margin-bottom: 20px; border: 1px solid var(--border); }
-.toggle-btn { flex: 1; height: 40px; border: none; border-radius: 6px; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 14px;}
-.toggle-btn.active { background: var(--sbi-blue); color: var(--bg-main); }
 
 .input-field {
   width: 100%; height: 56px; padding: 0 16px; margin-bottom: 20px;
   border: 1px solid var(--border); border-radius: var(--radius-sm);
   font-size: 1.2rem; font-family: 'IBM Plex Mono', monospace;
-  background: rgba(255,255,255,0.02); outline: none; text-align: center; color: var(--text-main);
+  background: var(--bg-main); outline: none; text-align: center; color: var(--text-main);
   transition: border-color 0.2s;
 }
-.input-field:focus { border-color: var(--sbi-blue); box-shadow: 0 0 0 3px var(--sbi-blue-light); }
+.input-field:focus { border-color: var(--ink); box-shadow: 0 0 0 3px var(--ink-light); }
 
 .field-label {
   display: block; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600;
-  color: var(--sbi-blue); text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 8px 2px;
+  color: var(--ink); text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 8px 2px;
 }
 
 .modal-btn {
   width: 100%; height: 52px; border: none; border-radius: var(--radius-sm);
   font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 12px; letter-spacing: 0.05em;
 }
-.modal-btn.primary { background: var(--sbi-blue); color: var(--bg-main); }
+.modal-btn.primary { background: var(--ink); color: var(--paper); }
 .modal-btn.cancel { background: transparent; color: var(--text-muted); border: 1px solid var(--border);}
-.modal-btn.danger { background: var(--danger); color: var(--text-main); }
+.modal-btn.danger { background: var(--danger); color: var(--paper); }
 
 /* REPORT PAGE */
 #report-page { overflow-y: auto; height: 100%; padding: max(16px, env(safe-area-inset-top)) 16px 16px; background: var(--bg-main); max-width: 800px; margin: 0 auto; width: 100%;}
-.report-back { background: var(--surface); color: var(--text-main); border: 1px solid var(--border); height: 48px; border-radius: var(--radius-sm); font-weight: 600; margin-bottom: 20px; width: 100%; cursor: pointer;}
-.report-section { border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 20px; overflow: hidden; background: var(--surface); }
-.report-section h4 { background: rgba(0,0,0,0.3); margin: 0; padding: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sbi-blue); border-bottom: 1px solid var(--border); }
+.report-back { background: var(--paper); color: var(--text-main); border: 1px solid var(--ink); height: 48px; border-radius: var(--radius-sm); font-weight: 600; margin-bottom: 20px; width: 100%; cursor: pointer;}
+.report-section { border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 20px; overflow: hidden; background: var(--paper); }
+.report-section h4 { background: var(--ink); margin: 0; padding: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--paper); border-bottom: 1px solid var(--border); }
 .report-table { width: 100%; border-collapse: collapse; font-size: 12px; }
 .report-table th, .report-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); text-align: left; }
 .report-table th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 10px; font-family: 'IBM Plex Mono', monospace; }
@@ -318,7 +317,10 @@ header {
       <span class="brand-sub">Command Ledger</span>
     </div>
   </div>
-  <div id="live-clock" class="mono">00:00:00</div>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <button id="theme-toggle" class="nav-item" style="width:auto; height:auto; padding:6px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--ink); font-size:10px;" onclick="toggleTheme()">LIGHT</button>
+    <div id="live-clock" class="mono">00:00:00</div>
+  </div>
 </header>
 
 <div id="login-page">
@@ -341,7 +343,7 @@ header {
     <span class="quick-link-arrow">→</span>
   </a>
   
-  <!-- COMMAND MODULE (Top Metrics & Excel) -->
+  <!-- COMMAND MODULE (Top Metrics) -->
   <div class="command-module">
     <div class="summary-card">
       <div class="seal-ring-wrap">
@@ -358,14 +360,6 @@ header {
         <div class="summary-frac mono" id="seal-frac">0 / 40</div>
       </div>
     </div>
-
-    <div class="excel-card">
-      <div class="excel-controls">
-        <button id="excel-btn-main" class="ex-btn" onclick="handleExcelMain()">SYS LOGIN</button>
-        <button id="excel-btn-logout" class="ex-btn ex-btn-out hidden" onclick="handleExcelLogOut()">OUT</button>
-      </div>
-      <div id="ex-status" class="hidden">Active</div>
-    </div>
   </div>
 
   <!-- SECTION 1: KEY PERFORMANCE TARGETS -->
@@ -379,7 +373,7 @@ header {
           <span class="w-target mono">T:5</span>
         </div>
         <div class="w-body"><span class="w-count mono" id="c-yono">0</span></div>
-        <button id="btn-yono" class="w-btn" onclick="openModal('Yono SBI')">LOG</button>
+        <button id="btn-yono" class="w-btn" onclick="addSimple('Yono SBI')">+ 1</button>
       </div>
 
       <!-- 2. WhatsApp -->
@@ -389,23 +383,17 @@ header {
           <span class="w-target mono">T:15</span>
         </div>
         <div class="w-body"><span class="w-count mono" id="c-wa">0</span></div>
-        <div class="w-btn-row">
-          <button id="btn-wa" class="w-btn" onclick="openModal('WhatsApp')">LOG</button>
-          <button id="btn-wa-backfill" class="w-btn w-btn-sub" onclick="openBackfillModal('WhatsApp')">+N</button>
-        </div>
+        <button id="btn-wa" class="w-btn" onclick="addSimple('WhatsApp')">+ 1</button>
       </div>
 
-      <!-- 3. Contact Centre (with +N logic) -->
+      <!-- 3. Contact Centre -->
       <div class="widget ledger-row" id="card-contact">
         <div class="w-header">
           <span class="w-title">Contact Ctr</span>
           <span class="w-target mono">T:10</span>
         </div>
         <div class="w-body"><span class="w-count mono" id="c-contact">0</span></div>
-        <div class="w-btn-row">
-          <button id="btn-contact" class="w-btn" onclick="openModal('Contact Centre')">LOG</button>
-          <button id="btn-contact-backfill" class="w-btn w-btn-sub" onclick="openBackfillModal('Contact Centre')">+N</button>
-        </div>
+        <button id="btn-contact" class="w-btn" onclick="addSimple('Contact Centre')">+ 1</button>
       </div>
 
       <!-- 4. NPS -->
@@ -554,7 +542,6 @@ header {
   </nav>
 </div>
 
-<!-- ALL MODALS AND JS REMAIN EXACTLY THE SAME -->
 <!-- REPORT PAGE -->
 <div id="report-page" class="hidden">
   <button class="report-back" onclick="hideReport()">Back to Dashboard</button>
@@ -567,34 +554,6 @@ header {
     <div style="overflow-x: auto;">
       <table class="report-table" id="logs-table"></table>
     </div>
-  </div>
-</div>
-
-<!-- INPUT MODAL -->
-<div id="modal-overlay" class="overlay" onclick="closeModal(event)">
-  <div class="bottom-sheet" id="modal-sheet" onclick="event.stopPropagation()">
-    <h4 id="modal-title">Entry</h4>
-    <div class="toggle-wrap">
-      <button id="t-acc" class="toggle-btn active" onclick="setType('Account Number')">Account</button>
-      <button id="t-mob" class="toggle-btn"        onclick="setType('Mobile Number')">Mobile</button>
-    </div>
-    <input type="number" id="val-field" class="input-field" placeholder="Enter digits">
-    <div id="dup-warning" class="dup-warning hidden" style="color:var(--warning); margin-bottom:15px; font-size:12px;">
-      <span id="dup-warning-text"></span>
-    </div>
-    <button class="modal-btn primary" id="save-btn" onclick="saveEntry()">Save Entry</button>
-    <button class="modal-btn cancel"  onclick="closeModal()">Cancel</button>
-  </div>
-</div>
-
-<!-- BACKFILL MODAL -->
-<div id="backfill-overlay" class="overlay" onclick="closeBackfillModal(event)">
-  <div class="bottom-sheet" id="backfill-sheet" onclick="event.stopPropagation()">
-    <h4 id="backfill-title">Backfill Entries</h4>
-    <p style="color:var(--text-muted); font-size:13px; margin-top:-10px; margin-bottom: 15px;">How many <span id="backfill-cat-label" style="color:var(--sbi-blue)"></span> entries do you want to add? These will be logged as offline entries.</p>
-    <input type="number" id="backfill-count-field" class="input-field" placeholder="Enter number" min="1" step="1">
-    <button class="modal-btn primary" id="backfill-save-btn" onclick="saveBackfill()">Add Entries</button>
-    <button class="modal-btn cancel" onclick="closeBackfillModal()">Cancel</button>
   </div>
 </div>
 
@@ -659,14 +618,10 @@ const MAP = [
 
 let state = JSON.parse(localStorage.getItem('sbi_v20_dark_v4')) || {
   counts: {}, logs: [], loginTime: null,
-  excelSignIn: null, excelLogOut: null, excelBreaks: [], excelIsPaused: false,
   brName:'Komtalpeta', brCode:'17978', userName:'Ashutosh Pattnaik'
 };
 
 MAP.forEach(({ key }) => { if (state.counts[key] === undefined) state.counts[key] = 0; });
-if (state.excelBreaks === undefined) state.excelBreaks = [];
-
-let activeCat = '', selType = 'Account Number';
 
 const $ = id => document.getElementById(id);
 const els = {};
@@ -686,98 +641,10 @@ function doLogin() {
   save();
 }
 
-function handleExcelMain() {
-  const now = new Date().toLocaleTimeString();
-  if (!state.excelSignIn) { state.excelSignIn = now; } 
-  else if (!state.excelIsPaused) { state.excelIsPaused = true; state.excelBreaks.push({ start: now, end: null }); } 
-  else { state.excelIsPaused = false; if (state.excelBreaks.length > 0) state.excelBreaks[state.excelBreaks.length - 1].end = now; }
-  save();
-}
-
-function handleExcelLogOut() {
-  const now = new Date().toLocaleTimeString();
-  if (state.excelIsPaused && state.excelBreaks.length > 0) { state.excelBreaks[state.excelBreaks.length - 1].end = now; state.excelIsPaused = false; }
-  state.excelLogOut = now; save();
-}
-
 function addSimple(cat) {
   state.counts[cat]++;
   state.logs.push({ id: state.logs.length+1, cat, val:'Auto (+1)', time: new Date().toLocaleTimeString() });
   save();
-}
-
-let dupConfirmed = false;
-function findDuplicate(val, category) { return state.logs.find(l => l.val === val && l.cat.startsWith(category)); }
-
-function resetDupWarning() {
-  dupConfirmed = false;
-  $('dup-warning').classList.add('hidden');
-  $('save-btn').textContent = 'Save Entry';
-  $('save-btn').classList.remove('danger');
-  $('save-btn').classList.add('primary');
-}
-
-function openModal(cat) {
-  activeCat = cat;
-  $('modal-title').textContent = cat;
-  $('val-field').value = '';
-  setType('Account Number');
-  resetDupWarning();
-  $('modal-overlay').classList.add('show');
-  setTimeout(() => $('val-field').focus(), 150);
-}
-
-function setType(type) {
-  selType = type;
-  $('t-acc').classList.toggle('active', type === 'Account Number');
-  $('t-mob').classList.toggle('active', type === 'Mobile Number');
-  $('val-field').placeholder = 'Enter ' + type.toLowerCase();
-}
-
-$('val-field').addEventListener('input', resetDupWarning);
-
-function saveEntry() {
-  const val = $('val-field').value.trim();
-  if (!val) return alert('Please enter digits');
-
-  const dup = findDuplicate(val, activeCat);
-  if (dup && !dupConfirmed) {
-    dupConfirmed = true;
-    $('dup-warning-text').innerHTML = `Already logged under <strong>${dup.cat}</strong> at ${dup.time}. Save again to force.`;
-    $('dup-warning').classList.remove('hidden');
-    $('save-btn').textContent = 'Force Save';
-    $('save-btn').classList.remove('primary');
-    $('save-btn').classList.add('danger');
-    return;
-  }
-
-  state.counts[activeCat]++;
-  state.logs.push({ id: state.logs.length+1, cat:`${activeCat} (${selType})`, val, time: new Date().toLocaleTimeString() });
-  save(); closeModal();
-}
-
-let backfillCat = '';
-function openBackfillModal(cat) {
-  backfillCat = cat;
-  $('backfill-cat-label').textContent = cat;
-  $('backfill-count-field').value = '';
-  $('backfill-overlay').classList.add('show');
-  setTimeout(() => $('backfill-count-field').focus(), 150);
-}
-function closeBackfillModal(e) {
-  if (e && e.target !== $('backfill-overlay')) return;
-  $('backfill-overlay').classList.remove('show');
-}
-function saveBackfill() {
-  const raw = $('backfill-count-field').value.trim();
-  const n = parseInt(raw, 10);
-  if (!raw || isNaN(n) || n <= 0) return alert('Enter valid number.');
-  const now = new Date().toLocaleTimeString();
-  for (let i = 0; i < n; i++) {
-    state.counts[backfillCat]++;
-    state.logs.push({ id: state.logs.length+1, cat: `${backfillCat} (Backfill)`, val: 'Offline entry', time: now });
-  }
-  save(); closeBackfillModal();
 }
 
 function undoLast() {
@@ -786,11 +653,6 @@ function undoLast() {
   const baseMap = MAP.find(m => lastLog.cat === m.key || lastLog.cat.startsWith(m.key + ' '));
   if (baseMap && state.counts[baseMap.key] > 0) state.counts[baseMap.key]--;
   save();
-}
-
-function closeModal(e) {
-  if (e && e.target !== $('modal-overlay')) return; 
-  $('modal-overlay').classList.remove('show'); resetDupWarning();
 }
 
 function save() { localStorage.setItem('sbi_v20_dark_v4', JSON.stringify(state)); refreshUI(); }
@@ -807,7 +669,7 @@ function refreshUI() {
     if (TARGETS[key]) {
       totalTargetCount += count;
       if (count >= TARGETS[key]) { e.card.classList.add('met'); e.btn.textContent = 'DONE'; } 
-      else { e.btn.textContent = key === 'NPS' ? '+ 1' : 'LOG'; }
+      else { e.btn.textContent = '+ 1'; }
     } else {
       if (count >= 5) { e.card.classList.add('danger-met'); }
     }
@@ -817,19 +679,6 @@ function refreshUI() {
   $('seal-pct').textContent = pct + '%';
   $('seal-frac').textContent = `${totalTargetCount} / ${TOTAL_TARGET}`;
   $('seal-ring-fill').style.strokeDashoffset = SEAL_CIRC - (Math.min(1, totalTargetCount / TOTAL_TARGET) * SEAL_CIRC);
-
-  const btnMain = $('excel-btn-main'); const btnLogout = $('excel-btn-logout'); const exStatus = $('ex-status');
-  if (state.excelLogOut) {
-    btnMain.textContent = 'LOGGED OUT'; btnMain.disabled = true; btnMain.style.background = 'var(--border)'; btnMain.style.color = 'var(--text-muted)';
-    btnLogout.classList.add('hidden'); exStatus.classList.remove('hidden'); exStatus.textContent = 'Session Closed';
-  } else if (state.excelSignIn) {
-    btnLogout.classList.remove('hidden'); exStatus.classList.remove('hidden');
-    if (state.excelIsPaused) { btnMain.textContent = 'RESUME'; btnMain.style.background = 'var(--warning)'; exStatus.textContent = '⏸ Break'; exStatus.style.color = 'var(--warning)'; } 
-    else { btnMain.textContent = 'BREAK'; btnMain.style.background = 'var(--sbi-blue)'; exStatus.textContent = '▶ Active'; exStatus.style.color = 'var(--success)'; }
-  } else {
-    btnMain.textContent = 'SYS LOGIN'; btnMain.disabled = false; btnMain.style.background = 'var(--sbi-blue)';
-    btnLogout.classList.add('hidden'); exStatus.classList.add('hidden');
-  }
 }
 
 function showReport() {
@@ -874,12 +723,7 @@ function doGeneratePDF() {
   doc.setFontSize(18); doc.setTextColor(0, 75, 135); doc.text('SBI Ops Ledger Report', 14, 16);
   doc.setFontSize(10); doc.setTextColor(100, 116, 139); doc.text(`Login: ${state.loginTime || '-'} | Date: ${dateStr}`, 14, 24);
   
-  let currentY = 32; doc.setTextColor(5, 150, 105);
-  if (state.excelSignIn) { doc.text(`Sign In: ${state.excelSignIn}`, 14, currentY); currentY += 6; }
-  state.excelBreaks.forEach(b => { doc.text(`Break: ${b.start} to ${b.end || 'Ongoing'}`, 14, currentY); currentY += 6; });
-  if (state.excelLogOut) { doc.text(`Log Out: ${state.excelLogOut}`, 14, currentY); currentY += 6; }
-  
-  doc.autoTable({ startY: currentY + 4, head: [['Category','Count','Target']], body: MAP.map(({ key }) => [key, state.counts[key], TARGETS[key] || '-']), headStyles: { fillColor: [0, 75, 135] }, theme: 'grid' });
+  doc.autoTable({ startY: 32, head: [['Category','Count','Target']], body: MAP.map(({ key }) => [key, state.counts[key], TARGETS[key] || '-']), headStyles: { fillColor: [0, 75, 135] }, theme: 'grid' });
   const afterSum = doc.lastAutoTable.finalY + 10;
   doc.setFontSize(14); doc.setTextColor(0, 75, 135); doc.text('Detailed Logs', 14, afterSum);
   doc.autoTable({ startY: afterSum + 5, head: [['#','Details','Value']], body: state.logs.map((l, i) => [i+1, `${l.cat} [${l.time}]`, l.val]), headStyles: { fillColor: [0, 75, 135] }, theme: 'grid' });
@@ -915,8 +759,20 @@ function shareBranchReport() {
   closeBranchShareModal();
 }
 
+function toggleTheme() {
+  document.body.classList.toggle('light-theme');
+  const isLight = document.body.classList.contains('light-theme');
+  localStorage.setItem('sbi_theme', isLight ? 'light' : 'dark');
+  $('theme-toggle').textContent = isLight ? 'DARK' : 'LIGHT';
+}
+function applySavedTheme() {
+  if (localStorage.getItem('sbi_theme') === 'light') {
+    document.body.classList.add('light-theme');
+    $('theme-toggle').textContent = 'DARK';
+  }
+}
 function resetApp() { openConfirmModal('reset', () => { localStorage.clear(); window.location.reload(); }); }
-window.onload = () => { if (state.loginTime) doLogin(); else refreshUI(); };
+window.onload = () => { applySavedTheme(); if (state.loginTime) doLogin(); else refreshUI(); };
 </script>
 </body>
 </html>
