@@ -39,9 +39,9 @@
 }
 
 body.light-theme {
-  --bg-main:         #ddd5e1;
-  --paper:           #ebe3ee;
-  --paper-hover:     #e2d9e6;
+  --bg-main:         #d9d9d9;
+  --paper:           #eeeeee;
+  --paper-hover:     #e4e4e4;
   --text-main:       #1c1424;
   --text-muted:      #75697f;
   --border:          rgba(210, 20, 130, 0.22);
@@ -63,11 +63,17 @@ body {
   overflow: hidden; 
   background: var(--bg-main);
   background-image:
-      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-  background-size: 100% 100%, 24px 24px, 24px 24px;
+      linear-gradient(90deg, transparent 0, transparent 46px, rgba(255,80,150,0.35) 46px, rgba(255,80,150,0.35) 47px, transparent 47px),
+      repeating-linear-gradient(rgba(140,140,150,0.16) 0px, rgba(140,140,150,0.16) 1px, transparent 1px, transparent 30px);
+  background-size: 100% 100%, 100% 30px;
+  background-attachment: fixed;
   color: var(--text-main);
   display: flex; flex-direction: column;
+}
+body.light-theme {
+  background-image:
+      linear-gradient(90deg, transparent 0, transparent 46px, rgba(210,20,130,0.3) 46px, rgba(210,20,130,0.3) 47px, transparent 47px),
+      repeating-linear-gradient(rgba(28,20,36,0.1) 0px, rgba(28,20,36,0.1) 1px, transparent 1px, transparent 30px);
 }
 h1, h2, h4, .brand-name, .w-count, .seal-pct { font-family: 'Oswald', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
 .w-count, .seal-pct { text-shadow: none; }
