@@ -1,631 +1,255 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SBI Daily Report</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            /* Tactical Terminal Theme */
-            --bg-base:       #060913;
-            --bg-panel:      #0d1326;
-            --bg-panel-hover:#131c36;
-            
-            --teal:          #2dd4bf; 
-            --teal-dim:      rgba(45, 212, 191, 0.15);
-            
-            --amber:         #f5a623;
-            --amber-dim:     rgba(245, 166, 35, 0.15);
-            
-            --green:         #34d399;
-            --green-dim:     rgba(52, 211, 153, 0.15);
-            
-            --danger:        #fb7185;
-            --danger-dim:    rgba(251, 113, 133, 0.15);
-
-            --text-main:     #f8fafc;
-            --text-muted:    #8b9bb4;
-            --border:        rgba(148, 197, 255, 0.1);
-
-            --r-sm:          4px;
-            --r-md:          8px;
-        }
-
-        *, *::before, *::after {
-            margin: 0; padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            font-family: 'Space Grotesk', sans-serif;
-            background: var(--bg-base);
-            color: var(--text-main);
-            height: 100vh; height: 100dvh;
-            overflow: hidden; 
-            display: flex; flex-direction: column;
-            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 30px 30px;
-            background-position: center top;
-        }
-
-        .mono { font-family: 'IBM Plex Mono', monospace; }
-        .hidden { display: none !important; }
-
-        /* ── HEADER ── */
-        header {
-            background: var(--bg-panel);
-            border-bottom: 1px solid var(--border);
-            padding: max(12px, env(safe-area-inset-top)) 16px 12px;
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 100;
-        }
-
-        .brand { display: flex; align-items: center; gap: 10px; }
-        .brand-icon {
-            width: 32px; height: 32px; border-radius: var(--r-sm);
-            background: var(--teal-dim); color: var(--teal);
-            border: 1px solid var(--teal);
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 14px;
-        }
-        .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
-        .brand-name { font-weight: 600; font-size: 14px; letter-spacing: 0.02em; }
-        .brand-sub  { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px;}
-
-        .header-actions { display: flex; align-items: center; gap: 12px; }
-        #live-date { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; color: var(--teal); }
-        .btn-exit {
-            background: transparent; border: 1px solid var(--danger); color: var(--danger);
-            padding: 4px 10px; border-radius: var(--r-sm); font-size: 10px; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: 0.2s;
-        }
-        .btn-exit:active { background: var(--danger-dim); transform: scale(0.95); }
-
-        /* ── WORKSPACE AREA ── */
-        #main-content {
-            display: flex; flex-direction: column; flex: 1; min-height: 0;
-            max-width: 500px; width: 100%; margin: 0 auto;
-            position: relative;
-        }
-
-        /* ── LOGIN SCREEN ── */
-        #login-wrapper {
-            height: 100%; display: flex; align-items: center; justify-content: center; padding: 20px;
-        }
-        #login-page {
-            background: var(--bg-panel); border: 1px solid var(--border);
-            border-radius: var(--r-md); padding: 40px 24px; text-align: center;
-            width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            position: relative; overflow: hidden;
-        }
-        /* Scanner line effect */
-        #login-page::after {
-            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: var(--teal); box-shadow: 0 0 10px var(--teal);
-            animation: scan 3s linear infinite; opacity: 0.5;
-        }
-        @keyframes scan { 0% { top: -10%; } 100% { top: 110%; } }
-
-        .auth-icon {
-            width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 12px;
-            background: var(--teal-dim); color: var(--teal); border: 1px solid var(--teal);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px; box-shadow: 0 0 20px var(--teal-dim);
-        }
-        #login-page h1 { font-size: 1.4rem; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.02em; }
-        #login-page p { font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 30px; }
-        
-        .btn-main {
-            width: 100%; height: 48px; border-radius: var(--r-sm);
-            background: var(--teal); color: var(--bg-base); border: none;
-            font-size: 14px; font-weight: 600; font-family: 'IBM Plex Mono', monospace;
-            text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: 0.1s;
-        }
-        .btn-main:active { transform: scale(0.97); }
-
-        /* ── DASHBOARD GRID ── */
-        #dashboard { 
-            display: flex; flex-direction: column; flex: 1; min-height: 0;
-        }
-        
-        .scroll-area {
-            flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
-            padding: 16px; display: flex; flex-direction: column; gap: 16px;
-        }
-
-        /* ── EXTERNAL LINK BANNER ── */
-        .quick-link-banner {
-            display: flex; justify-content: space-between; align-items: center;
-            background: var(--bg-panel); border: 1px solid var(--border);
-            border-radius: var(--r-md); padding: 14px 16px;
-            color: var(--text-main); text-decoration: none; font-weight: 600;
-            font-size: 13px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .quick-link-banner:active { transform: scale(0.98); background: var(--teal-dim); border-color: var(--teal); }
-        .quick-link-icon-wrapper { display: flex; align-items: center; gap: 10px; }
-        .quick-link-icon { color: var(--teal); display: flex; }
-        .quick-link-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
-        .quick-link-arrow { color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; transition: transform 0.2s; }
-        .quick-link-banner:active .quick-link-arrow { transform: translateX(4px); color: var(--teal); }
-
-        .section-header {
-            font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; 
-            color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em;
-            display: flex; align-items: center; gap: 10px; margin-top: 4px;
-        }
-        .section-header::after { content: ""; flex: 1; height: 1px; background: var(--border); }
-
-        .grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
-        }
-        /* Make the last odd item span both columns to balance the grid */
-        .grid > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
-
-        /* ── TACTICAL CARDS ── */
-        .stat-card {
-            background: var(--bg-panel); border: 1px solid var(--border);
-            border-radius: var(--r-sm); padding: 12px; cursor: pointer;
-            position: relative; transition: all 0.2s ease;
-            display: flex; flex-direction: column; gap: 8px;
-            user-select: none; -webkit-user-select: none;
-        }
-        /* Active State Line */
-        .stat-card::before {
-            content: ""; position: absolute; left: -1px; top: -1px; bottom: -1px; width: 3px;
-            background: var(--teal); border-radius: var(--r-sm) 0 0 var(--r-sm);
-            transition: background 0.3s;
-        }
-        .stat-card:active { transform: scale(0.96); background: var(--bg-panel-hover); }
-
-        .card-head { display: flex; justify-content: space-between; align-items: flex-start; }
-        .card-icon { font-size: 16px; }
-        .card-target { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-muted); background: rgba(255,255,255,0.03); padding: 2px 6px; border-radius: 4px; }
-        
-        .card-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.2; }
-        
-        .card-body { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; }
-        .card-count { font-family: 'IBM Plex Mono', monospace; font-size: 2rem; font-weight: 700; color: var(--text-main); line-height: 1; }
-        
-        .progress-track { width: 100%; height: 2px; background: rgba(255,255,255,0.05); margin-top: 4px; border-radius: 2px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--teal); width: 0%; transition: 0.4s ease; }
-
-        /* Status Colors */
-        .stat-card.mid::before { background: var(--amber); }
-        .stat-card.mid .progress-fill { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
-        .stat-card.mid .card-count { color: var(--amber); }
-
-        .stat-card.met::before { background: var(--green); }
-        .stat-card.met .progress-fill { background: var(--green); box-shadow: 0 0 8px var(--green); }
-        .stat-card.met .card-count { color: var(--green); }
-        .stat-card.met { border-color: var(--green-dim); background: rgba(52, 211, 153, 0.05); }
-
-        /* ── FIXED BOTTOM ACTIONS ── */
-        .bottom-actions {
-            background: var(--bg-panel); border-top: 1px solid var(--border);
-            padding: 12px 16px max(12px, env(safe-area-inset-bottom));
-            display: flex; gap: 12px; z-index: 10;
-        }
-        .action-btn {
-            flex: 1; height: 44px; border-radius: var(--r-sm); border: none;
-            font-size: 12px; font-weight: 600; font-family: 'IBM Plex Mono', monospace;
-            text-transform: uppercase; letter-spacing: 0.05em;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            cursor: pointer; transition: 0.15s;
-        }
-        .action-btn:active { transform: scale(0.96); }
-        .action-btn.send { background: var(--teal); color: var(--bg-base); }
-        .action-btn.reset { background: transparent; border: 1px solid var(--danger); color: var(--danger); flex: 0.6; }
-
-        /* ── TOAST ── */
-        #toast {
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: var(--teal); color: var(--bg-base);
-            padding: 10px 20px; border-radius: var(--r-sm);
-            font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; 
-            white-space: nowrap; z-index: 9999;
-            transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px var(--teal-dim);
-        }
-        #toast.show { top: max(16px, env(safe-area-inset-top)); }
-
-        /* ── CONFIRM MODAL ── */
-        .overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(3px);
-            opacity: 0; pointer-events: none; transition: 0.2s ease; z-index: 2000;
-            display: flex; align-items: center; justify-content: center; padding: 20px;
-        }
-        .overlay.show { opacity: 1; pointer-events: auto; }
-        
-        .modal-box {
-            background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--r-md);
-            padding: 24px; width: 100%; max-width: 320px; text-align: center;
-            transform: scale(0.95); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-        }
-        .overlay.show .modal-box { transform: scale(1); }
-        
-        #modal-icon { font-size: 32px; margin-bottom: 12px; }
-        #modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
-        #modal-msg { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); margin-bottom: 24px; }
-        
-        .modal-btn {
-            width: 100%; height: 44px; border-radius: var(--r-sm); border: none; margin-bottom: 10px;
-            font-size: 13px; font-weight: 600; font-family: 'IBM Plex Mono', monospace; text-transform: uppercase;
-            cursor: pointer; transition: 0.2s;
-        }
-        .modal-btn-primary { background: var(--teal); color: var(--bg-base); }
-        .modal-btn-danger { background: var(--danger); color: var(--bg-base); }
-        .modal-btn-cancel { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
-        .modal-btn:active { transform: scale(0.96); }
-
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>SBI Daily Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#1a0730;--bg2:#4a1a63;--cream:#fff6e4;--ink:#3a1d4d;--mute:#7b6390;--line:#f0e2c4;--gold:#ffc65c;--rose:#ff6fa5;--teal:#2fb9a6;--amber:#f5a623;--green:#2fb97a;--danger:#e5484d}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Nunito',system-ui,sans-serif;color:var(--ink);height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;background:radial-gradient(ellipse 90% 45% at 50% 105%,#ff6fa566,transparent 70%),radial-gradient(ellipse 60% 35% at 15% 5%,#8a4ad055,transparent 65%),linear-gradient(var(--bg1),var(--bg2))}
+.hidden{display:none!important}
+header{background:#12052299;backdrop-filter:blur(10px);border-bottom:2px solid #ffc65c55;padding:max(12px,env(safe-area-inset-top)) 16px 12px;display:flex;justify-content:space-between;align-items:center;z-index:100;color:#fff}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--rose));color:#2a0f3d;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.brand-text{display:flex;flex-direction:column;line-height:1.1}
+.brand-name{font-weight:800;font-size:15px}
+.brand-sub{font-size:10px;color:#d9c3ee;letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.header-actions{display:flex;align-items:center;gap:12px}
+#live-date{font-size:12px;font-weight:700;color:var(--gold)}
+.btn-exit{background:transparent;border:1.5px solid #ff8e93;color:#ff8e93;padding:5px 12px;border-radius:20px;font:700 11px 'Nunito',sans-serif;cursor:pointer}
+.btn-exit:active{transform:scale(.95)}
+#main-content{display:flex;flex-direction:column;flex:1;min-height:0;max-width:500px;width:100%;margin:0 auto;position:relative}
+#login-wrapper{height:100%;display:flex;align-items:center;justify-content:center;padding:20px}
+#login-page{background:var(--cream);border:3px solid var(--gold);border-radius:26px;padding:38px 24px;text-align:center;width:100%;box-shadow:0 0 0 6px #ffc65c33,0 25px 50px #0008}
+.auth-icon{width:70px;height:70px;margin:-72px auto 14px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--rose));border:4px solid var(--cream);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 8px 20px #0006}
+#login-page h1{font-family:'Great Vibes',cursive;font-weight:400;font-size:2.6rem;color:var(--bg2);margin-bottom:4px}
+#login-page p{font-weight:600;font-size:.95rem;color:var(--mute);margin-bottom:26px}
+.btn-main{width:100%;height:50px;border-radius:30px;background:linear-gradient(90deg,var(--gold),var(--rose));color:#2a0f3d;border:none;font:800 15px 'Nunito',sans-serif;cursor:pointer;box-shadow:0 4px 0 #d9477f}
+.btn-main:active{transform:translateY(3px);box-shadow:0 1px 0 #d9477f}
+#dashboard{display:flex;flex-direction:column;flex:1;min-height:0}
+.scroll-area{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:16px;display:flex;flex-direction:column;gap:14px}
+.quick-link-banner{display:flex;justify-content:space-between;align-items:center;background:var(--cream);border:2px solid var(--gold);border-radius:16px;padding:14px 16px;color:var(--ink);text-decoration:none;font-weight:800;font-size:13px;box-shadow:0 4px 0 #d9a93f}
+.quick-link-banner:active{transform:translateY(3px);box-shadow:none}
+.quick-link-icon-wrapper{display:flex;align-items:center;gap:10px}
+.quick-link-icon svg{width:18px;height:18px;stroke:var(--teal);fill:none;stroke-width:2.2;display:block}
+.quick-link-arrow{color:var(--mute)}
+.section-header{font-weight:800;font-size:12px;color:var(--gold);letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.section-header::after{content:"";flex:1;height:1px;background:#ffc65c55}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.grid>div:last-child:nth-child(odd){grid-column:1/-1}
+.stat-card{background:var(--cream);border:2px solid var(--line);border-radius:16px;padding:12px 12px 12px 16px;cursor:pointer;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:6px;user-select:none;-webkit-user-select:none;box-shadow:0 4px 0 #d9c79b;transition:transform .12s,box-shadow .12s}
+.stat-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--teal)}
+.stat-card:active{transform:translateY(3px);box-shadow:0 1px 0 #d9c79b}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start}
+.card-icon{font-size:18px}
+.card-target{font-weight:800;font-size:10px;color:var(--mute);background:#fff;border:1px solid var(--line);padding:2px 7px;border-radius:10px}
+.card-title{font-size:11px;font-weight:800;color:var(--mute);text-transform:uppercase;letter-spacing:.04em;line-height:1.2}
+.card-count{font-size:2.1rem;font-weight:800;color:var(--ink);line-height:1}
+.progress-track{width:100%;height:6px;background:#eadcbd;border-radius:6px;overflow:hidden;margin-top:2px}
+.progress-fill{height:100%;background:var(--teal);width:0%;transition:.4s ease;border-radius:6px}
+.stat-card.mid::before,.stat-card.mid .progress-fill{background:var(--amber)}
+.stat-card.mid .card-count{color:#c77d0a}
+.stat-card.met::before,.stat-card.met .progress-fill{background:var(--green)}
+.stat-card.met .card-count{color:var(--green)}
+.stat-card.met{background:#eafaf0;border-color:#a6e3bf}
+.bottom-actions{background:#12052299;backdrop-filter:blur(10px);border-top:2px solid #ffc65c55;padding:12px 16px max(12px,env(safe-area-inset-bottom));display:flex;gap:12px;z-index:10}
+.action-btn{flex:1;height:46px;border-radius:30px;border:none;font:800 13px 'Nunito',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.action-btn:active{transform:scale(.96)}
+.action-btn.send{background:linear-gradient(90deg,var(--gold),var(--rose));color:#2a0f3d}
+.action-btn.reset{background:transparent;border:1.5px solid #ff8e93;color:#ff8e93;flex:.6}
+#toast{position:fixed;top:-100px;left:50%;transform:translateX(-50%);background:var(--gold);color:#2a0f3d;padding:10px 20px;border-radius:30px;font-weight:800;font-size:13px;white-space:nowrap;z-index:9999;transition:top .4s cubic-bezier(.4,0,.2,1);box-shadow:0 6px 18px #0006}
+#toast.show{top:max(16px,env(safe-area-inset-top))}
+.overlay{position:fixed;inset:0;background:rgba(10,3,20,.78);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:.2s ease;z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px}
+.overlay.show{opacity:1;pointer-events:auto}
+.modal-box{background:var(--cream);border:3px solid var(--gold);border-radius:22px;padding:24px;width:100%;max-width:320px;text-align:center;transform:scale(.95);transition:.3s cubic-bezier(.175,.885,.32,1.275)}
+.overlay.show .modal-box{transform:scale(1)}
+#modal-icon{font-size:34px;margin-bottom:10px}
+#modal-title{font-size:1.15rem;font-weight:800;margin-bottom:8px}
+#modal-msg{font-size:13px;font-weight:600;color:var(--mute);margin-bottom:22px}
+.modal-btn{width:100%;height:46px;border-radius:30px;border:none;margin-bottom:10px;font:800 14px 'Nunito',sans-serif;cursor:pointer}
+.modal-btn-primary{background:linear-gradient(90deg,var(--gold),var(--rose));color:#2a0f3d}
+.modal-btn-danger{background:var(--danger);color:#fff}
+.modal-btn-cancel{background:transparent;color:var(--mute);border:1.5px solid var(--line)}
+.modal-btn:active{transform:scale(.96)}
+/* belated birthday wish */
+#bday{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse 80% 45% at 50% 105%,#ff6fa577,transparent 70%),radial-gradient(ellipse 60% 40% at 20% 8%,#8a4ad066,transparent 65%),linear-gradient(#1a0730,#3b1458);transition:opacity .7s ease,transform .7s ease;overflow:hidden}
+#bday.out{opacity:0;transform:scale(1.06);pointer-events:none}
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.bunting{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;border-top:3px solid #ffffff44}
+.bunting i{flex:1;max-width:60px;height:38px;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;animation:sway 3s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+.bl{position:absolute;bottom:-90px;width:38px;height:48px;border-radius:50% 50% 48% 48%;opacity:.9;animation:rise linear forwards}
+.bl::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:50px;background:#ffffff77}
+.bl::before{content:"";position:absolute;left:22%;top:16%;width:20%;height:26%;border-radius:50%;background:#ffffff77}
+@keyframes rise{to{transform:translateY(-125vh) translateX(26px)}}
+.bd-card{position:relative;z-index:2;width:100%;max-width:380px;text-align:center;background:var(--cream);border:3px solid var(--gold);border-radius:28px;padding:44px 26px 28px;box-shadow:0 0 0 7px #ffc65c33,0 30px 60px #000a;animation:pop .9s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes pop{from{opacity:0;transform:translateY(30px) scale(.9)}}
+.bd-cake{width:76px;height:76px;margin:-82px auto 10px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--rose));border:4px solid var(--cream);display:flex;align-items:center;justify-content:center;font-size:36px;animation:hop 1.4s ease-in-out infinite;box-shadow:0 8px 20px #0006}
+@keyframes hop{50%{transform:translateY(-8px) rotate(6deg)}}
+.bd-small{font-weight:800;letter-spacing:.3em;text-transform:uppercase;font-size:.85rem;color:var(--rose)}
+#bday h2{font-family:'Great Vibes',cursive;font-weight:400;font-size:3rem;line-height:1.05;color:var(--bg2);margin:6px 0 10px}
+#bday h2 span{font-size:4.2rem;background:linear-gradient(90deg,#e8a020,var(--rose),#e8a020);background-size:200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 3s linear infinite}
+@keyframes sh{to{background-position:-200% 0}}
+#bday p{font-weight:600;font-size:1rem;line-height:1.5;color:var(--ink);margin-bottom:10px}
+#bday .sig{font-family:'Great Vibes',cursive;font-size:1.8rem;color:#a0457a;margin:6px 0 18px}
+#mute{position:absolute;top:calc(54px + env(safe-area-inset-top,0px));right:12px;z-index:3;background:#ffffff22;border:1px solid #ffc65c88;color:var(--gold);border-radius:20px;padding:6px 12px;font:700 12px 'Nunito',sans-serif;cursor:pointer}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header id="app-header" class="hidden">
-    <div class="brand">
-        <div class="brand-icon">SB</div>
-        <div class="brand-text">
-            <span class="brand-name">Ops Ledger</span>
-            <span class="brand-sub">Koraput Node</span>
-        </div>
-    </div>
-    <div class="header-actions">
-        <span id="live-date"></span>
-        <button class="btn-exit" onclick="openConfirm('logout')">Exit</button>
-    </div>
+  <div class="brand"><div class="brand-icon">SB</div><div class="brand-text"><span class="brand-name">Daily Report</span><span class="brand-sub">Koraput Branch</span></div></div>
+  <div class="header-actions"><span id="live-date"></span><button class="btn-exit" onclick="openConfirm('logout')">Exit</button></div>
 </header>
 
 <div id="main-content">
-    
-    <!-- LOGIN -->
-    <div id="login-wrapper">
-        <div id="login-page">
-            <div class="auth-icon">🔐</div>
-            <h1>Secure Uplink</h1>
-            <p>Field Operations Terminal</p>
-            <button class="btn-main" onclick="login()">Initialize</button>
-        </div>
+  <div id="login-wrapper">
+    <div id="login-page">
+      <div class="auth-icon">🎀</div>
+      <h1>Welcome back</h1>
+      <p>Daily Report Portal</p>
+      <button class="btn-main" onclick="login()">Sign in</button>
     </div>
+  </div>
 
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="hidden">
-        
-        <div class="scroll-area">
-            
-            <!-- QUICK LINK BANNER -->
-            <a href="https://yonoretail.sbi.bank.in/accounts/re-kyc/kyc-entry?srcChn=RINB" target="_blank" class="quick-link-banner">
-                <div class="quick-link-icon-wrapper">
-                    <span class="quick-link-icon">
-                        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                    </span>
-                    <span>SBI Re-KYC Portal <span style="font-size: 10px; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; margin-left: 4px;">[EXT]</span></span>
-                </div>
-                <span class="quick-link-arrow">→</span>
-            </a>
-
-            <div class="section-header">Live Metrics</div>
-            
-            <div class="grid">
-                <!-- 1. NPS -->
-                <div class="stat-card" id="btn-nps" onclick="increment('nps')">
-                    <div class="card-head">
-                        <span class="card-icon">😊</span>
-                        <span class="card-target">T:20</span>
-                    </div>
-                    <div class="card-title">NPS Feedback</div>
-                    <div class="card-body"><span class="card-count" id="nps">0</span></div>
-                    <div class="progress-track"><div class="progress-fill" id="pb-nps"></div></div>
-                </div>
-
-                <!-- 2. WhatsApp -->
-                <div class="stat-card" id="btn-whatsapp" onclick="increment('whatsapp')">
-                    <div class="card-head">
-                        <span class="card-icon">💬</span>
-                        <span class="card-target">T:25</span>
-                    </div>
-                    <div class="card-title">WhatsApp Reg</div>
-                    <div class="card-body"><span class="card-count" id="whatsapp">0</span></div>
-                    <div class="progress-track"><div class="progress-fill" id="pb-whatsapp"></div></div>
-                </div>
-
-                <!-- 3. Yono Reg -->
-                <div class="stat-card" id="btn-yonoRegistration" onclick="increment('yonoRegistration')">
-                    <div class="card-head">
-                        <span class="card-icon">📝</span>
-                        <span class="card-target">T:20</span>
-                    </div>
-                    <div class="card-title">Yono Reg</div>
-                    <div class="card-body"><span class="card-count" id="yonoRegistration">0</span></div>
-                    <div class="progress-track"><div class="progress-fill" id="pb-yonoRegistration"></div></div>
-                </div>
-
-                <!-- 4. Contact Centre -->
-                <div class="stat-card" id="btn-contactCentre" onclick="increment('contactCentre')">
-                    <div class="card-head">
-                        <span class="card-icon">☎️</span>
-                        <span class="card-target">T:40</span>
-                    </div>
-                    <div class="card-title">Contact Ctr</div>
-                    <div class="card-body"><span class="card-count" id="contactCentre">0</span></div>
-                    <div class="progress-track"><div class="progress-fill" id="pb-contactCentre"></div></div>
-                </div>
-
-                <!-- 5. CBDC -->
-                <div class="stat-card" id="btn-cbdc" onclick="increment('cbdc')">
-                    <div class="card-head">
-                        <span class="card-icon">💳</span>
-                        <span class="card-target">T:5</span>
-                    </div>
-                    <div class="card-title">CBDC</div>
-                    <div class="card-body"><span class="card-count" id="cbdc">0</span></div>
-                    <div class="progress-track"><div class="progress-fill" id="pb-cbdc"></div></div>
-                </div>
-
-                <!-- 6. Migration -->
-                <div class="stat-card" id="btn-channelMigration" onclick="increment('channelMigration')">
-                    <div class="card-head">
-                        <span class="card-icon">🔄</span>
-                        <span class="card-target">T:12</span>
-                    </div>
-                    <div class="card-title">Migration</div>
-                    <div class="card-body"><span class="card-count" id="channelMigration">0</span></div>
-                    <div class="progress-track"><div class="progress-fill" id="pb-channelMigration"></div></div>
-                </div>
-
-                <!-- 7. Re-KYC -->
-                <div class="stat-card" id="btn-rekyc" onclick="increment('rekyc')">
-                    <div class="card-head">
-                        <span class="card-icon">🪪</span>
-                        <span class="card-target">T:20</span>
-                    </div>
-                    <div class="card-title">Re-KYC</div>
-                    <div class="card-body"><span class="card-count" id="rekyc">0</span></div>
-                    <div class="progress-track"><div class="progress-fill" id="pb-rekyc"></div></div>
-                </div>
-
-                <!-- 8. Yono Usage -->
-                <div class="stat-card" id="btn-yonoUsage" onclick="increment('yonoUsage')">
-                    <div class="card-head">
-                        <span class="card-icon">📱</span>
-                        <span class="card-target">T:15</span>
-                    </div>
-                    <div class="card-title">Yono Usage</div>
-                    <div class="card-body"><span class="card-count" id="yonoUsage">0</span></div>
-                    <div class="progress-track"><div class="progress-fill" id="pb-yonoUsage"></div></div>
-                </div>
-
-                <!-- 9. WA Usage -->
-                <div class="stat-card" id="btn-whatsappUsage" onclick="increment('whatsappUsage')">
-                    <div class="card-head">
-                        <span class="card-icon">📲</span>
-                        <span class="card-target">T:20</span>
-                    </div>
-                    <div class="card-title">WA Usage</div>
-                    <div class="card-body"><span class="card-count" id="whatsappUsage">0</span></div>
-                    <div class="progress-track"><div class="progress-fill" id="pb-whatsappUsage"></div></div>
-                </div>
-
-                <!-- 10. ATM Card -->
-                <div class="stat-card" id="btn-atmCardIssuance" onclick="increment('atmCardIssuance')">
-                    <div class="card-head">
-                        <span class="card-icon">🏧</span>
-                        <span class="card-target">T:10</span>
-                    </div>
-                    <div class="card-title">ATM Card Issue</div>
-                    <div class="card-body"><span class="card-count" id="atmCardIssuance">0</span></div>
-                    <div class="progress-track"><div class="progress-fill" id="pb-atmCardIssuance"></div></div>
-                </div>
-
-                <!-- 11. Cheque Book -->
-                <div class="stat-card" id="btn-chequeBookIssuance" onclick="increment('chequeBookIssuance')">
-                    <div class="card-head">
-                        <span class="card-icon">📘</span>
-                        <span class="card-target">T:10</span>
-                    </div>
-                    <div class="card-title">Cheque Book</div>
-                    <div class="card-body"><span class="card-count" id="chequeBookIssuance">0</span></div>
-                    <div class="progress-track"><div class="progress-fill" id="pb-chequeBookIssuance"></div></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- FIXED BOTTOM ACTIONS -->
-        <div class="bottom-actions">
-            <button class="action-btn reset" onclick="openConfirm('reset')">Wipe</button>
-            <button class="action-btn send" onclick="exportToWhatsApp()">📱 Transmit Report</button>
-        </div>
+  <div id="dashboard" class="hidden">
+    <div class="scroll-area">
+      <a href="https://yonoretail.sbi.bank.in/accounts/re-kyc/kyc-entry?srcChn=RINB" target="_blank" class="quick-link-banner">
+        <div class="quick-link-icon-wrapper"><span class="quick-link-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span><span>SBI Re-KYC Portal</span></div>
+        <span class="quick-link-arrow">→</span>
+      </a>
+      <div class="section-header">Today's Numbers</div>
+      <div class="grid" id="grid"></div>
     </div>
+    <div class="bottom-actions">
+      <button class="action-btn reset" onclick="openConfirm('reset')">Reset</button>
+      <button class="action-btn send" onclick="exportToWhatsApp()">📱 Send Report</button>
+    </div>
+  </div>
 </div>
 
 <div id="toast"></div>
 
-<!-- CENTER MODAL -->
 <div id="confirm-overlay" class="overlay" onclick="closeConfirm()">
-    <div class="modal-box" onclick="event.stopPropagation()">
-        <div id="modal-icon">⚠️</div>
-        <div id="modal-title">Confirm Action</div>
-        <div id="modal-msg">Are you sure?</div>
-        <button class="modal-btn" id="confirm-action-btn" onclick="executeConfirm()">Proceed</button>
-        <button class="modal-btn modal-btn-cancel" onclick="closeConfirm()">Cancel</button>
-    </div>
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div id="modal-icon">⚠️</div><div id="modal-title">Confirm Action</div><div id="modal-msg">Are you sure?</div>
+    <button class="modal-btn" id="confirm-action-btn" onclick="executeConfirm()">Proceed</button>
+    <button class="modal-btn modal-btn-cancel" onclick="closeConfirm()">Cancel</button>
+  </div>
 </div>
 
-<!-- JS PRESERVED 100% -->
+<!-- Belated birthday wish -->
+<div id="bday" class="hidden" role="dialog" aria-label="Belated birthday wish">
+  <canvas id="fx"></canvas>
+  <div class="bunting" id="bunt"></div>
+  <button id="mute">🔊 Music</button>
+  <div class="bd-card">
+    <div class="bd-cake">🎂</div>
+    <div class="bd-small">Belated</div>
+    <h2>Happy Birthday,<br><span>Eli!</span></h2>
+    <p>Sorry we're a little late, but the celebration never stops. Wishing you a year full of joy, success and sweet surprises.</p>
+    <div class="sig">With love, Ashu</div>
+    <button class="btn-main" id="thanks">Thank you 💜</button>
+  </div>
+</div>
+
 <script>
-    const TARGETS = {
-        nps: 20, whatsapp: 25, yonoRegistration: 20,
-        contactCentre: 40, cbdc: 5, channelMigration: 12,
-        rekyc: 20, whatsappUsage: 20, yonoUsage: 15,
-        atmCardIssuance: 10, chequeBookIssuance: 10
-    };
+const CARDS=[['nps','😊','NPS Feedback',20],['whatsapp','💬','WhatsApp Reg',25],['yonoRegistration','📝','Yono Reg',20],['contactCentre','☎️','Contact Ctr',40],['cbdc','💳','CBDC',5],['channelMigration','🔄','Migration',12],['rekyc','🪪','Re-KYC',20],['yonoUsage','📱','Yono Usage',15],['whatsappUsage','📲','WA Usage',20],['atmCardIssuance','🏧','ATM Card Issue',10],['chequeBookIssuance','📘','Cheque Book',10]];
+const TARGETS=Object.fromEntries(CARDS.map(c=>[c[0],c[3]]));
+const FIELDS=Object.keys(TARGETS);
+document.getElementById('grid').innerHTML=CARDS.map(([f,i,t,n])=>`<div class="stat-card" id="btn-${f}" onclick="increment('${f}')"><div class="card-head"><span class="card-icon">${i}</span><span class="card-target">Target ${n}</span></div><div class="card-title">${t}</div><div class="card-body"><span class="card-count" id="${f}">0</span></div><div class="progress-track"><div class="progress-fill" id="pb-${f}"></div></div></div>`).join('');
 
-    const FIELDS = Object.keys(TARGETS);
+function fmt(date){return `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}/${date.getFullYear()}`}
+function setDate(){const el=document.getElementById('live-date');if(el)el.textContent=fmt(new Date())}
+function showToast(msg,dur=3500){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur)}
+function greeting(){const h=new Date().getHours();return (h<12?'Good morning':h<17?'Good afternoon':'Good evening')+', Pummy.'}
 
-    function fmt(date) {
-        const d = String(date.getDate()).padStart(2,'0');
-        const m = String(date.getMonth()+1).padStart(2,'0');
-        const y = date.getFullYear();
-        return `${d}/${m}/${y}`;
-    }
+function login(){
+  localStorage.setItem('sbi_a1_loggedIn','true');
+  document.getElementById('login-wrapper').classList.add('hidden');
+  showDashboard();showBday();
+}
+function showDashboard(){
+  const lw=document.getElementById('login-wrapper');if(lw)lw.classList.add('hidden');
+  document.getElementById('app-header').classList.remove('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  setDate();loadSavedData();
+}
+function doLogout(){localStorage.removeItem('sbi_a1_loggedIn');window.location.reload()}
+function updateUI(field){
+  const val=parseInt(document.getElementById(field).textContent)||0,target=TARGETS[field],mid=Math.floor(target/2);
+  document.getElementById('pb-'+field).style.width=Math.min(Math.round(val/target*100),100)+'%';
+  const btn=document.getElementById('btn-'+field);btn.classList.remove('mid','met');
+  if(val>=target)btn.classList.add('met');else if(val>=mid)btn.classList.add('mid');
+}
+function increment(field){const el=document.getElementById(field);el.textContent=(parseInt(el.textContent)||0)+1;updateUI(field);saveData();if(navigator.vibrate)navigator.vibrate(40)}
+function saveData(){const d={};FIELDS.forEach(f=>{d[f]=document.getElementById(f).textContent});localStorage.setItem('sbi_a1_data',JSON.stringify(d))}
+function loadSavedData(){const s=localStorage.getItem('sbi_a1_data');if(!s)return;const d=JSON.parse(s);FIELDS.forEach(f=>{const el=document.getElementById(f);if(el){el.textContent=d[f]||0;updateUI(f)}})}
+function exportToWhatsApp(){
+  const today=fmt(new Date()),d={};FIELDS.forEach(f=>{d[f]=document.getElementById(f).textContent});
+  const msg=`*Date:* ${today}\n*Name:* ELIPOMA NAG\n*Branch name:* SBI KORAPUT\n*Branch code:* 00121\n\n*Data Report:*\nNPS: ${d.nps}\nWhatsApp: ${d.whatsapp}\nYono Registration: ${d.yonoRegistration}\nContact Centre: ${d.contactCentre}\nCBDC: ${d.cbdc}\nChannel Migration: ${d.channelMigration}\nRe-KYC: ${d.rekyc}\nWhatsApp Usage: ${d.whatsappUsage}\nYono Usage: ${d.yonoUsage}\nATM Card Issuance: ${d.atmCardIssuance}\nCheque Book Issuance: ${d.chequeBookIssuance}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+function doReset(){FIELDS.forEach(f=>{document.getElementById(f).textContent='0';updateUI(f)});localStorage.removeItem('sbi_a1_data');showToast('All counts reset.')}
 
-    function setDate() {
-        const el = document.getElementById('live-date');
-        if (el) el.textContent = fmt(new Date());
-    }
+let pendingConfirmAction=null;
+function openConfirm(type){
+  pendingConfirmAction=type;
+  const icon=document.getElementById('modal-icon'),title=document.getElementById('modal-title'),msg=document.getElementById('modal-msg'),btn=document.getElementById('confirm-action-btn');
+  if(type==='reset'){icon.textContent='🗑️';title.textContent='Reset counts?';msg.textContent='This will erase all of today\'s counts. It cannot be undone.';btn.className='modal-btn modal-btn-danger';btn.textContent='Yes, reset'}
+  else{icon.textContent='🔒';title.textContent='Sign out?';msg.textContent='Are you sure you want to sign out?';btn.className='modal-btn modal-btn-primary';btn.textContent='Sign out'}
+  document.getElementById('confirm-overlay').classList.add('show');
+}
+function closeConfirm(){document.getElementById('confirm-overlay').classList.remove('show');pendingConfirmAction=null}
+function executeConfirm(){if(pendingConfirmAction==='reset')doReset();else if(pendingConfirmAction==='logout')doLogout();closeConfirm()}
 
-    function showToast(msg, dur = 3500) {
-        const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), dur);
-    }
+/* ===== Belated birthday wish + celebration ===== */
+const COLS=['#ffc65c','#ff6fa5','#2fb9a6','#8a4ad0','#ffffff'];
+const bd=document.getElementById('bday'),cv=document.getElementById('fx'),cx=cv.getContext('2d');
+let parts=[],raf=0,timers=[],AC=null,songOn=true,songTimers=[];
+function sizeFx(){cv.width=innerWidth;cv.height=innerHeight}
+function burst(x,y,n,up){for(let i=0;i<n;i++){const a=(up?-Math.PI/2:Math.random()*Math.PI*2)+(Math.random()-.5)*(up?1.6:0),s=5+Math.random()*9;parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,w:5+Math.random()*6,c:COLS[i%5],r:Math.random()*6,l:1})}}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);parts=parts.filter(p=>p.y<cv.height+30&&p.l>0);
+  parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.22;p.vx*=.987;p.r+=.2;p.l-=.0035;cx.save();cx.globalAlpha=Math.max(p.l,0);cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.w/2,-p.w/4,p.w,p.w/2);cx.restore()});
+  raf=requestAnimationFrame(loop)}
+function balloon(){const b=document.createElement('span');b.className='bl';b.style.cssText=`left:${Math.random()*92}%;background:${COLS[Math.floor(Math.random()*4)]};animation-duration:${7+Math.random()*6}s;transform:scale(${.7+Math.random()*.7})`;bd.appendChild(b);setTimeout(()=>b.remove(),14000)}
+function tone(f,t0,d,v){const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+t0;o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.03);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.05)}
+function song(){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+  const S=[[392,.75],[392,.25],[440,1],[392,1],[523,1],[494,2],[392,.75],[392,.25],[440,1],[392,1],[587,1],[523,2],[392,.75],[392,.25],[784,1],[659,1],[523,1],[494,1],[440,1],[698,.75],[698,.25],[659,1],[523,1],[587,1],[523,2]];
+  let t=.2;S.forEach(([f,d])=>{tone(f,t,d*.55*1.6,.16);tone(f/2,t,d*.55,.05);t+=d*.55})}catch(e){}}
+function stopSong(){try{if(AC){AC.close();AC=null}}catch(e){}}
+function showBday(){
+  bd.classList.remove('hidden','out');sizeFx();
+  const B=document.getElementById('bunt');B.innerHTML=Array.from({length:14},(_,i)=>`<i style="background:${COLS[i%4]};animation-delay:${i*.15}s"></i>`).join('');
+  parts=[];cancelAnimationFrame(raf);loop();
+  const w=cv.width,h=cv.height;burst(w*.2,h,70,true);burst(w*.8,h,70,true);
+  timers.push(setInterval(()=>{burst(Math.random()*w,h*.95,40,true)},1600),setInterval(balloon,550));
+  for(let i=0;i<5;i++)balloon();
+  if(songOn)song();
+}
+function endBday(){
+  timers.forEach(clearInterval);timers=[];stopSong();
+  burst(cv.width/2,cv.height*.55,160,false);
+  bd.classList.add('out');
+  localStorage.setItem('sbi_a1_bdayShown','true');
+  setTimeout(()=>{bd.classList.add('hidden');cancelAnimationFrame(raf);bd.querySelectorAll('.bl').forEach(b=>b.remove())},750);
+  showToast("You're welcome! "+greeting(),4200);
+  if(navigator.vibrate)navigator.vibrate([60,40,60]);
+}
+document.getElementById('thanks').onclick=endBday;
+document.getElementById('mute').onclick=e=>{songOn=!songOn;e.target.textContent=songOn?'🔊 Music':'🔇 Music';if(songOn)song();else stopSong()};
+addEventListener('resize',()=>{if(!bd.classList.contains('hidden'))sizeFx()});
+bd.addEventListener('pointerdown',e=>{if(e.target.id!=='thanks'&&e.target.id!=='mute'){burst(e.clientX,e.clientY,30,false);if(songOn&&!AC)song()}});
 
-    function login() {
-        localStorage.setItem('sbi_a1_loggedIn', 'true');
-        document.getElementById('login-wrapper').classList.add('hidden');
-        showDashboard();
-        const h = new Date().getHours();
-        const greet = h < 12 ? 'SYS UP: Good morning' : h < 17 ? 'SYS UP: Good afternoon' : 'SYS UP: Good evening';
-        showToast(`${greet}, Pummy.`);
-    }
-
-    function showDashboard() {
-        const loginWrapper = document.getElementById('login-wrapper');
-        if(loginWrapper) loginWrapper.classList.add('hidden');
-        
-        document.getElementById('app-header').classList.remove('hidden');
-        document.getElementById('dashboard').classList.remove('hidden');
-        setDate();
-        loadSavedData();
-    }
-
-    function doLogout() {
-        localStorage.removeItem('sbi_a1_loggedIn');
-        window.location.reload();
-    }
-
-    function updateUI(field) {
-        const val = parseInt(document.getElementById(field).textContent) || 0;
-        const target = TARGETS[field];
-        const mid = Math.floor(target / 2);
-        const pct = Math.min(Math.round((val / target) * 100), 100);
-        
-        document.getElementById('pb-' + field).style.width = pct + '%';
-        const btn = document.getElementById('btn-' + field);
-        
-        btn.classList.remove('mid', 'met');
-        if (val >= target)   btn.classList.add('met');
-        else if (val >= mid) btn.classList.add('mid');
-    }
-
-    function increment(field) {
-        const el = document.getElementById(field);
-        el.textContent = (parseInt(el.textContent) || 0) + 1;
-        updateUI(field);
-        saveData();
-        if (navigator.vibrate) navigator.vibrate(40);
-    }
-
-    function saveData() {
-        const data = {};
-        FIELDS.forEach(f => { data[f] = document.getElementById(f).textContent; });
-        localStorage.setItem('sbi_a1_data', JSON.stringify(data));
-    }
-
-    function loadSavedData() {
-        const saved = localStorage.getItem('sbi_a1_data');
-        if (!saved) return;
-        const data = JSON.parse(saved);
-        FIELDS.forEach(f => {
-            const el = document.getElementById(f);
-            if (el) { el.textContent = data[f] || 0; updateUI(f); }
-        });
-    }
-
-    function exportToWhatsApp() {
-        const today = fmt(new Date());
-        const d = {};
-        FIELDS.forEach(f => { d[f] = document.getElementById(f).textContent; });
-        const msg =
-            `*Date:* ${today}\n` +
-            `*Name:* ELIPOMA NAG\n` +
-            `*Branch name:* SBI KORAPUT\n` +
-            `*Branch code:* 00121\n\n` +
-            `*Data Report:*\n` +
-            `NPS: ${d.nps}\n` +
-            `WhatsApp: ${d.whatsapp}\n` +
-            `Yono Registration: ${d.yonoRegistration}\n` +
-            `Contact Centre: ${d.contactCentre}\n` +
-            `CBDC: ${d.cbdc}\n` +
-            `Channel Migration: ${d.channelMigration}\n` +
-            `Re-KYC: ${d.rekyc}\n` +
-            `WhatsApp Usage: ${d.whatsappUsage}\n` +
-            `Yono Usage: ${d.yonoUsage}\n` +
-            `ATM Card Issuance: ${d.atmCardIssuance}\n` +
-            `Cheque Book Issuance: ${d.chequeBookIssuance}`;
-        window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
-    }
-
-    function doReset() {
-        FIELDS.forEach(f => {
-            document.getElementById(f).textContent = '0';
-            updateUI(f);
-        });
-        localStorage.removeItem('sbi_a1_data');
-        showToast("System purged. All targets reset.");
-    }
-
-    /* ============ CUSTOM MODAL ============ */
-    let pendingConfirmAction = null;
-
-    function openConfirm(type) {
-        pendingConfirmAction = type;
-        const overlay = document.getElementById('confirm-overlay');
-        const icon = document.getElementById('modal-icon');
-        const title = document.getElementById('modal-title');
-        const msg = document.getElementById('modal-msg');
-        const btn = document.getElementById('confirm-action-btn');
-
-        if (type === 'reset') {
-            icon.textContent = '🗑️';
-            icon.style.color = 'var(--danger)';
-            title.textContent = 'Wipe Data?';
-            msg.textContent = 'This will permanently erase all counts for today. Cannot be undone.';
-            btn.className = 'modal-btn modal-btn-danger';
-            btn.textContent = 'Execute Wipe';
-        } else if (type === 'logout') {
-            icon.textContent = '🔒';
-            icon.style.color = 'var(--teal)';
-            title.textContent = 'End Session?';
-            msg.textContent = 'Are you sure you want to lock the terminal and exit?';
-            btn.className = 'modal-btn modal-btn-primary';
-            btn.textContent = 'Lock Terminal';
-        }
-        
-        overlay.classList.add('show');
-    }
-
-    function closeConfirm() {
-        document.getElementById('confirm-overlay').classList.remove('show');
-        pendingConfirmAction = null;
-    }
-
-    function executeConfirm() {
-        if (pendingConfirmAction === 'reset') doReset();
-        else if (pendingConfirmAction === 'logout') doLogout();
-        closeConfirm();
-    }
-
-    window.onload = () => {
-        if (localStorage.getItem('sbi_a1_loggedIn') === 'true') {
-            document.getElementById('login-wrapper').classList.add('hidden');
-            showDashboard();
-        }
-    };
+window.onload=()=>{
+  if(localStorage.getItem('sbi_a1_loggedIn')==='true'){
+    document.getElementById('login-wrapper').classList.add('hidden');showDashboard();
+    if(localStorage.getItem('sbi_a1_bdayShown')!=='true')showBday();
+  }
+};
 </script>
 </body>
 </html>
