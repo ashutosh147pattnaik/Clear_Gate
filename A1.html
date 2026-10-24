@@ -85,7 +85,6 @@ body {
   background-size: 100% 100%, 100% 100%, 100% 100%, 20px 20px;
   color: var(--text-main);
   display: flex; flex-direction: column;
-  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 h1, h2, h4, .brand-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-spacing: -0.02em; }
@@ -130,14 +129,6 @@ header {
   box-shadow: var(--btn-shadow);
 }
 #theme-toggle:active { transform: translateY(2px); box-shadow: none; }
-
-#live-clock {
-  font-size: 11px; font-weight: 700; 
-  color: var(--ink);
-  padding: 5px 8px; border-radius: 8px;
-  border: 1.5px solid var(--border-active);
-  background: var(--ink-light);
-}
 
 /* LOGIN PAGE */
 #login-page { 
@@ -425,7 +416,6 @@ header {
   </div>
   <div style="display:flex; align-items:center; gap:8px;">
     <button id="theme-toggle" onclick="toggleTheme()">VIBE: DARK</button>
-    <div id="live-clock" class="mono">00:00:00</div>
   </div>
 </header>
 
@@ -757,14 +747,6 @@ MAP.forEach(({ key, id }) => {
 const SEAL_CIRC = 2 * Math.PI * 42;
 $('seal-ring-fill').style.strokeDasharray = SEAL_CIRC;
 $('seal-ring-fill').style.strokeDashoffset = SEAL_CIRC;
-
-// Battery saver: the clock only ticks while the page is visible
-let clockTimer = null;
-function tickClock() { $('live-clock').textContent = new Date().toLocaleTimeString(); }
-function startClock() { if (clockTimer) return; tickClock(); clockTimer = setInterval(tickClock, 1000); }
-function stopClock() { clearInterval(clockTimer); clockTimer = null; }
-document.addEventListener('visibilitychange', () => { document.hidden ? stopClock() : startClock(); });
-startClock();
 
 function doLogin() {
   if (!state.loginTime) state.loginTime = new Date().toLocaleTimeString();
